@@ -1,0 +1,9 @@
+post
+---------
+{
+"name":"ragul",
+"emailId":"ragul@gmail.com",
+"phoneNumber":"7867564567",
+"jobRole":"dev",
+"experience":2
+}
