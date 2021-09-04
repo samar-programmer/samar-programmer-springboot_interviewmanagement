@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class InterviewmanagementApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void contextLoads() {//NOSONAR
 	}
 
 }

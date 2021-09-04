@@ -1,8 +1,11 @@
 package com.revature.interviewmanagement.dao.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
+
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -14,17 +17,14 @@ import com.revature.interviewmanagement.entity.Candidate;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 
-
 @Repository
 @Transactional
 public class CandidateDaoImpl implements CandidateDao{
 	
+	static final LocalDateTime localTime=LocalDateTime.now();
 	@Autowired
 	private SessionFactory sessionFactory;
-//	CandidateDaoImpl(SessionFactory sessionFactory){
-//		this.sessionFactory=sessionFactory;
-//	}
-	
+
 	@Override
 	public String addCandidate(Candidate candidate) {
 		Session session=sessionFactory.getCurrentSession();
@@ -32,9 +32,9 @@ public class CandidateDaoImpl implements CandidateDao{
 		Long id=null;
 		try {
 			
-			Query emailQuery = session.getNamedQuery("callCandidateByEmailProcedure")
+			Query<?> emailQuery = session.getNamedQuery("callCandidateByEmailProcedure")
 				    .setParameter("email",candidate.getEmailId());
-			Query phoneQuery = session.getNamedQuery("callCandidateByPhoneProcedure")
+			Query<?> phoneQuery = session.getNamedQuery("callCandidateByPhoneProcedure")
 				    .setParameter("phone",candidate.getPhoneNumber());
 			
 				if(emailQuery.list().isEmpty() && phoneQuery.list().isEmpty() ) {
@@ -49,12 +49,12 @@ public class CandidateDaoImpl implements CandidateDao{
 			
 			
 			
-		} catch (Exception e1) {
+		} catch (HibernateException e1) {
 			
 			e1.printStackTrace();
 		}
 		
-		return (id!=null)?"Candidate details inserted with id: "+id:"Couldn't create candidate...Error occured while inserting";
+		return (id!=null)?"Candidate details inserted with id: "+id+" at "+localTime:"Couldn't create candidate...Error occured while inserting";
 	}
 
 	@Override
@@ -72,10 +72,10 @@ public class CandidateDaoImpl implements CandidateDao{
 		}
 			
 		if(!check) {
-			Query emailQuery = session.getNamedQuery("callCandidateByEmailUpdateProcedure")
+			Query<?> emailQuery = session.getNamedQuery("callCandidateByEmailUpdateProcedure")
 				    .setParameter("email",candidate.getEmailId())
 				    .setParameter("id",id);
-			Query phoneQuery = session.getNamedQuery("callCandidateByPhoneUpdateProcedure")
+			Query<?> phoneQuery = session.getNamedQuery("callCandidateByPhoneUpdateProcedure")
 				    .setParameter("phone",candidate.getPhoneNumber())
 				    .setParameter("id",id);
 			
@@ -101,24 +101,15 @@ public class CandidateDaoImpl implements CandidateDao{
 		Session session=sessionFactory.getCurrentSession();
 		String result=null;
 		Candidate deleteObject=null;
-			try {
-				 deleteObject=session.get(Candidate.class, id);
-			}
-			catch (Exception e1) {
-				result="Deletion is failed...Entered Id doesn't exists2";
-				//e1.printStackTrace();
-			}
-				if(deleteObject!=null) {
-					session.delete(deleteObject);
-					session.flush();
-					result="Deletion is successful for id: "+id;
-				}
-		
-				else {
-					throw new IdNotFoundException("Deletion is failed...Entered Id doesn't exists");
-				}
-			
-		
+		 deleteObject=session.get(Candidate.class, id);
+		if(deleteObject!=null) {
+			session.delete(deleteObject);
+			session.flush();
+			result="Deletion is successful for id: "+id;
+		}
+		else {
+			throw new IdNotFoundException("Deletion is failed...Entered Id doesn't exists");
+		}
 		return result;
 	
 	}
@@ -126,36 +117,40 @@ public class CandidateDaoImpl implements CandidateDao{
 	@Override
 	public Candidate getCandidateByPhoneNumber(String phoneNumber) {
 		Session session=sessionFactory.getCurrentSession();
-		Query<Candidate> query=session.createQuery("select c from Candidate c where c.phoneNumber=?1").setParameter(1,phoneNumber);
-		return (query.getResultList().isEmpty()?null:query.getResultList().get(0));
+		Query<?> query=session.createQuery("select c from Candidate c where c.phoneNumber=?1").setParameter(1,phoneNumber);
+		return (query.getResultList().isEmpty()?null:(Candidate) query.getResultList().get(0));
 	}
 
 	@Override
 	public List<Candidate> getCandidateByName(String name) {
 		Session session=sessionFactory.getCurrentSession();
-		Query<Candidate> query=session.createQuery("select c from Candidate c where c.name=?1").setParameter(1,name);
-		return (query.getResultList().isEmpty()?null:query.getResultList());
+		@SuppressWarnings("unchecked")
+		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.name=?1").setParameter(1,name).getResultList();
+		return (resultList.isEmpty()?null:resultList);
 	}
 
 	@Override
 	public List<Candidate> getCandidateByExperience(Integer exp) {
 		Session session=sessionFactory.getCurrentSession();
-		Query<Candidate> query=session.createQuery("select c from Candidate c where c.experience=?1").setParameter(1,exp);
-		return (query.getResultList().isEmpty()?null:query.getResultList());
+		@SuppressWarnings("unchecked")
+		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.experience=?1").setParameter(1,exp).getResultList();
+		return (resultList.isEmpty()?null:resultList);
 	}
 
 	@Override
 	public List<Candidate> getCandidateByRole(String role) {
 		Session session=sessionFactory.getCurrentSession();
-		Query<Candidate> query=session.createQuery("select c from Candidate c where c.jobRole=?1").setParameter(1,role);
-		return (query.getResultList().isEmpty()?null:query.getResultList());
+		@SuppressWarnings("unchecked")
+		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.jobRole=?1").setParameter(1,role).getResultList();
+		return (resultList.isEmpty()?null:resultList);
 	}
 
 	@Override
 	public Candidate getCandidateByEmailId(String email) {
 		Session session=sessionFactory.getCurrentSession();
-		Query<Candidate> query=session.createQuery("select c from Candidate c where c.emailId=?1").setParameter(1,email);
-		return (query.getResultList().isEmpty()?null:query.getResultList().get(0));
+		@SuppressWarnings("unchecked")
+		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.emailId=?1").setParameter(1,email).getResultList();
+		return (resultList.isEmpty()?null:resultList.get(0));
 	}
 
 	@Override

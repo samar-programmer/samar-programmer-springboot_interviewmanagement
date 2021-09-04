@@ -5,39 +5,37 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
 
-@Entity
+
 //@EntityListeners(AuditingEntityListener.class)
 @Table(name="candidate_test")
-@NamedNativeQueries({
+
     @NamedNativeQuery(
     name = "callCandidateByEmailProcedure",
     query = "CALL getCandidateByEmail(:email)",
     resultClass = Candidate.class
-    ),
+    )
     @NamedNativeQuery(
     name = "callCandidateByPhoneProcedure",
     query = "CALL getCandidateByPhone(:phone)",
     resultClass = Candidate.class
-    ),
+    )
     @NamedNativeQuery(
     	    name = "callCandidateByEmailUpdateProcedure",
     	    query = "CALL getCandidateUpdateByEmail(:email,:id)",
     	    resultClass = Candidate.class
-    	    ),
+    	    )
     @NamedNativeQuery(
     	    name = "callCandidateByPhoneUpdateProcedure",
     	    query = "CALL getCandidateUpdateByPhone(:phone,:id)",
     	    resultClass = Candidate.class
     	    )
-    })
+@Entity  
 public class Candidate implements Serializable{
 	
 	@Id
@@ -72,23 +70,6 @@ public class Candidate implements Serializable{
     //@LastModifiedDate
 	private LocalDateTime updatedOn;
 	
-	private String updatedBy;
-	
-	public Candidate() {}
-	
-	
-	
-
-	@Override
-	public String toString() {
-		return "Candidate [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailId=" + emailId
-				+ ", phoneNumber=" + phoneNumber + ", jobRole=" + jobRole + ", experience=" + experience + ", addedOn="
-				+ addedOn + ", updatedOn=" + updatedOn + ", updatedBy=" + updatedBy + "]";
-	}
-
-
-
-
 	public Long getId() {
 		return id;
 	}
@@ -169,7 +150,8 @@ public class Candidate implements Serializable{
 		this.updatedBy = updatedBy;
 	}
 
+	private String updatedBy;
 	
-	
+
 	
 }
