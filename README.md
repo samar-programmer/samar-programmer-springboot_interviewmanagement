@@ -1,4 +1,4 @@
-#  Interview management Management Application
+#  Interview Management Application
 
 * Created CRUD operations for candidate entity
 
