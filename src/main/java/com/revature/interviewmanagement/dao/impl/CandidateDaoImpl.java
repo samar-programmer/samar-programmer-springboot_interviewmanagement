@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.entity.Candidate;
-import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 

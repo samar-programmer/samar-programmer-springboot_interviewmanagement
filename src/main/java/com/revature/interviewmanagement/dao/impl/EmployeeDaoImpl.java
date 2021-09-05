@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.revature.interviewmanagement.dao.EmployeeDao;
-import com.revature.interviewmanagement.entity.Candidate;
 import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
@@ -56,6 +55,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
 				result.add(phoneQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
 				result.add(employeeIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
 				result.add(designationIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
+				break;
+			}
+			default:{
 				break;
 			}
 		}
@@ -133,18 +135,18 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		try {
 			List<Boolean> stateArr=checkState(session,employee,0,-1);
 			
-			boolean addState=stateArr.stream().anyMatch(p-> p.booleanValue()==false);
+			boolean addState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
 			
 				if(!addState) {
 					id=(Long)session.save(employee);
 				}
-				else if(!stateArr.get(0)){
+				else if(Boolean.FALSE.equals(stateArr.get(0))){
 					throw new DuplicateIdException("Entered email id already exists");
 				}
-				else if(!stateArr.get(1)){
+				else if(Boolean.FALSE.equals(stateArr.get(1))){
 					throw new DuplicateIdException("Entered phone number already exists");
 				}
-				else if(!stateArr.get(2)){
+				else if(Boolean.FALSE.equals(stateArr.get(2))){
 					throw new DuplicateIdException("Entered Employee Id already exists");
 				}
 				else {
@@ -179,7 +181,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			
 		if(check) {
 				List<Boolean> stateArr=checkState(session,employee,1,id);
-			boolean updateState=stateArr.stream().anyMatch(p-> p.booleanValue()==false);
+			boolean updateState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
 			
 				if(!updateState) {
 					employee.setId(id);
@@ -187,13 +189,14 @@ public class EmployeeDaoImpl implements EmployeeDao {
 					session.flush();
 					result="updation is successful for id: "+id;
 				}
-				else if(!stateArr.get(0)){
+				//Boolean.FALSE.equals(stateArr.get(0))) 
+				else if(Boolean.FALSE.equals(stateArr.get(0))){
 					throw new DuplicateIdException("Updation is failed...Entered email id already exists in another record");
 				}
-				else if(!stateArr.get(1)){
+				else if(Boolean.FALSE.equals(stateArr.get(1))){
 					throw new DuplicateIdException("Updation is failed...Entered phone number already exists in another record");
 				}
-				else if(!stateArr.get(2)){
+				else if(Boolean.FALSE.equals(stateArr.get(2))){
 					throw new DuplicateIdException("Updation is failed...Entered Employee Id already exists in another record");
 				}
 				else {

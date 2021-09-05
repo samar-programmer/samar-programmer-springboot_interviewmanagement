@@ -2,6 +2,8 @@ use sample;
 show tables;
 create database sample;
 show databases;
+
+#Candidate section
 select * from candidate_test;
 
 drop table candidate_test;
@@ -39,6 +41,13 @@ DELIMITER $
          END 
  $;
 #stored procedure for candidate entity starts
+#--------------------------------------------------------------------------------
+#Employee
+use sample;
+drop table employee_test;
+select * from employee_test;
+
+
 
 
 
