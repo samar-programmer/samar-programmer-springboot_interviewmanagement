@@ -46,9 +46,9 @@ public class CandidateServiceImpl implements CandidateService {
 	}
 
 	@Override
-	public List<Candidate> getCandidateByName(String name) {
+	public List<Candidate> getCandidateByFirstName(String fname) {
 		
-		return candidateDao.getCandidateByName(name) ;
+		return candidateDao.getCandidateByFirstName(fname) ;
 	}
 
 	@Override
@@ -73,5 +73,11 @@ public class CandidateServiceImpl implements CandidateService {
 	public String addCandidate(Candidate candidate) {
 		
 		return candidateDao.addCandidate(candidate);
+	}
+
+
+	@Override
+	public List<Candidate> getCandidateByLastName(String lname) {
+		return candidateDao.getCandidateByLastName(lname) ;
 	}
 }

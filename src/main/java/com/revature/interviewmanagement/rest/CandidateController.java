@@ -49,15 +49,20 @@ public class CandidateController {
 	 
 	 @GetMapping("/candidate/phone/{phone-number}")  
 	 public ResponseEntity<Candidate> getCandidateByPhoneNumber(@PathVariable("phone-number") String phoneNumber){
-	
+		 	//if we don't give @PathVariable("phone-number") here, phone number couldn't be recognized as string
 		 return new ResponseEntity<>(candidateSerive.getCandidateByPhoneNumber(phoneNumber), new HttpHeaders(), HttpStatus.OK);  
 	} 
 	  
-	 @GetMapping("/candidate/name/{name}") 
-	 public ResponseEntity<List<Candidate>> getCandidateByName(@PathVariable String name){  
+	 @GetMapping("/candidate/first-name/{fname}") 
+	 public ResponseEntity<List<Candidate>> getCandidateByFirstName(@PathVariable String fname){  
 		 
-		 return new ResponseEntity<>(candidateSerive.getCandidateByName(name), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(candidateSerive.getCandidateByFirstName(fname), new HttpHeaders(), HttpStatus.OK);  
 	}  
+	 @GetMapping("/candidate/last-name/{lname}") 
+	 public ResponseEntity<List<Candidate>> getCandidateByLastName(@PathVariable String lname){  
+		 
+		 return new ResponseEntity<>(candidateSerive.getCandidateByLastName(lname), new HttpHeaders(), HttpStatus.OK);  
+	} 
 	 
 	 @GetMapping("/candidate/experience/{exp}")
 	public ResponseEntity<List<Candidate>> getCandidateByExperience(@PathVariable Integer exp){ 

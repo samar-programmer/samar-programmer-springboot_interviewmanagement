@@ -14,7 +14,7 @@ public interface CandidateDao {
 
 	public Candidate getCandidateByPhoneNumber(String phoneNumber);
 
-	public List<Candidate> getCandidateByName(String name);
+	public List<Candidate> getCandidateByLastName(String lname);
 
 	public List<Candidate> getCandidateByExperience(Integer exp);
 
@@ -25,5 +25,7 @@ public interface CandidateDao {
 	public Candidate getCandidateById(Long id);
 
 	public List<Candidate> getAllCandidate();
+
+	public List<Candidate> getCandidateByFirstName(String fname);
 
 }

@@ -15,8 +15,6 @@ public interface CandidateService {
 
 	public List<Candidate> getCandidateByExperience(Integer exp);
 
-	public List<Candidate> getCandidateByName(String name);
-
 	public Candidate getCandidateByPhoneNumber(String phoneNumber);
 
 	public String deleteCandidate(Long id);
@@ -24,4 +22,8 @@ public interface CandidateService {
 	public String updateCandidate(Long id,Candidate candidate);
 
 	public String addCandidate(Candidate candidate);
+
+	public List<Candidate> getCandidateByFirstName(String fname);
+
+	public List<Candidate> getCandidateByLastName(String lname);
 }

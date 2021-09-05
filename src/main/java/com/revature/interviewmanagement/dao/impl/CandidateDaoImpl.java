@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.entity.Candidate;
+import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 
@@ -62,16 +63,18 @@ public class CandidateDaoImpl implements CandidateDao{
 		Session session=sessionFactory.getCurrentSession();
 		boolean check=false;
 		String result=null;
-		try {
-			session.load(Candidate.class,id);
+		Candidate updateObj=null;
+	try {
+		updateObj=session.load(Candidate.class,id);
+			if(!updateObj.getEmailId().isEmpty()) { //necessary line to continue the flow 
+				check=true;
+			}
 		} 
-		catch (Exception e1) {
-			result="updation is failed...entered id doesn't exist";
-			check=true;
-			
+		catch(org.hibernate.ObjectNotFoundException e) {
+			throw new IdNotFoundException("Updation is failed...entered id doesn't exist");
 		}
 			
-		if(!check) {
+		if(check) {
 			Query<?> emailQuery = session.getNamedQuery("callCandidateByEmailUpdateProcedure")
 				    .setParameter("email",candidate.getEmailId())
 				    .setParameter("id",id);
@@ -122,10 +125,18 @@ public class CandidateDaoImpl implements CandidateDao{
 	}
 
 	@Override
-	public List<Candidate> getCandidateByName(String name) {
+	public List<Candidate> getCandidateByFirstName(String fname) {
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
-		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.name=?1").setParameter(1,name).getResultList();
+		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.firstName=?1").setParameter(1,fname).getResultList();
+		return (resultList.isEmpty()?null:resultList);
+	}
+	
+	@Override
+	public List<Candidate> getCandidateByLastName(String lname) {
+		Session session=sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.lastName=?1").setParameter(1,lname).getResultList();
 		return (resultList.isEmpty()?null:resultList);
 	}
 
@@ -162,6 +173,7 @@ public class CandidateDaoImpl implements CandidateDao{
 	@Override
 	public List<Candidate> getAllCandidate() {
 		Session session=sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
 		Query<Candidate> query=session.createQuery("select c from Candidate c");
 		return (query.getResultList().isEmpty()?null:query.getResultList());
 	}
