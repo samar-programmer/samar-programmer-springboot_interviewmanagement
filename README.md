@@ -2,6 +2,7 @@
 
 * Created CRUD operations for Candidate entity
 * Created CRUD operations for Employee entity
+* Created CRUD operations for interview entity
 
 # Technologies used
   * Spring Boot 2.4
