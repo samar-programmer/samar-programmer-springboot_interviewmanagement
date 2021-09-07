@@ -72,6 +72,16 @@ public class Candidate implements Serializable{
 	
 	private String updatedBy;
 	
+	
+	
+	
+	@Override
+	public String toString() {
+		return "Candidate [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailId=" + emailId
+				+ ", phoneNumber=" + phoneNumber + ", jobRole=" + jobRole + ", experience=" + experience + ", addedOn="
+				+ addedOn + ", updatedOn=" + updatedOn + ", updatedBy=" + updatedBy + "]";
+	}
+
 	public Long getId() {
 		return id;
 	}

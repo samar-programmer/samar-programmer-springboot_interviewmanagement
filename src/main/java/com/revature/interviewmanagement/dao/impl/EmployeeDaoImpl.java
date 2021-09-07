@@ -181,7 +181,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			
 		if(check) {
 				List<Boolean> stateArr=checkState(session,employee,1,id);
-			boolean updateState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
+				boolean updateState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
 			
 				if(!updateState) {
 					employee.setId(id);
@@ -189,7 +189,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 					session.flush();
 					result="updation is successful for id: "+id;
 				}
-				//Boolean.FALSE.equals(stateArr.get(0))) 
+				
 				else if(Boolean.FALSE.equals(stateArr.get(0))){
 					throw new DuplicateIdException("Updation is failed...Entered email id already exists in another record");
 				}

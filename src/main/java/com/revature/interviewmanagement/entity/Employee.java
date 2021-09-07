@@ -41,6 +41,15 @@ public class Employee implements Serializable {
 	private LocalDateTime updatedOn;
 	private String updatedBy;
 	
+	
+	
+	
+	@Override
+	public String toString() {
+		return "Employee [id=" + id + ", employeeId=" + employeeId + ", designationId=" + designationId + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", phoneNumber=" + phoneNumber + ", emailId=" + emailId
+				+ ", addedOn=" + addedOn + ", updatedOn=" + updatedOn + ", updatedBy=" + updatedBy + "]";
+	}
 	public Long getId() {
 		return id;
 	}

@@ -46,6 +46,11 @@ DELIMITER $
 use sample;
 drop table employee_test;
 select * from employee_test;
+#--------------------------------------------------------------------------------
+#interview 
+desc interview_test;
+drop table interview_test;
+select * from interview_test;
 
 
 
