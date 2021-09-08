@@ -1,19 +1,20 @@
 package com.revature.interviewmanagement.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-//@EntityListeners(AuditingEntityListener.class)
-@Table(name="candidate_test")
 
     @NamedNativeQuery(
     name = "callCandidateByEmailProcedure",
@@ -36,51 +37,47 @@ import javax.persistence.Table;
     	    resultClass = Candidate.class
     	    )
 @Entity  
-public class Candidate implements Serializable{
+@Table(name="candidate_test")
+public class Candidate {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	
-	@Column(nullable=false)
+	@Column(nullable=false,name="first_name")
 	private String firstName;
 	
-	@Column(nullable=false)
+	@Column(nullable=false,name="last_name")
 	private String lastName;
 	
 	
-	@Column(nullable=false,unique=true)
+	@Column(nullable=false,unique=true,name="email_id")
 	private String emailId;
 	
-	@Column(nullable=false,unique=true)
+	@Column(nullable=false,unique=true,name="phone_number")
 	private String phoneNumber;
 	
-	@Column(nullable=false)
+	@Column(nullable=false,name="job_role")
 	private String jobRole;
 	
 	@Column(nullable=false)
 	private Integer experience;
 	
-	//@Column(updatable = false, nullable = false)
-   //@CreatedDate
+
+	@Column(name="added_on")
 	private LocalDateTime addedOn;
 	
-	//@Column(nullable = false)
-    //@LastModifiedDate
+	@Column(name="updated_on")
 	private LocalDateTime updatedOn;
 	
+	@Column(name="updated_by")
 	private String updatedBy;
 	
+	@JsonIgnore
+	@OneToMany(mappedBy="candidate",cascade=CascadeType.ALL)
+	private List<Interview> interview;
 	
-	
-	
-	@Override
-	public String toString() {
-		return "Candidate [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailId=" + emailId
-				+ ", phoneNumber=" + phoneNumber + ", jobRole=" + jobRole + ", experience=" + experience + ", addedOn="
-				+ addedOn + ", updatedOn=" + updatedOn + ", updatedBy=" + updatedBy + "]";
-	}
 
 	public Long getId() {
 		return id;
@@ -162,8 +159,14 @@ public class Candidate implements Serializable{
 		this.updatedBy = updatedBy;
 	}
 
-	
-	
+	public List<Interview> getInterview() {
+		return interview;
+	}
+
+	public void setInterview(List<Interview> interview) {
+		this.interview = interview;
+	}
+
 
 	
 }

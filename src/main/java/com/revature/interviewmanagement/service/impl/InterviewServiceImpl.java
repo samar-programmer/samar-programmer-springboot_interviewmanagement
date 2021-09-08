@@ -77,13 +77,13 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	public List<Interview> getInterviewByEmployeeId(String employeeId) {
+	public List<Interview> getInterviewByEmployeeId(Long employeeId) {
 		
 		return interviewDao.getInterviewByEmployeeId(employeeId) ;
 	}
 
 	@Override
-	public List<Interview> getInterviewByDesignationId(String destId) {
+	public List<Interview> getInterviewByDesignationId(Long destId) {
 		
 		return interviewDao.getInterviewByDesignationId(destId);
 	}

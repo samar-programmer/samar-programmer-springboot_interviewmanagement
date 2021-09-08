@@ -27,9 +27,9 @@ public interface InterviewService {
 
 	public List<Interview> getInterviewByEmpId(Long empId);
 	
-	public	List<Interview> getInterviewByEmployeeId(String employeeId);
+	public	List<Interview> getInterviewByEmployeeId(Long employeeId);
 
-	public	List<Interview> getInterviewByDesignationId(String destId);
+	public	List<Interview> getInterviewByDesignationId(Long destId);
 
 	public	List<Interview> getInterviewByEmployeeName(String name);
 

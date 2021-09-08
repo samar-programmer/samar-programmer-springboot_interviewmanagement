@@ -12,9 +12,9 @@ public interface EmployeeService {
 
 	public String addEmployee(Employee employee);
 
-	public List<Employee> getEmployeeByEmployeeId(String empId);
+	public List<Employee> getEmployeeByEmployeeId(Long empId);
 
-	public List<Employee> getEmployeeByDesignationId(String destId);
+	public List<Employee> getEmployeeByDesignationId(Long destId);
 
 	public Employee getEmployeeByPhoneNumber(String phoneNumber);
 

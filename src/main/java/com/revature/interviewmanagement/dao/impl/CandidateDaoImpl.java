@@ -18,13 +18,14 @@ import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 
 @Repository
-@Transactional
 public class CandidateDaoImpl implements CandidateDao{
 	
 	static final LocalDateTime localTime=LocalDateTime.now();
+	
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	@Transactional
 	@Override
 	public String addCandidate(Candidate candidate) {
 		Session session=sessionFactory.getCurrentSession();
@@ -57,6 +58,7 @@ public class CandidateDaoImpl implements CandidateDao{
 		return (id!=null)?"Candidate details inserted with id: "+id+" at "+localTime:"Couldn't create candidate...Error occured while inserting";
 	}
 
+	@Transactional
 	@Override
 	public String updateCandidate(Long id,Candidate candidate) {
 		Session session=sessionFactory.getCurrentSession();
@@ -98,6 +100,7 @@ public class CandidateDaoImpl implements CandidateDao{
 	
 	}
 
+	@Transactional
 	@Override
 	public String deleteCandidate(Long id) {
 		Session session=sessionFactory.getCurrentSession();

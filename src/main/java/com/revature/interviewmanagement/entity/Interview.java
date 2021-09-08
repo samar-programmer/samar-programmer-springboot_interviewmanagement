@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="interview_test")
 public class Interview {
@@ -20,6 +23,28 @@ public class Interview {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private	Long id;
+	
+	@Column(name="interview_type",nullable=false)
+	private String interviewType;
+	
+	@Column(nullable=false,name="call_scheduled_date")
+	private LocalDate callScheduledDate;
+	
+	@Column(nullable=false,name="call_scheduled_time")
+	private LocalTime callScheduledTime;
+	
+	@Column(name="added_on")
+	private LocalDateTime addedOn;
+	
+	@Column(name="updated_on")
+	private LocalDateTime updatedOn;
+	
+	@Column(name="updated_by")
+	private String updatedBy;
+	
+	@JsonIgnore
+	@OneToOne(mappedBy="interview",cascade=CascadeType.ALL)
+	private Result result;
 	
 	@OneToOne
 	@JoinColumn(nullable=false)
@@ -29,30 +54,6 @@ public class Interview {
 	@JoinColumn(nullable=false)
 	private Employee employee;
 	
-	private String interviewType;
-	
-	@Column(nullable=false)
-	private LocalDate callScheduledDate;
-	
-	@Column(nullable=false)
-	private LocalTime callScheduledTime;
-	
-	private LocalDateTime addedOn;
-	
-	private LocalDateTime updatedOn;
-	
-	private String updatedBy;
-	
-	
-	
-	
-	@Override
-	public String toString() {
-		return "Interview [id=" + id + ", candidate=" + candidate + ", employee=" + employee + ", interviewType="
-				+ interviewType + ", callScheduledDate=" + callScheduledDate + ", callScheduledTime="
-				+ callScheduledTime + ", addedOn=" + addedOn + ", updatedOn=" + updatedOn + ", updatedBy=" + updatedBy
-				+ "]";
-	}
 	public Long getId() {
 		return id;
 	}
@@ -109,6 +110,12 @@ public class Interview {
 	}
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+	public Result getResult() {
+		return result;
+	}
+	public void setResult(Result result) {
+		this.result = result;
 	}
 	
 	

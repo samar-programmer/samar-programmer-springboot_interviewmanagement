@@ -14,9 +14,9 @@ public interface EmployeeDao {
 
 	public Employee getEmployeeByPhoneNumber(String phoneNumber);
 
-	public List<Employee> getEmployeeByDesignationId(String destId);
+	public List<Employee> getEmployeeByDesignationId(Long destId);
 
-	public List<Employee> getEmployeeByEmployeeId(String empId);
+	public List<Employee> getEmployeeByEmployeeId(Long empId);
 
 	public String addEmployee(Employee employee);
 

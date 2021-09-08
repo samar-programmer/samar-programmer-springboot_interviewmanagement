@@ -18,10 +18,10 @@ import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 
 @Repository
-@Transactional
 public class InterviewDaoImpl implements InterviewDao {
 
 	static final LocalDateTime localTime=LocalDateTime.now();
+	
 	@Autowired
 	private SessionFactory sessionFactory;
 	
@@ -131,7 +131,7 @@ public class InterviewDaoImpl implements InterviewDao {
 	}
 	
 	@Override
-	public List<Interview> getInterviewByEmployeeId(String employeeId) {//this empId is auto generated id(Long) in employee entity not the employeeId(String) of employee entity
+	public List<Interview> getInterviewByEmployeeId(Long employeeId) {//this empId is auto generated id(Long) in employee entity not the employeeId(String) of employee entity
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPLOYEEID).setParameter(1,employeeId).getResultList();
@@ -139,7 +139,7 @@ public class InterviewDaoImpl implements InterviewDao {
 	}
 
 	@Override
-	public List<Interview> getInterviewByDesignationId(String destId) {
+	public List<Interview> getInterviewByDesignationId(Long destId) {
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPLOYEEDESIGNATIONID).setParameter(1,destId).getResultList();
@@ -170,6 +170,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		return resultList;
 	}
 
+	@Transactional
 	@Override
 	public String deleteInterview(Long id) {
 		Session session=sessionFactory.getCurrentSession();
@@ -195,7 +196,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		
 	}
 	
-
+	@Transactional
 	@Override
 	public String updateInterview(Long id, Interview interview) {
 		Session session=sessionFactory.getCurrentSession();
@@ -221,7 +222,8 @@ public class InterviewDaoImpl implements InterviewDao {
 		return result;
 		
 	}
-
+	
+	@Transactional
 	@Override
 	public String addInterview(Interview interview,Long canId,Long empId) {
 		Session session=sessionFactory.getCurrentSession();

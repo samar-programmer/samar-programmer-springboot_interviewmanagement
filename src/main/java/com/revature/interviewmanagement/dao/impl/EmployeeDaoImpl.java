@@ -18,7 +18,6 @@ import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 
 @Repository
-@Transactional
 public class EmployeeDaoImpl implements EmployeeDao {
 
 	static final LocalDateTime localTime=LocalDateTime.now();
@@ -112,7 +111,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public List<Employee> getEmployeeByDesignationId(String destId) {
+	public List<Employee> getEmployeeByDesignationId(Long destId) {
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_DESIGNATIONID).setParameter("destId",destId).getResultList();
@@ -120,7 +119,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public List<Employee> getEmployeeByEmployeeId(String empId) {
+	public List<Employee> getEmployeeByEmployeeId(Long empId) {
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEID).setParameter("empId",empId).getResultList();
@@ -128,6 +127,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		
 	}
 
+	@Transactional
 	@Override
 	public String addEmployee(Employee employee) {
 		Session session=sessionFactory.getCurrentSession();
@@ -163,6 +163,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	
 	}
 
+	@Transactional
 	@Override
 	public String updateEmployee(Long id, Employee employee) {
 		Session session=sessionFactory.getCurrentSession();
@@ -206,6 +207,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		return result;
 		}
 
+	@Transactional
 	@Override
 	public String deleteEmployee(Long id) {
 		Session session=sessionFactory.getCurrentSession();

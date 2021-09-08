@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import com.revature.interviewmanagement.service.EmployeeService;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin("http://localhost:4200")
 public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeSerive;
@@ -64,14 +66,14 @@ public class EmployeeController {
 	}
 	 
 	 @GetMapping("/employee/employee-id/{empId}")
-	public ResponseEntity<List<Employee>> getEmployeeByEmployeeId(@PathVariable String empId){ 
+	public ResponseEntity<List<Employee>> getEmployeeByEmployeeId(@PathVariable Long empId){ 
 		 
 		 return new ResponseEntity<>(employeeSerive.getEmployeeByEmployeeId(empId), new HttpHeaders(), HttpStatus.OK); 
 	} 
 	
 	 
 	 @GetMapping("/employee/designation-id/{destId}")  
-	 public ResponseEntity<List<Employee>> getEmployeeByDesignationId(@PathVariable String destId){  
+	 public ResponseEntity<List<Employee>> getEmployeeByDesignationId(@PathVariable Long destId){  
 		 
 		 return new ResponseEntity<>(employeeSerive.getEmployeeByDesignationId(destId), new HttpHeaders(), HttpStatus.OK); 
 	}

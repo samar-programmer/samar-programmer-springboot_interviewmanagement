@@ -34,13 +34,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public List<Employee> getEmployeeByEmployeeId(String empId) {
+	public List<Employee> getEmployeeByEmployeeId(Long empId) {
 	
 		return employeeDao.getEmployeeByEmployeeId(empId);
 	}
 
 	@Override
-	public List<Employee> getEmployeeByDesignationId(String destId) {
+	public List<Employee> getEmployeeByDesignationId(Long destId) {
 		
 		return employeeDao.getEmployeeByDesignationId(destId);
 	}

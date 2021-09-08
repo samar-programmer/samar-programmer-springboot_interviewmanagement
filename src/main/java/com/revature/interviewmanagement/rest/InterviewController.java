@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import com.revature.interviewmanagement.service.InterviewService;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin("http://localhost:4200")
 public class InterviewController {
 
 	@Autowired
@@ -96,13 +98,13 @@ public class InterviewController {
 	} 
 	 
 	 @GetMapping("/interview/employee/employee-id/{employeeId}")//this is the employeeId(String) of employee entity not auto generated id
-		public ResponseEntity<List<Interview>> getInterviewByEmployeeId(@PathVariable("employeeId") String employeeId){ 
+		public ResponseEntity<List<Interview>> getInterviewByEmployeeId(@PathVariable("employeeId") Long employeeId){ 
 			 
 			 return new ResponseEntity<>(interviewService.getInterviewByEmployeeId(employeeId), new HttpHeaders(), HttpStatus.OK); 
 		}
 	 
 	 @GetMapping("/interview/employee/designation-id/{destId}")
-		public ResponseEntity<List<Interview>> getInterviewByDesignationId(@PathVariable String destId){ 
+		public ResponseEntity<List<Interview>> getInterviewByDesignationId(@PathVariable Long destId){ 
 			 
 			 return new ResponseEntity<>(interviewService.getInterviewByDesignationId(destId), new HttpHeaders(), HttpStatus.OK); 
 		} 
