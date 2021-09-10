@@ -5,7 +5,7 @@
   * Created CRUD operations for interview entity
 
 # Technologies used
-  * Spring Boot 2.4
+  * Spring Boot 2.5.4
   * Hibernate 5.4
   * Java 11
 
