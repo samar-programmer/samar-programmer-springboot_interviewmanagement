@@ -6,7 +6,7 @@ import com.revature.interviewmanagement.entity.Candidate;
 
 public interface CandidateDao {
 
-	public String addCandidate(Candidate candidate);
+	public String addCandidate(Long id,Candidate candidate);
 
 	public String updateCandidate(Long id, Candidate candidate);
 

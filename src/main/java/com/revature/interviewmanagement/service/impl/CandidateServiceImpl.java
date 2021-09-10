@@ -70,9 +70,9 @@ public class CandidateServiceImpl implements CandidateService {
 	}
 
 	@Override
-	public String addCandidate(Candidate candidate) {
+	public String addCandidate(Long id,Candidate candidate) {
 		
-		return candidateDao.addCandidate(candidate);
+		return candidateDao.addCandidate(id,candidate);
 	}
 
 

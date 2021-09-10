@@ -84,10 +84,10 @@ public class EmployeeController {
 		 return new ResponseEntity<>(employeeSerive.getEmployeeByDesignationId(destId), new HttpHeaders(), HttpStatus.OK); 
 	}
 	
-	@PostMapping("/employee")
-	public ResponseEntity<String> addEmployee(@RequestBody Employee employee){
+	@PostMapping("/employee/{credential-id}")
+	public ResponseEntity<String> addEmployee(@PathVariable("credential-id") Long id,@RequestBody Employee employee){
 		logger.debug("Entering addEmployee method");
-		return	new ResponseEntity<>(employeeSerive.addEmployee(employee), new HttpHeaders(), HttpStatus.CREATED);
+		return	new ResponseEntity<>(employeeSerive.addEmployee(id,employee), new HttpHeaders(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/employee/{id}")

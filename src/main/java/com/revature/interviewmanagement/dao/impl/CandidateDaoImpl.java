@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.entity.Candidate;
+import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 
@@ -29,7 +30,7 @@ public class CandidateDaoImpl implements CandidateDao{
 
 	@Transactional
 	@Override
-	public String addCandidate(Candidate candidate) {
+	public String addCandidate(Long credentialId,Candidate candidate) {
 		Session session=sessionFactory.getCurrentSession();
 		
 		Long id=null;
@@ -41,6 +42,8 @@ public class CandidateDaoImpl implements CandidateDao{
 				    .setParameter("phone",candidate.getPhoneNumber());
 			
 				if(emailQuery.list().isEmpty() && phoneQuery.list().isEmpty() ) {
+					CandidateCredential candidateCredential=session.load(CandidateCredential.class,credentialId);//assuming that credential id always exists.
+					candidate.setCandidateCredential(candidateCredential);
 					id=(Long)session.save(candidate);
 					logger.info("Candidate added with id: {}",id);
 				}

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.revature.interviewmanagement.dao.EmployeeDao;
 import com.revature.interviewmanagement.entity.Employee;
+import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 
@@ -27,13 +28,13 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	static final String CHECK_EMPLOYEE_EMPLOYEEID="SELECT e FROM Employee e WHERE e.employeeId=:empId";
-	static final String CHECK_EMPLOYEE_DESIGNATIONID="SELECT e FROM Employee e WHERE e.designationId=:destId";
-	static final String CHECK_EMPLOYEE_EMAILID="SELECT e FROM Employee e WHERE e.emailId=:email";
-	static final String CHECK_EMPLOYEE_PHONENUMBER="SELECT e FROM Employee e WHERE e.phoneNumber=:phone";
-	static final String CHECK_EMPLOYEE_ALLEMPLOYEE="SELECT e FROM Employee e";
-	static final String CHECK_EMPLOYEE_EMPLOYEEBYFNAME="SELECT e FROM Employee e WHERE e.firstName=:fname";
-	static final String CHECK_EMPLOYEE_EMPLOYEEBYLNAME="SELECT e FROM Employee e WHERE e.lastName=:lname";
+	private static final String CHECK_EMPLOYEE_EMPLOYEEID="SELECT e FROM Employee e WHERE e.employeeId=:empId";
+	private static final String CHECK_EMPLOYEE_DESIGNATIONID="SELECT e FROM Employee e WHERE e.designationId=:destId";
+	private static final String CHECK_EMPLOYEE_EMAILID="SELECT e FROM Employee e WHERE e.emailId=:email";
+	private static final String CHECK_EMPLOYEE_PHONENUMBER="SELECT e FROM Employee e WHERE e.phoneNumber=:phone";
+	private static final String CHECK_EMPLOYEE_ALLEMPLOYEE="SELECT e FROM Employee e";
+	private static final String CHECK_EMPLOYEE_EMPLOYEEBYFNAME="SELECT e FROM Employee e WHERE e.firstName=:fname";
+	private static final String CHECK_EMPLOYEE_EMPLOYEEBYLNAME="SELECT e FROM Employee e WHERE e.lastName=:lname";
 	
 	
 	private List<Boolean> checkState(Session session, Employee employee,int statusCode, long id) {
@@ -141,7 +142,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	@Transactional
 	@Override
-	public String addEmployee(Employee employee) {
+	public String addEmployee(Long credentialId,Employee employee) {
 		Session session=sessionFactory.getCurrentSession();
 		Long id=null;
 		try {
@@ -150,6 +151,8 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			boolean addState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
 			
 				if(!addState) {
+					EmployeeCredential employeeCredential=session.load(EmployeeCredential.class,credentialId);//assuming that employee credentials always exists
+					employee.setEmployeeCredential(employeeCredential);
 					id=(Long)session.save(employee);
 					logger.info("Employee added with id: {}",id);
 				}

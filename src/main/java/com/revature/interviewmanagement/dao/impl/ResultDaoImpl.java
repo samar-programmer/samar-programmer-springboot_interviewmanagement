@@ -24,10 +24,10 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	static final String CHECK_RESULT_ALLRESULT="SELECT r FROM Result r";
-	static final String CHECK_RESULT_RESULTBYINTERVIEWID="SELECT r FROM Result r WHERE r.interview.id=?1";
-	static final String CHECK_RESULT_RESULTBYEMPID="SELECT r FROM Result r WHERE r.interview.employee.id=?1";
-	static final String CHECK_RESULT_RESULTBYCANDIDATEID="SELECT r FROM Result r WHERE r.interview.candidate.id=?1 ";
+	private static final String CHECK_RESULT_ALLRESULT="SELECT r FROM Result r";
+	private static final String CHECK_RESULT_RESULTBYINTERVIEWID="SELECT r FROM Result r WHERE r.interview.id=?1";
+	private static final String CHECK_RESULT_RESULTBYEMPID="SELECT r FROM Result r WHERE r.interview.employee.id=?1";
+	private static final String CHECK_RESULT_RESULTBYCANDIDATEID="SELECT r FROM Result r WHERE r.interview.candidate.id=?1 ";
 	
 	
 	@Override

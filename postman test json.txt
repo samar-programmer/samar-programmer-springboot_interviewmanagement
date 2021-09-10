@@ -1,0 +1,58 @@
+post
+---------
+candidate
+
+{
+"firstName":"arul",
+"lastName":"K",
+"emailId":"ragul@gmail.com",
+"phoneNumber":"7867564567",
+"jobRole":"dev",
+"experience":2,
+"resumeLink":"https://drive.google.com/file/d/1dEEEUvz0s7hhLrf1Endmmctr3XcATdW7/view"
+}
+
+resume link2 :https://drive.google.com/file/d/1CUZxW9_B8MwMUidsJ52fd6JVAkDOkGUg/view
+
+resume link3 :https://drive.google.com/file/d/1SS46mwVG65lNlDKy8Ue7Jhh8BO0G-cr5/view
+
+
+
+
+
+--------------------------------------
+Employee
+{
+"firstName":"gokul",
+"lastName":"G",
+"emailId":"gokul@gmail.com",
+"phoneNumber":"7867564567",
+"designationId":1001,
+"employeeId":1002
+}
+
+
+----------------------------------------------
+Interview
+----------
+{
+"callScheduledDate":"2021-09-07",
+"callScheduledTime":"15:00",
+"interviewType":"Technical interview"
+
+}
+
+
+-----------------------------------------------
+Result
+
+{
+    "status":"selected",
+    "remarks":"good"
+}
+
+
+
+
+
+

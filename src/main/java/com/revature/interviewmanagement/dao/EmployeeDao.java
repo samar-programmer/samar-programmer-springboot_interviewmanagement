@@ -18,7 +18,7 @@ public interface EmployeeDao {
 
 	public List<Employee> getEmployeeByEmployeeId(Long empId);
 
-	public String addEmployee(Employee employee);
+	public String addEmployee(Long id,Employee employee);
 
 	public String updateEmployee(Long id, Employee employee);
 

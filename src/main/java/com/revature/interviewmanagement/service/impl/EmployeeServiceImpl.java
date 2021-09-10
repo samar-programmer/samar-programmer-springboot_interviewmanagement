@@ -28,9 +28,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public String addEmployee(Employee employee) {
+	public String addEmployee(Long id,Employee employee) {
 		
-		return employeeDao.addEmployee(employee);
+		return employeeDao.addEmployee(id,employee);
 	}
 
 	@Override

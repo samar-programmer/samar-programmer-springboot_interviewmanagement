@@ -26,21 +26,21 @@ public class InterviewDaoImpl implements InterviewDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	static final String CHECK_INTERVIEW_ALLINTERVIEW="SELECT i FROM Interview i";
-	static final String CHECK_INTERVIEW_SCHEDULEDDATE="SELECT i FROM Interview i WHERE i.callScheduledDate=?1";
-	static final String CHECK_INTERVIEW_CANDIDATEID="SELECT i FROM Interview i WHERE i.candidate.id=?1";
-	static final String CHECK_INTERVIEW_CANDIDATENAME="SELECT i FROM Interview i WHERE CONCAT(i.candidate.firstName,' ', i.candidate.lastName) LIKE :name ";
-	static final String CHECK_INTERVIEW_CANDIDATEEMAIL="SELECT i FROM Interview i WHERE i.candidate.emailId=?1";
-	static final String CHECK_INTERVIEW_CANDIDATEPHONE="SELECT i FROM Interview i WHERE i.candidate.phoneNumber=?1";
-	static final String CHECK_INTERVIEW_CANDIDATEROLE="SELECT i FROM Interview i WHERE i.candidate.jobRole=?1";
-	static final String CHECK_INTERVIEW_CANDIDATEEXPERIENCE="SELECT i FROM Interview i WHERE i.candidate.experience=?1";
-	static final String CHECK_INTERVIEW_EMPID="SELECT i FROM Interview i WHERE i.employee.id=?1";
-	static final String CHECK_INTERVIEW_EMPLOYEEID="SELECT i FROM Interview i WHERE i.employee.employeeId=?1";
-	static final String CHECK_INTERVIEW_EMPLOYEENAME="SELECT i FROM Interview i WHERE CONCAT(i.employee.firstName,' ', i.employee.lastName) LIKE :name ";
-	static final String CHECK_INTERVIEW_EMPLOYEEDESIGNATIONID="SELECT i FROM Interview i WHERE i.employee.designationId=?1";
-	static final String CHECK_INTERVIEW_EMPLOYEEEMAIL="SELECT i FROM Interview i WHERE i.employee.emailId=?1";
-	static final String CHECK_INTERVIEW_EMPLOYEEPHONE="SELECT i FROM Interview i WHERE i.employee.phoneNumber=?1";
-	static final String CHECK_INTERVIEW_TYPE="SELECT i FROM Interview i WHERE i.interviewType=?1";
+	private static final String CHECK_INTERVIEW_ALLINTERVIEW="SELECT i FROM Interview i";
+	private static final String CHECK_INTERVIEW_SCHEDULEDDATE="SELECT i FROM Interview i WHERE i.callScheduledDate=?1";
+	private static final String CHECK_INTERVIEW_CANDIDATEID="SELECT i FROM Interview i WHERE i.candidate.id=?1";
+	private static final String CHECK_INTERVIEW_CANDIDATENAME="SELECT i FROM Interview i WHERE CONCAT(i.candidate.firstName,' ', i.candidate.lastName) LIKE :name ";
+	private static final String CHECK_INTERVIEW_CANDIDATEEMAIL="SELECT i FROM Interview i WHERE i.candidate.emailId=?1";
+	private static final String CHECK_INTERVIEW_CANDIDATEPHONE="SELECT i FROM Interview i WHERE i.candidate.phoneNumber=?1";
+	private static final String CHECK_INTERVIEW_CANDIDATEROLE="SELECT i FROM Interview i WHERE i.candidate.jobRole=?1";
+	private static final String CHECK_INTERVIEW_CANDIDATEEXPERIENCE="SELECT i FROM Interview i WHERE i.candidate.experience=?1";
+	private static final String CHECK_INTERVIEW_EMPID="SELECT i FROM Interview i WHERE i.employee.id=?1";
+	private static final String CHECK_INTERVIEW_EMPLOYEEID="SELECT i FROM Interview i WHERE i.employee.employeeId=?1";
+	private static final String CHECK_INTERVIEW_EMPLOYEENAME="SELECT i FROM Interview i WHERE CONCAT(i.employee.firstName,' ', i.employee.lastName) LIKE :name ";
+	private static final String CHECK_INTERVIEW_EMPLOYEEDESIGNATIONID="SELECT i FROM Interview i WHERE i.employee.designationId=?1";
+	private static final String CHECK_INTERVIEW_EMPLOYEEEMAIL="SELECT i FROM Interview i WHERE i.employee.emailId=?1";
+	private static final String CHECK_INTERVIEW_EMPLOYEEPHONE="SELECT i FROM Interview i WHERE i.employee.phoneNumber=?1";
+	private static final String CHECK_INTERVIEW_TYPE="SELECT i FROM Interview i WHERE i.interviewType=?1";
 	
 	
 	

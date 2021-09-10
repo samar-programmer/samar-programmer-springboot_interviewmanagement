@@ -87,10 +87,10 @@ public class CandidateController {
 		 return new ResponseEntity<>(candidateSerive.getCandidateByRole(role), new HttpHeaders(), HttpStatus.OK); 
 	}
 	
-	@PostMapping("/candidate")
-	public ResponseEntity<String> addCandidate(@RequestBody Candidate candidate){
+	@PostMapping("/candidate/{credential-id}")
+	public ResponseEntity<String> addCandidate(@PathVariable("credential-id") Long id,@RequestBody Candidate candidate){
 		logger.debug("Entering addCandidate method");
-		return	new ResponseEntity<>(candidateSerive.addCandidate(candidate), new HttpHeaders(), HttpStatus.CREATED);
+		return	new ResponseEntity<>(candidateSerive.addCandidate(id,candidate), new HttpHeaders(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/candidate/{id}")

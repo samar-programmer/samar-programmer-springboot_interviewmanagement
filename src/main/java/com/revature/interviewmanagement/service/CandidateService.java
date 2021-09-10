@@ -21,7 +21,7 @@ public interface CandidateService {
 
 	public String updateCandidate(Long id,Candidate candidate);
 
-	public String addCandidate(Candidate candidate);
+	public String addCandidate(Long id,Candidate candidate);
 
 	public List<Candidate> getCandidateByFirstName(String fname);
 
