@@ -2,6 +2,8 @@ package com.revature.interviewmanagement.rest;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,54 +29,56 @@ import com.revature.interviewmanagement.service.ResultService;
 @CrossOrigin("http://localhost:4200")
 public class ResultController {
 
+	private static final Logger logger=LogManager.getLogger(ResultController.class.getName());
+	
 	@Autowired
 	private ResultService resultService;
 	
 	@GetMapping("/result")
 	public ResponseEntity<List<Result>> getAllResult(){
-		
+		logger.debug("Entering getAllResult method");
 		return	new ResponseEntity<>(resultService.getAllResult(), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/result/{id}")
 	public ResponseEntity<Result> getResultById(@PathVariable Long id){
-		
+		logger.debug("Entering getResultById method");
 		return	new ResponseEntity<>(resultService.getResultById(id), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/result/interview/{id}")
 	public ResponseEntity<List<Result>> getResultByInterviewId(@PathVariable("id") Long interviewId){
-		
+		logger.debug("Entering getResultByInterviewId method");
 		return	new ResponseEntity<>(resultService.getResultByInterviewId(interviewId), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/result/employee/{id}")
 	public ResponseEntity<List<Result>> getResultByEmployeeId(@PathVariable("id") Long empId){
-		
+		logger.debug("Entering getResultByEmployeeId method");
 		return	new ResponseEntity<>(resultService.getResultByEmployeeId(empId), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/result/candidate/{id}")
 	public ResponseEntity<List<Result>> getResultByCandidateId(@PathVariable("id") Long canId){
-		
+		logger.debug("Entering getResultByCandidateId method");
 		return	new ResponseEntity<>(resultService.getResultByCandidateId(canId), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@PostMapping("/result/{interview-id}")
 	public ResponseEntity<String> addResult(@PathVariable("interview-id") Long interviewId,@RequestBody Result result){
-		
-		return	new ResponseEntity<>(resultService.addResult(interviewId,result), new HttpHeaders(), HttpStatus.OK);
+		logger.debug("Entering addResult method");
+		return	new ResponseEntity<>(resultService.addResult(interviewId,result), new HttpHeaders(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/result/{id}")
 	public ResponseEntity<String> updateResult(@PathVariable Long id,@RequestBody Result result){
-		
+		logger.debug("Entering updateResult method");
 		return	new ResponseEntity<>(resultService.updateResult(id,result), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/result/{id}")
 	public ResponseEntity<String> deleteResult(@PathVariable Long id){
-		
+		logger.debug("Entering deleteResult method");
 		return	new ResponseEntity<>(resultService.deleteResult(id), new HttpHeaders(), HttpStatus.OK);
 	}
 	
@@ -82,12 +86,14 @@ public class ResultController {
  
  @ExceptionHandler(IdNotFoundException.class)
 	public ResponseEntity<String> userNotFound(IdNotFoundException e) {
+	 	logger.error("Id not found exception for {}",e.getMessage());
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
  
  @ExceptionHandler(DuplicateIdException.class)
 	public ResponseEntity<String> duplicateResultFound(DuplicateIdException e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	 	logger.error("Duplicate Id exception for {}",e.getMessage());
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 }

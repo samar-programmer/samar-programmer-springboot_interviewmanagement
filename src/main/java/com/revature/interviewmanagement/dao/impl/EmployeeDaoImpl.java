@@ -1,9 +1,11 @@
 package com.revature.interviewmanagement.dao.impl;
 
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,7 +22,8 @@ import com.revature.interviewmanagement.exception.IdNotFoundException;
 @Repository
 public class EmployeeDaoImpl implements EmployeeDao {
 
-	static final LocalDateTime localTime=LocalDateTime.now();
+	private static final Logger logger=LogManager.getLogger(EmployeeDaoImpl.class.getName());
+	
 	@Autowired
 	private SessionFactory sessionFactory;
 	
@@ -41,6 +44,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		
 		List<Boolean> result=new ArrayList<>(4);
 		
+		//status code 0 for insert and 1 for update
 		switch(statusCode) {
 			case 0:{
 				result.add(emailQuery.list().isEmpty());
@@ -50,10 +54,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
 				break;
 			}
 			case 1:{
-				result.add(emailQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
-				result.add(phoneQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
-				result.add(employeeIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
-				result.add(designationIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
+				result.add(emailQuery.list().isEmpty() || emailQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
+				result.add(phoneQuery.list().isEmpty() || phoneQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
+				result.add(employeeIdQuery.list().isEmpty() || employeeIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
+				result.add(designationIdQuery.list().isEmpty() || designationIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
 				break;
 			}
 			default:{
@@ -67,6 +71,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public List<Employee> getAllEmployees() {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getAllEmployees method");
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_ALLEMPLOYEE).getResultList();
 		return (resultList.isEmpty()?null:resultList);
@@ -75,12 +80,14 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public Employee getEmployeeById(Long id) {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getEmployeeById method");
 		return session.get(Employee.class, id);
 	}
 
 	@Override
 	public Employee getEmployeeByEmailId(String email) {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getEmployeeByEmailId method");
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMAILID).setParameter("email",email).getResultList();
 		return (resultList.isEmpty()?null:resultList.get(0));
@@ -89,6 +96,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public Employee getEmployeeByPhoneNumber(String phoneNumber) {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getEmployeeByPhoneNumber method");
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_PHONENUMBER).setParameter("phone",phoneNumber).getResultList();
 		return (resultList.isEmpty()?null:resultList.get(0));
@@ -97,6 +105,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public List<Employee> getEmployeeByFirstName(String fname) {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getEmployeeByFirstName method");
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEBYFNAME).setParameter("fname",fname).getResultList();
 		return (resultList.isEmpty()?null:resultList);
@@ -105,6 +114,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public List<Employee> getEmployeeByLastName(String lname) {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getEmployeeByLastName method");
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEBYLNAME).setParameter("lname",lname).getResultList();
 		return (resultList.isEmpty()?null:resultList);
@@ -113,6 +123,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public List<Employee> getEmployeeByDesignationId(Long destId) {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getEmployeeByDesignationId method");
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_DESIGNATIONID).setParameter("destId",destId).getResultList();
 		return (resultList.isEmpty()?null:resultList);
@@ -121,6 +132,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public List<Employee> getEmployeeByEmployeeId(Long empId) {
 		Session session=sessionFactory.getCurrentSession();
+		logger.info("Entering getEmployeeByEmployeeId method");
 		@SuppressWarnings("unchecked")
 		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEID).setParameter("empId",empId).getResultList();
 		return (resultList.isEmpty()?null:resultList);
@@ -139,6 +151,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			
 				if(!addState) {
 					id=(Long)session.save(employee);
+					logger.info("Employee added with id: {}",id);
 				}
 				else if(Boolean.FALSE.equals(stateArr.get(0))){
 					throw new DuplicateIdException("Entered email id already exists");
@@ -156,10 +169,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			
 		} catch (HibernateException e1) {
 			
-			e1.printStackTrace();
+			logger.warn("unable to add employee, message: {}",e1.getMessage(),e1);
 		}
 		
-		return (id!=null)?"Employee details inserted with id: "+id+" at "+localTime:"Couldn't create employee...Error occured while inserting";
+		return (id!=null)?"Employee details inserted with id: "+id:"Couldn't create employee...Error occured while inserting";
 	
 	}
 
@@ -177,6 +190,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			}
 		} 
 		catch (org.hibernate.ObjectNotFoundException e1) {
+			logger.warn("unable to update employee, message: {}",e1.getMessage(),e1);
 			throw new IdNotFoundException("Updation is failed...entered id doesn't exist");
 		}
 			
@@ -188,6 +202,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 					employee.setId(id);
 					session.merge(employee);
 					session.flush();
+					logger.info("Employee updated with id: {}",id);
 					result="updation is successful for id: "+id;
 				}
 				
@@ -220,12 +235,14 @@ public class EmployeeDaoImpl implements EmployeeDao {
 				check=true;
 			}
 		}catch(org.hibernate.ObjectNotFoundException e) {
+			logger.warn("unable to delete employee, message: {}",e.getMessage(),e);
 			throw new IdNotFoundException("Deletion is failed...Entered Id doesn't exists");
 		}
 		 
 		if(check) {
 			session.delete(deleteObject);
 			session.flush();
+			logger.info("Employee deleted with id: {}",id);
 			result="Deletion is successful for id: "+id;
 		}
 		

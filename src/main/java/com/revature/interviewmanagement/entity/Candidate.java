@@ -64,6 +64,8 @@ public class Candidate {
 	@Column(nullable=false)
 	private Integer experience;
 	
+	@Column(nullable=false,name="resume_link")
+	private String resumeLink;
 
 	@Column(name="added_on")
 	private LocalDateTime addedOn;
@@ -133,6 +135,14 @@ public class Candidate {
 
 	public void setExperience(Integer experience) {
 		this.experience = experience;
+	}
+	
+	public String getResumeLink() {
+		return resumeLink;
+	}
+
+	public void setResumeLink(String resumeLink) {
+		this.resumeLink = resumeLink;
 	}
 
 	public LocalDateTime getAddedOn() {
