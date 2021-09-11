@@ -52,6 +52,14 @@ Result
 }
 
 
+-------------------------------------------------------
+candidate & employee credentials 
+
+{
+	"emailId":"gokul@gmail.com",
+	"password":"Abcd@123"
+}
+
 
 
 

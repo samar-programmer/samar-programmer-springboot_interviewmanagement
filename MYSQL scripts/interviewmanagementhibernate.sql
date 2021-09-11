@@ -61,6 +61,14 @@ desc result_test;
 drop table result_test;
 select * from result_test;
 
+#credentials
+
+drop table candidate_credential;
+drop table employee_credential;
+
+select * from candidate_credential;
+select * from employee_credential;
+
 
 
 
