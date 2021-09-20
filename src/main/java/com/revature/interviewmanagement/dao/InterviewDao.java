@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Interview;
+import com.revature.interviewmanagement.model.InterviewDto;
 
 public interface InterviewDao {
 
@@ -39,9 +40,9 @@ public interface InterviewDao {
 
 	public String deleteInterview(Long id);
 
-	public String updateInterview(Long id, Interview interview);
+	public String updateInterview(Long id, InterviewDto interview);
 
-	public String addInterview(Interview interview,Long canId,Long empId);
+	public String addInterview(InterviewDto interview,Long canId,Long empId);
 
 	public List<Interview> getInterviewByType(String type);
 

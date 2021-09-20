@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.interviewmanagement.dao.InterviewDao;
 import com.revature.interviewmanagement.entity.Interview;
+import com.revature.interviewmanagement.model.InterviewDto;
 import com.revature.interviewmanagement.service.InterviewService;
 
 @Service
@@ -113,13 +114,13 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	public String updateInterview(Long id, Interview interview) {
+	public String updateInterview(Long id, InterviewDto interview) {
 		
 		return interviewDao.updateInterview(id,interview);
 	}
 
 	@Override
-	public String addInterview(Interview interview,Long canId,Long empId) {
+	public String addInterview(InterviewDto interview,Long canId,Long empId) {
 		
 		return interviewDao.addInterview(interview,canId,empId);
 	}

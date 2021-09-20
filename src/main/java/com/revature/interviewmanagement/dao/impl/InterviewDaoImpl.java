@@ -17,6 +17,8 @@ import com.revature.interviewmanagement.entity.Candidate;
 import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.InterviewDto;
+import com.revature.interviewmanagement.util.mapper.InterviewMapper;
 
 @Repository
 public class InterviewDaoImpl implements InterviewDao {
@@ -26,21 +28,21 @@ public class InterviewDaoImpl implements InterviewDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	private static final String CHECK_INTERVIEW_ALLINTERVIEW="SELECT i FROM Interview i";
-	private static final String CHECK_INTERVIEW_SCHEDULEDDATE="SELECT i FROM Interview i WHERE i.callScheduledDate=?1";
-	private static final String CHECK_INTERVIEW_CANDIDATEID="SELECT i FROM Interview i WHERE i.candidate.id=?1";
-	private static final String CHECK_INTERVIEW_CANDIDATENAME="SELECT i FROM Interview i WHERE CONCAT(i.candidate.firstName,' ', i.candidate.lastName) LIKE :name ";
-	private static final String CHECK_INTERVIEW_CANDIDATEEMAIL="SELECT i FROM Interview i WHERE i.candidate.emailId=?1";
-	private static final String CHECK_INTERVIEW_CANDIDATEPHONE="SELECT i FROM Interview i WHERE i.candidate.phoneNumber=?1";
-	private static final String CHECK_INTERVIEW_CANDIDATEROLE="SELECT i FROM Interview i WHERE i.candidate.jobRole=?1";
-	private static final String CHECK_INTERVIEW_CANDIDATEEXPERIENCE="SELECT i FROM Interview i WHERE i.candidate.experience=?1";
-	private static final String CHECK_INTERVIEW_EMPID="SELECT i FROM Interview i WHERE i.employee.id=?1";
-	private static final String CHECK_INTERVIEW_EMPLOYEEID="SELECT i FROM Interview i WHERE i.employee.employeeId=?1";
-	private static final String CHECK_INTERVIEW_EMPLOYEENAME="SELECT i FROM Interview i WHERE CONCAT(i.employee.firstName,' ', i.employee.lastName) LIKE :name ";
-	private static final String CHECK_INTERVIEW_EMPLOYEEDESIGNATIONID="SELECT i FROM Interview i WHERE i.employee.designationId=?1";
-	private static final String CHECK_INTERVIEW_EMPLOYEEEMAIL="SELECT i FROM Interview i WHERE i.employee.emailId=?1";
-	private static final String CHECK_INTERVIEW_EMPLOYEEPHONE="SELECT i FROM Interview i WHERE i.employee.phoneNumber=?1";
-	private static final String CHECK_INTERVIEW_TYPE="SELECT i FROM Interview i WHERE i.interviewType=?1";
+	private static final String GET_ALLINTERVIEW="SELECT i FROM Interview i";
+	private static final String GET_INTERVIEW_SCHEDULEDDATE="SELECT i FROM Interview i WHERE i.callScheduledDate=?1";
+	private static final String GET_INTERVIEW_CANDIDATEID="SELECT i FROM Interview i WHERE i.candidate.id=?1";
+	private static final String GET_INTERVIEW_CANDIDATENAME="SELECT i FROM Interview i WHERE CONCAT(i.candidate.firstName,' ', i.candidate.lastName) LIKE :name ";
+	private static final String GET_INTERVIEW_CANDIDATEEMAIL="SELECT i FROM Interview i WHERE i.candidate.emailId=?1";
+	private static final String GET_INTERVIEW_CANDIDATEPHONE="SELECT i FROM Interview i WHERE i.candidate.phoneNumber=?1";
+	private static final String GET_INTERVIEW_CANDIDATEROLE="SELECT i FROM Interview i WHERE i.candidate.jobRole=?1";
+	private static final String GET_INTERVIEW_CANDIDATEEXPERIENCE="SELECT i FROM Interview i WHERE i.candidate.experience=?1";
+	private static final String GET_INTERVIEW_EMPID="SELECT i FROM Interview i WHERE i.employee.id=?1";
+	private static final String GET_INTERVIEW_EMPLOYEEID="SELECT i FROM Interview i WHERE i.employee.employeeId=?1";
+	private static final String GET_INTERVIEW_EMPLOYEENAME="SELECT i FROM Interview i WHERE CONCAT(i.employee.firstName,' ', i.employee.lastName) LIKE :name ";
+	private static final String GET_INTERVIEW_EMPLOYEEDESIGNATIONID="SELECT i FROM Interview i WHERE i.employee.designationId=?1";
+	private static final String GET_INTERVIEW_EMPLOYEEEMAIL="SELECT i FROM Interview i WHERE i.employee.emailId=?1";
+	private static final String GET_INTERVIEW_EMPLOYEEPHONE="SELECT i FROM Interview i WHERE i.employee.phoneNumber=?1";
+	private static final String GET_INTERVIEW_TYPE="SELECT i FROM Interview i WHERE i.interviewType=?1";
 	
 	
 	
@@ -49,7 +51,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getAllInterview method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_ALLINTERVIEW).getResultList();
+		List<Interview> resultList=session.createQuery(GET_ALLINTERVIEW).getResultList();
 		return resultList;
 	}
 
@@ -65,7 +67,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByType method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_TYPE).setParameter(1,type).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_TYPE).setParameter(1,type).getResultList();
 		return resultList;
 	}
 
@@ -74,7 +76,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByScheduledDate method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_SCHEDULEDDATE).setParameter(1,scheduledDate).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_SCHEDULEDDATE).setParameter(1,scheduledDate).getResultList();
 		return resultList;
 	}
 
@@ -83,7 +85,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByCandidateId method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_CANDIDATEID).setParameter(1,canId).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_CANDIDATEID).setParameter(1,canId).getResultList();
 		return resultList;
 	}
 
@@ -92,7 +94,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByCandidateName method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_CANDIDATENAME).setParameter("name", "%"+name+"%").getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_CANDIDATENAME).setParameter("name", "%"+name+"%").getResultList();
 		return resultList;
 	}
 
@@ -101,7 +103,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByCandidatePhone method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_CANDIDATEPHONE).setParameter(1,phone).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_CANDIDATEPHONE).setParameter(1,phone).getResultList();
 		return resultList;
 	}
 
@@ -110,7 +112,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByCandidateEmail method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_CANDIDATEEMAIL).setParameter(1,email).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_CANDIDATEEMAIL).setParameter(1,email).getResultList();
 		return resultList;
 	}
 
@@ -119,7 +121,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByCandidateRole method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_CANDIDATEROLE).setParameter(1,role).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_CANDIDATEROLE).setParameter(1,role).getResultList();
 		return resultList;
 	}
 
@@ -128,7 +130,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByCandidateExperience method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_CANDIDATEEXPERIENCE).setParameter(1,exp).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_CANDIDATEEXPERIENCE).setParameter(1,exp).getResultList();
 		return resultList;
 	}
 
@@ -137,7 +139,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByEmpId method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPID).setParameter(1,empId).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_EMPID).setParameter(1,empId).getResultList();
 		return resultList;
 	}
 	
@@ -146,7 +148,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByEmployeeId method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPLOYEEID).setParameter(1,employeeId).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_EMPLOYEEID).setParameter(1,employeeId).getResultList();
 		return resultList;
 	}
 
@@ -155,7 +157,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByDesignationId method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPLOYEEDESIGNATIONID).setParameter(1,destId).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_EMPLOYEEDESIGNATIONID).setParameter(1,destId).getResultList();
 		return resultList;
 	}
 
@@ -164,7 +166,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByEmployeeName method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPLOYEENAME).setParameter("name","%"+name+"%").getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_EMPLOYEENAME).setParameter("name","%"+name+"%").getResultList();
 		return resultList;
 	}
 
@@ -173,7 +175,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByEmployeePhone method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPLOYEEPHONE).setParameter(1,phone).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_EMPLOYEEPHONE).setParameter(1,phone).getResultList();
 		return resultList;
 	}
 
@@ -182,7 +184,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getInterviewByEmployeeEmail method");
 		@SuppressWarnings("unchecked")
-		List<Interview> resultList=session.createQuery(CHECK_INTERVIEW_EMPLOYEEEMAIL).setParameter(1,email).getResultList();
+		List<Interview> resultList=session.createQuery(GET_INTERVIEW_EMPLOYEEEMAIL).setParameter(1,email).getResultList();
 		return resultList;
 	}
 
@@ -207,7 +209,7 @@ public class InterviewDaoImpl implements InterviewDao {
 			session.delete(deleteObject);
 			session.flush();
 			logger.info("Interview deleted with id: {}",id);
-			result="Deletion is successful for id: "+id;
+			result="Interview deletion is successful for id: "+id;
 		}
 		
 		return result;
@@ -216,7 +218,7 @@ public class InterviewDaoImpl implements InterviewDao {
 	
 	@Transactional
 	@Override
-	public String updateInterview(Long id, Interview interview) {
+	public String updateInterview(Long id, InterviewDto interviewDto) {
 		Session session=sessionFactory.getCurrentSession();
 		boolean check=false;
 		String result=null;
@@ -233,6 +235,7 @@ public class InterviewDaoImpl implements InterviewDao {
 		}
 			
 		if(check) {
+					Interview interview=InterviewMapper.interviewEntityMapper(interviewDto);
 					interview.setId(id);
 					session.merge(interview);
 					session.flush();
@@ -245,7 +248,7 @@ public class InterviewDaoImpl implements InterviewDao {
 	
 	@Transactional
 	@Override
-	public String addInterview(Interview interview,Long canId,Long empId) {
+	public String addInterview(InterviewDto interviewDto,Long canId,Long empId) {
 		Session session=sessionFactory.getCurrentSession();
 		Long id=null;
 		boolean candidateState=true;
@@ -261,7 +264,7 @@ public class InterviewDaoImpl implements InterviewDao {
 						employeeState=false;
 					}
 				
-					
+				Interview interview=InterviewMapper.interviewEntityMapper(interviewDto);
 				interview.setCandidate(candidate);
 				interview.setEmployee(employee);
 				id=(Long)session.save(interview);

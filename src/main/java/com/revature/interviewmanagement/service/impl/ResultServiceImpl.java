@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.interviewmanagement.dao.ResultDao;
 import com.revature.interviewmanagement.entity.Result;
+import com.revature.interviewmanagement.model.ResultDto;
 import com.revature.interviewmanagement.service.ResultService;
 
 @Service
@@ -22,13 +23,13 @@ public class ResultServiceImpl implements ResultService {
 	}
 
 	@Override
-	public String updateResult(Long id, Result result) {
+	public String updateResult(Long id, ResultDto result) {
 		
 		return resultDao.updateResult(id,result);
 	}
 
 	@Override
-	public String addResult(Long interviewId, Result result) {
+	public String addResult(Long interviewId, ResultDto result) {
 		
 		return resultDao.addResult(interviewId,result);
 	}

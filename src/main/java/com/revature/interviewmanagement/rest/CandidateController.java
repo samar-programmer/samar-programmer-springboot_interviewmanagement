@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.interviewmanagement.entity.Candidate;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.service.CandidateService;
 
 @RestController
@@ -50,29 +51,24 @@ public class CandidateController {
 	}
 	
 	
-	 @GetMapping("/candidate/email/{email}") 
-	 public ResponseEntity<Candidate> getCandidateByEmailId(@PathVariable String email){
+	 @PostMapping("/candidate/email") 
+	 public ResponseEntity<Candidate> getCandidateByEmailId(@RequestBody CandidateDto candidateDto){
 		 logger.debug("Entering getCandidateByEmailId method");
-		 return new ResponseEntity<>(candidateSerive.getCandidateByEmailId(email), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(candidateSerive.getCandidateByEmailId(candidateDto.getEmailId()), new HttpHeaders(), HttpStatus.OK);  
 	} 
 	 
-	 @GetMapping("/candidate/phone/{phone-number}")  
-	 public ResponseEntity<Candidate> getCandidateByPhoneNumber(@PathVariable("phone-number") String phoneNumber){
-		 	//if we don't give @PathVariable("phone-number") here, phone number couldn't be recognized as string
+	 @PostMapping("/candidate/phone")  
+	 public ResponseEntity<Candidate> getCandidateByPhoneNumber(@RequestBody CandidateDto candidateDto){
 		 logger.debug("Entering getCandidateByPhoneNumber method");
-		 return new ResponseEntity<>(candidateSerive.getCandidateByPhoneNumber(phoneNumber), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(candidateSerive.getCandidateByPhoneNumber(candidateDto.getPhoneNumber()), new HttpHeaders(), HttpStatus.OK);  
 	} 
 	  
-	 @GetMapping("/candidate/first-name/{fname}") 
-	 public ResponseEntity<List<Candidate>> getCandidateByFirstName(@PathVariable String fname){  
-		 logger.debug("Entering getCandidateByFirstName method");
-		 return new ResponseEntity<>(candidateSerive.getCandidateByFirstName(fname), new HttpHeaders(), HttpStatus.OK);  
+	 @GetMapping("/candidate/name/{name}") 
+	 public ResponseEntity<List<Candidate>> getCandidateByName(@PathVariable String name){  
+		 logger.debug("Entering getCandidateByName method");
+		 return new ResponseEntity<>(candidateSerive.getCandidateByName(name), new HttpHeaders(), HttpStatus.OK);  
 	}  
-	 @GetMapping("/candidate/last-name/{lname}") 
-	 public ResponseEntity<List<Candidate>> getCandidateByLastName(@PathVariable String lname){  
-		 logger.debug("Entering getCandidateByLastName method");
-		 return new ResponseEntity<>(candidateSerive.getCandidateByLastName(lname), new HttpHeaders(), HttpStatus.OK);  
-	} 
+	 
 	 
 	 @GetMapping("/candidate/experience/{exp}")
 	public ResponseEntity<List<Candidate>> getCandidateByExperience(@PathVariable Integer exp){ 
@@ -88,15 +84,15 @@ public class CandidateController {
 	}
 	
 	@PostMapping("/candidate/{credential-id}")
-	public ResponseEntity<String> addCandidate(@PathVariable("credential-id") Long id,@RequestBody Candidate candidate){
+	public ResponseEntity<String> addCandidate(@PathVariable("credential-id") Long id,@RequestBody CandidateDto candidateDto){
 		logger.debug("Entering addCandidate method");
-		return	new ResponseEntity<>(candidateSerive.addCandidate(id,candidate), new HttpHeaders(), HttpStatus.CREATED);
+		return	new ResponseEntity<>(candidateSerive.addCandidate(id,candidateDto), new HttpHeaders(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/candidate/{id}")
-	public ResponseEntity<String> updateCandidate(@PathVariable Long id,@RequestBody Candidate candidate){
+	public ResponseEntity<String> updateCandidate(@PathVariable Long id,@RequestBody CandidateDto candidateDto){
 		logger.debug("Entering updateCandidate method");
-		return	new ResponseEntity<>(candidateSerive.updateCandidate(id,candidate), new HttpHeaders(), HttpStatus.OK);
+		return	new ResponseEntity<>(candidateSerive.updateCandidate(id,candidateDto), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/candidate/{id}")

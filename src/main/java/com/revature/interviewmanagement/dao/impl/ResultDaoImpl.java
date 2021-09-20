@@ -15,6 +15,8 @@ import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.entity.Result;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.ResultDto;
+import com.revature.interviewmanagement.util.mapper.ResultMapper;
 
 @Repository
 public class ResultDaoImpl implements com.revature.interviewmanagement.dao.ResultDao {
@@ -24,10 +26,10 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	private static final String CHECK_RESULT_ALLRESULT="SELECT r FROM Result r";
-	private static final String CHECK_RESULT_RESULTBYINTERVIEWID="SELECT r FROM Result r WHERE r.interview.id=?1";
-	private static final String CHECK_RESULT_RESULTBYEMPID="SELECT r FROM Result r WHERE r.interview.employee.id=?1";
-	private static final String CHECK_RESULT_RESULTBYCANDIDATEID="SELECT r FROM Result r WHERE r.interview.candidate.id=?1 ";
+	private static final String GET_ALLRESULT="SELECT r FROM Result r";
+	private static final String GET_RESULTBYINTERVIEWID="SELECT r FROM Result r WHERE r.interview.id=?1";
+	private static final String GET_RESULTBYEMPID="SELECT r FROM Result r WHERE r.interview.employee.id=?1";
+	private static final String GET_RESULTBYCANDIDATEID="SELECT r FROM Result r WHERE r.interview.candidate.id=?1 ";
 	
 	
 	@Override
@@ -35,7 +37,7 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getAllResult method");
 		@SuppressWarnings("unchecked")
-		List<Result> resultList=session.createQuery(CHECK_RESULT_ALLRESULT).getResultList();
+		List<Result> resultList=session.createQuery(GET_ALLRESULT).getResultList();
 		return resultList;
 	}
 
@@ -52,7 +54,7 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getResultByInterviewId method");
 		@SuppressWarnings("unchecked")
-		List<Result> result=session.createQuery(CHECK_RESULT_RESULTBYINTERVIEWID).setParameter(1,interviewId).getResultList();
+		List<Result> result=session.createQuery(GET_RESULTBYINTERVIEWID).setParameter(1,interviewId).getResultList();
 		return result;
 		
 	}
@@ -62,7 +64,7 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getResultByEmployeeId method");
 		@SuppressWarnings("unchecked")
-		List<Result> resultList=session.createQuery(CHECK_RESULT_RESULTBYEMPID).setParameter(1,empId).getResultList();
+		List<Result> resultList=session.createQuery(GET_RESULTBYEMPID).setParameter(1,empId).getResultList();
 		return resultList;
 	}
 
@@ -71,17 +73,16 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getResultByCandidateId method");
 		@SuppressWarnings("unchecked")
-		List<Result> resultList=session.createQuery(CHECK_RESULT_RESULTBYCANDIDATEID).setParameter(1,canId).getResultList();
+		List<Result> resultList=session.createQuery(GET_RESULTBYCANDIDATEID).setParameter(1,canId).getResultList();
 		return resultList;
 	}
 
 	@Transactional
 	@Override
-	public String addResult(Long interviewId, Result result) {
+	public String addResult(Long interviewId, ResultDto resultDto) {
 		Session session=sessionFactory.getCurrentSession();
-		
 		@SuppressWarnings("unchecked")
-		List<Result> interviewCheck=session.createQuery(CHECK_RESULT_RESULTBYINTERVIEWID).setParameter(1,interviewId).getResultList();
+		List<Result> interviewCheck=session.createQuery(GET_RESULTBYINTERVIEWID).setParameter(1,interviewId).getResultList();
 		
 		if(interviewCheck!=null && !interviewCheck.isEmpty()) {
 			throw new DuplicateIdException("Can't add Result for this interview..This interview already has a result");
@@ -90,6 +91,7 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		Long id=null;
 		try {
 				Interview interview=session.load(Interview.class,interviewId);
+				Result result=ResultMapper.resultEntityMapper(resultDto);
 				result.setInterview(interview);
 				id=(Long)session.save(result);
 				logger.info("result added with id: {}",id);
@@ -106,7 +108,7 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 
 	@Transactional
 	@Override
-	public String updateResult(Long id, Result result) {
+	public String updateResult(Long id, ResultDto resultDto) {
 		Session session=sessionFactory.getCurrentSession();
 		boolean check=false;
 		String output=null;
@@ -125,6 +127,7 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		
 			
 		if(check) {
+					Result result=ResultMapper.resultEntityMapper(resultDto);
 					result.setId(id);
 					session.merge(result);
 					session.flush();
@@ -153,10 +156,12 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		}
 		 
 		if(check) {
+			session.clear();//without this line caused org.hibernate.ObjectDeletedException: deleted object would be re-saved by cascade (remove deleted object from associations)
 			session.delete(deleteObject);
 			session.flush();
+			
 			logger.info("result deleted with id: {}",id);
-			result="Deletion is successful for id: "+id;
+			result="Result deletion is successful for id: "+id;
 		}
 		
 		return result;

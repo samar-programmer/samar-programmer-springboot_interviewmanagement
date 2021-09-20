@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.interviewmanagement.entity.Result;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.ResultDto;
 import com.revature.interviewmanagement.service.ResultService;
 
 @RestController
@@ -65,15 +66,15 @@ public class ResultController {
 	}
 	
 	@PostMapping("/result/{interview-id}")
-	public ResponseEntity<String> addResult(@PathVariable("interview-id") Long interviewId,@RequestBody Result result){
+	public ResponseEntity<String> addResult(@PathVariable("interview-id") Long interviewId,@RequestBody ResultDto resultDto){
 		logger.debug("Entering addResult method");
-		return	new ResponseEntity<>(resultService.addResult(interviewId,result), new HttpHeaders(), HttpStatus.CREATED);
+		return	new ResponseEntity<>(resultService.addResult(interviewId,resultDto), new HttpHeaders(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/result/{id}")
-	public ResponseEntity<String> updateResult(@PathVariable Long id,@RequestBody Result result){
+	public ResponseEntity<String> updateResult(@PathVariable Long id,@RequestBody ResultDto resultDto){
 		logger.debug("Entering updateResult method");
-		return	new ResponseEntity<>(resultService.updateResult(id,result), new HttpHeaders(), HttpStatus.OK);
+		return	new ResponseEntity<>(resultService.updateResult(id,resultDto), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/result/{id}")

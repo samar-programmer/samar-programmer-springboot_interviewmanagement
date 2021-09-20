@@ -3,14 +3,15 @@ package com.revature.interviewmanagement.service;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Result;
+import com.revature.interviewmanagement.model.ResultDto;
 
 public interface ResultService {
 
 	public String deleteResult(Long id);
 
-	public String updateResult(Long id, Result result);
+	public String updateResult(Long id, ResultDto result);
 
-	public String addResult(Long interviewId, Result result);
+	public String addResult(Long interviewId, ResultDto result);
 
 	public List<Result> getResultByCandidateId(Long canId);
 

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.credentials.EmployeeCredentialDto;
 import com.revature.interviewmanagement.service.EmployeeCredentialService;
 
 @RestController
@@ -32,29 +31,28 @@ private static final Logger logger=LogManager.getLogger(EmployeeCredentialContro
 		@Autowired
 		private EmployeeCredentialService employeeCredentialService;
 	
-	
-		@GetMapping("/employee/credential/{id}")
-		public ResponseEntity<EmployeeCredential> getCredentialById(@PathVariable Long id){
-			logger.debug("Entering getCredentialById method");
-			return	new ResponseEntity<>(employeeCredentialService.getCredentialById(id), new HttpHeaders(), HttpStatus.OK);
-		}
 		
-		 @GetMapping("/employee/credential/validation") 
-		 public ResponseEntity<Boolean> validateCredential(@RequestBody EmployeeCredential employeeCredential){  
+		 @PostMapping("/employee/credential/login") 
+		 public ResponseEntity<Boolean> validateCredential(@RequestBody EmployeeCredentialDto employeeCredentialDto){  
 			 logger.debug("Entering validateCredential method");
-			 return new ResponseEntity<>(employeeCredentialService.validateCredential(employeeCredential), new HttpHeaders(), HttpStatus.OK);  
+			 return new ResponseEntity<>(employeeCredentialService.validateCredential(employeeCredentialDto), new HttpHeaders(), HttpStatus.OK);  
+		}
+		 @PostMapping("/employee/credential/check-email") 
+		 public ResponseEntity<Boolean> validateEmail(@RequestBody EmployeeCredentialDto employeeCredentialDto){  
+			 logger.debug("Entering validateEmailCredential method");
+			 return new ResponseEntity<>(employeeCredentialService.validateEmail(employeeCredentialDto.getEmailId()), new HttpHeaders(), HttpStatus.OK);  
 		}
 		
-		@PostMapping("/employee/credential")
-		public ResponseEntity<String> addCredential(@RequestBody EmployeeCredential employeeCredential){
+		@PostMapping("/employee/credential/signup")
+		public ResponseEntity<String> addCredential(@RequestBody EmployeeCredentialDto employeeCredentialDto){
 			logger.debug("Entering addCredential method");
-			return	new ResponseEntity<>(employeeCredentialService.addCredential(employeeCredential), new HttpHeaders(), HttpStatus.CREATED);
+			return	new ResponseEntity<>(employeeCredentialService.addCredential(employeeCredentialDto), new HttpHeaders(), HttpStatus.CREATED);
 		}
 		
-		@PutMapping("/employee/credential/{id}")
-		public ResponseEntity<String> updateCredential(@PathVariable Long id,@RequestBody EmployeeCredential employeeCredential){
+		@PutMapping("/employee/credential/change-password/{id}")
+		public ResponseEntity<String> updatePassword(@PathVariable Long id,@RequestBody EmployeeCredentialDto employeeCredentialDto){
 			logger.debug("Entering updateInterview method");
-			return	new ResponseEntity<>(employeeCredentialService.updateCredential(id,employeeCredential), new HttpHeaders(), HttpStatus.OK);
+			return	new ResponseEntity<>(employeeCredentialService.updatePassword(id,employeeCredentialDto), new HttpHeaders(), HttpStatus.OK);
 		}
 	
 		@ExceptionHandler(IdNotFoundException.class)

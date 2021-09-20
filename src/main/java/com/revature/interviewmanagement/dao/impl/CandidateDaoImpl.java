@@ -19,6 +19,8 @@ import com.revature.interviewmanagement.entity.Candidate;
 import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.CandidateDto;
+import com.revature.interviewmanagement.util.mapper.CandidateMapper;
 
 @Repository
 public class CandidateDaoImpl implements CandidateDao{
@@ -27,22 +29,32 @@ public class CandidateDaoImpl implements CandidateDao{
 	
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	private static final String GET_CANDIDATE_BYPHONE="select c from Candidate c where c.phoneNumber=?1";
+	private static final String GET_CANDIDATE_BYNAME="select c from Candidate c where  CONCAT(c.firstName,' ', c.lastName) LIKE ?1";
+	private static final String GET_CANDIDATE_BYEMAIL="select c from Candidate c where c.emailId=?1";
+	private static final String GET_CANDIDATE_BYEXPERIENCE="select c from Candidate c where c.experience=?1";
+	private static final String GET_CANDIDATE_BYROLE="select c from Candidate c where c.jobRole=?1";
+	private static final String GET_ALLCANDIDATE="select c from Candidate c";
+	
+	
 
 	@Transactional
 	@Override
-	public String addCandidate(Long credentialId,Candidate candidate) {
+	public String addCandidate(Long credentialId,CandidateDto candidateDto) {
 		Session session=sessionFactory.getCurrentSession();
 		
 		Long id=null;
 		try {
 			
 			Query<?> emailQuery = session.getNamedQuery("callCandidateByEmailProcedure")
-				    .setParameter("email",candidate.getEmailId());
+				    .setParameter("email",candidateDto.getEmailId());
 			Query<?> phoneQuery = session.getNamedQuery("callCandidateByPhoneProcedure")
-				    .setParameter("phone",candidate.getPhoneNumber());
+				    .setParameter("phone",candidateDto.getPhoneNumber());
 			
 				if(emailQuery.list().isEmpty() && phoneQuery.list().isEmpty() ) {
 					CandidateCredential candidateCredential=session.load(CandidateCredential.class,credentialId);//assuming that credential id always exists.
+					Candidate candidate=CandidateMapper.candidateEntityMapper(candidateDto);
 					candidate.setCandidateCredential(candidateCredential);
 					id=(Long)session.save(candidate);
 					logger.info("Candidate added with id: {}",id);
@@ -57,7 +69,6 @@ public class CandidateDaoImpl implements CandidateDao{
 			
 			
 		} catch (HibernateException e1) {
-			
 			logger.error("unable to add candidate, message: {}",e1.getMessage(),e1);
 		}
 		
@@ -66,7 +77,7 @@ public class CandidateDaoImpl implements CandidateDao{
 
 	@Transactional
 	@Override
-	public String updateCandidate(Long id,Candidate candidate) {
+	public String updateCandidate(Long id,CandidateDto candidateDto) {
 		Session session=sessionFactory.getCurrentSession();
 		boolean check=false;
 		String result=null;
@@ -84,13 +95,14 @@ public class CandidateDaoImpl implements CandidateDao{
 			
 		if(check) {
 			Query<?> emailQuery = session.getNamedQuery("callCandidateByEmailUpdateProcedure")
-				    .setParameter("email",candidate.getEmailId())
+				    .setParameter("email",candidateDto.getEmailId())
 				    .setParameter("id",id);
 			Query<?> phoneQuery = session.getNamedQuery("callCandidateByPhoneUpdateProcedure")
-				    .setParameter("phone",candidate.getPhoneNumber())
+				    .setParameter("phone",candidateDto.getPhoneNumber())
 				    .setParameter("id",id);
 			
 				if(emailQuery.list().isEmpty() && phoneQuery.list().isEmpty()) {
+					Candidate candidate=CandidateMapper.candidateEntityMapper(candidateDto);
 					candidate.setId(id);
 					session.merge(candidate);
 					session.flush();
@@ -119,7 +131,7 @@ public class CandidateDaoImpl implements CandidateDao{
 			session.delete(deleteObject);
 			session.flush();
 			logger.info("candidate was deleted with id: {}",id);
-			result="Deletion is successful for id: "+id;
+			result="Candidate deletion is successful for id: "+id;
 		}
 		else {
 			throw new IdNotFoundException("Deletion is failed...Entered Id doesn't exists");
@@ -132,25 +144,16 @@ public class CandidateDaoImpl implements CandidateDao{
 	public Candidate getCandidateByPhoneNumber(String phoneNumber) {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getCandidateByPhoneNumber method");
-		Query<?> query=session.createQuery("select c from Candidate c where c.phoneNumber=?1").setParameter(1,phoneNumber);
+		Query<?> query=session.createQuery(GET_CANDIDATE_BYPHONE).setParameter(1,phoneNumber);
 		return (query.getResultList().isEmpty()?null:(Candidate) query.getResultList().get(0));
 	}
 
 	@Override
-	public List<Candidate> getCandidateByFirstName(String fname) {
+	public List<Candidate> getCandidateByName(String name) {
 		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entered getCandidateByFirstName method");
+		logger.info("Entered getCandidateByName method");
 		@SuppressWarnings("unchecked")
-		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.firstName=?1").setParameter(1,fname).getResultList();
-		return (resultList.isEmpty()?null:resultList);
-	}
-	
-	@Override
-	public List<Candidate> getCandidateByLastName(String lname) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entered getCandidateByLastName method");
-		@SuppressWarnings("unchecked")
-		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.lastName=?1").setParameter(1,lname).getResultList();
+		List<Candidate> resultList=session.createQuery(GET_CANDIDATE_BYNAME).setParameter(1, "%"+name+"%").getResultList();
 		return (resultList.isEmpty()?null:resultList);
 	}
 
@@ -159,7 +162,7 @@ public class CandidateDaoImpl implements CandidateDao{
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getCandidateByExperience method");
 		@SuppressWarnings("unchecked")
-		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.experience=?1").setParameter(1,exp).getResultList();
+		List<Candidate> resultList=session.createQuery(GET_CANDIDATE_BYEXPERIENCE).setParameter(1,exp).getResultList();
 		return (resultList.isEmpty()?null:resultList);
 	}
 
@@ -168,7 +171,7 @@ public class CandidateDaoImpl implements CandidateDao{
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getCandidateByPhoneNumber method");
 		@SuppressWarnings("unchecked")
-		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.jobRole=?1").setParameter(1,role).getResultList();
+		List<Candidate> resultList=session.createQuery(GET_CANDIDATE_BYROLE).setParameter(1,role).getResultList();
 		return (resultList.isEmpty()?null:resultList);
 	}
 
@@ -177,7 +180,7 @@ public class CandidateDaoImpl implements CandidateDao{
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getCandidateByEmailId method");
 		@SuppressWarnings("unchecked")
-		List<Candidate> resultList=session.createQuery("select c from Candidate c where c.emailId=?1").setParameter(1,email).getResultList();
+		List<Candidate> resultList=session.createQuery(GET_CANDIDATE_BYEMAIL).setParameter(1,email).getResultList();
 		return (resultList.isEmpty()?null:resultList.get(0));
 	}
 
@@ -193,7 +196,7 @@ public class CandidateDaoImpl implements CandidateDao{
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entered getAllCandidate method");
 		@SuppressWarnings("unchecked")
-		Query<Candidate> query=session.createQuery("select c from Candidate c");
+		Query<Candidate> query=session.createQuery(GET_ALLCANDIDATE);
 		return (query.getResultList().isEmpty()?null:query.getResultList());
 	}
 

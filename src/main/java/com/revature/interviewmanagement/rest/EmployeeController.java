@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.service.EmployeeService;
 
 @RestController
@@ -47,53 +48,48 @@ public class EmployeeController {
 	}
 	
 	
-	 @GetMapping("/employee/email/{email}") 
-	 public ResponseEntity<Employee> getEmployeeByEmailId(@PathVariable String email){
+	 @PostMapping("/employee/email") 
+	 public ResponseEntity<Employee> getEmployeeByEmailId(@RequestBody EmployeeDto employeeDto){
 		 logger.debug("Entering getAllCandidate method");
-		 return new ResponseEntity<>(employeeSerive.getEmployeeByEmailId(email), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(employeeSerive.getEmployeeByEmailId(employeeDto.getEmailId()), new HttpHeaders(), HttpStatus.OK);  
 	} 
 	 
-	 @GetMapping("/employee/phone/{phone-number}")  
-	 public ResponseEntity<Employee> getEmployeeByPhoneNumber(@PathVariable("phone-number") String phoneNumber){
-		//if we don't give @PathVariable("phone-number") here, phone number couldn't be recognized as string
+	 @PostMapping("/employee/phone")  
+	 public ResponseEntity<Employee> getEmployeeByPhoneNumber(@RequestBody EmployeeDto employeeDto){
 		 logger.debug("Entering getEmployeeByPhoneNumber method");
-		 return new ResponseEntity<>(employeeSerive.getEmployeeByPhoneNumber(phoneNumber), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(employeeSerive.getEmployeeByPhoneNumber(employeeDto.getPhoneNumber()), new HttpHeaders(), HttpStatus.OK);  
 	} 
 	  
-	 @GetMapping("/employee/first-name/{fname}") 
-	 public ResponseEntity<List<Employee>> getEmployeeByFirstName(@PathVariable String fname){  
-		 logger.debug("Entering getEmployeeByFirstName method");
-		 return new ResponseEntity<>(employeeSerive.getEmployeeByFirstName(fname), new HttpHeaders(), HttpStatus.OK);  
+	 @GetMapping("/employee/name/{name}") 
+	 public ResponseEntity<List<Employee>> getEmployeeByName(@PathVariable String name){  
+		 logger.debug("Entering getEmployeeByName method");
+		 return new ResponseEntity<>(employeeSerive.getEmployeeByName(name), new HttpHeaders(), HttpStatus.OK);  
 	}  
-	 @GetMapping("/employee/last-name/{lname}") 
-	 public ResponseEntity<List<Employee>> getEmployeeByLastName(@PathVariable String lname){  
-		 logger.debug("Entering getEmployeeByLastName method");
-		 return new ResponseEntity<>(employeeSerive.getEmployeeByLastName(lname), new HttpHeaders(), HttpStatus.OK);  
-	}
+	
 	 
-	 @GetMapping("/employee/employee-id/{empId}")
-	public ResponseEntity<List<Employee>> getEmployeeByEmployeeId(@PathVariable Long empId){ 
+	 @PostMapping("/employee/employee-id")
+	public ResponseEntity<List<Employee>> getEmployeeByEmployeeId(@RequestBody EmployeeDto employeeDto){ 
 		 logger.debug("Entering getEmployeeByEmployeeId method");
-		 return new ResponseEntity<>(employeeSerive.getEmployeeByEmployeeId(empId), new HttpHeaders(), HttpStatus.OK); 
+		 return new ResponseEntity<>(employeeSerive.getEmployeeByEmployeeId(employeeDto.getEmployeeId()), new HttpHeaders(), HttpStatus.OK); 
 	} 
 	
 	 
-	 @GetMapping("/employee/designation-id/{destId}")  
-	 public ResponseEntity<List<Employee>> getEmployeeByDesignationId(@PathVariable Long destId){  
+	 @PostMapping("/employee/designation-id")  
+	 public ResponseEntity<List<Employee>> getEmployeeByDesignationId(@RequestBody EmployeeDto employeeDto){  
 		 logger.debug("Entering getEmployeeByDesignationId method");
-		 return new ResponseEntity<>(employeeSerive.getEmployeeByDesignationId(destId), new HttpHeaders(), HttpStatus.OK); 
+		 return new ResponseEntity<>(employeeSerive.getEmployeeByDesignationId(employeeDto.getDesignationId()), new HttpHeaders(), HttpStatus.OK); 
 	}
 	
 	@PostMapping("/employee/{credential-id}")
-	public ResponseEntity<String> addEmployee(@PathVariable("credential-id") Long id,@RequestBody Employee employee){
+	public ResponseEntity<String> addEmployee(@PathVariable("credential-id") Long id,@RequestBody EmployeeDto employeeDto){
 		logger.debug("Entering addEmployee method");
-		return	new ResponseEntity<>(employeeSerive.addEmployee(id,employee), new HttpHeaders(), HttpStatus.CREATED);
+		return	new ResponseEntity<>(employeeSerive.addEmployee(id,employeeDto), new HttpHeaders(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/employee/{id}")
-	public ResponseEntity<String> updateEmployee(@PathVariable Long id,@RequestBody Employee employee){
+	public ResponseEntity<String> updateEmployee(@PathVariable Long id,@RequestBody EmployeeDto employeeDto){
 		logger.debug("Entering updateEmployee method");
-		return	new ResponseEntity<>(employeeSerive.updateEmployee(id,employee), new HttpHeaders(), HttpStatus.OK);
+		return	new ResponseEntity<>(employeeSerive.updateEmployee(id,employeeDto), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/employee/{id}")

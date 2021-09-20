@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.interviewmanagement.dao.EmployeeDao;
 import com.revature.interviewmanagement.entity.Employee;
+import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.service.EmployeeService;
 
 @Service
@@ -22,13 +23,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public String updateEmployee(Long id, Employee employee) {
+	public String updateEmployee(Long id, EmployeeDto employee) {
 		
 		return employeeDao.updateEmployee(id,employee);
 	}
 
 	@Override
-	public String addEmployee(Long id,Employee employee) {
+	public String addEmployee(Long id,EmployeeDto employee) {
 		
 		return employeeDao.addEmployee(id,employee);
 	}
@@ -72,15 +73,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public List<Employee> getEmployeeByLastName(String lname) {
+	public List<Employee> getEmployeeByName(String name) {
 		
-		return employeeDao.getEmployeeByLastName(lname);
+		return employeeDao.getEmployeeByName(name);
 	}
 
-	@Override
-	public List<Employee> getEmployeeByFirstName(String fname) {
-		
-		 return employeeDao.getEmployeeByFirstName(fname);
-	}
 
 }

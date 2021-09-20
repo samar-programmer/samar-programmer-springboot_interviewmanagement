@@ -3,6 +3,7 @@ package com.revature.interviewmanagement.dao;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Employee;
+import com.revature.interviewmanagement.model.EmployeeDto;
 
 public interface EmployeeDao {
 
@@ -18,14 +19,13 @@ public interface EmployeeDao {
 
 	public List<Employee> getEmployeeByEmployeeId(Long empId);
 
-	public String addEmployee(Long id,Employee employee);
+	public String addEmployee(Long id,EmployeeDto employee);
 
-	public String updateEmployee(Long id, Employee employee);
+	public String updateEmployee(Long id, EmployeeDto employee);
 
 	public String deleteEmployee(Long id);
 
-	public List<Employee> getEmployeeByFirstName(String fname);
+	public List<Employee> getEmployeeByName(String name);
 
-	public List<Employee> getEmployeeByLastName(String lname);
 
 }

@@ -19,6 +19,8 @@ import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.EmployeeDto;
+import com.revature.interviewmanagement.util.mapper.EmployeeMapper;
 
 @Repository
 public class EmployeeDaoImpl implements EmployeeDao {
@@ -33,11 +35,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	private static final String CHECK_EMPLOYEE_EMAILID="SELECT e FROM Employee e WHERE e.emailId=:email";
 	private static final String CHECK_EMPLOYEE_PHONENUMBER="SELECT e FROM Employee e WHERE e.phoneNumber=:phone";
 	private static final String CHECK_EMPLOYEE_ALLEMPLOYEE="SELECT e FROM Employee e";
-	private static final String CHECK_EMPLOYEE_EMPLOYEEBYFNAME="SELECT e FROM Employee e WHERE e.firstName=:fname";
-	private static final String CHECK_EMPLOYEE_EMPLOYEEBYLNAME="SELECT e FROM Employee e WHERE e.lastName=:lname";
+	private static final String CHECK_EMPLOYEE_EMPLOYEEBYNAME="SELECT e FROM Employee e WHERE CONCAT(e.firstName,' ', e.lastName) LIKE :name";
 	
 	
-	private List<Boolean> checkState(Session session, Employee employee,int statusCode, long id) {
+	
+	private List<Boolean> checkState(Session session, EmployeeDto employee,int statusCode, long id) {
 		Query<?> emailQuery = session.createQuery(CHECK_EMPLOYEE_EMAILID).setParameter("email",employee.getEmailId());
 		Query<?> phoneQuery = session.createQuery(CHECK_EMPLOYEE_PHONENUMBER).setParameter("phone",employee.getPhoneNumber());
 		Query<?> employeeIdQuery = session.createQuery(CHECK_EMPLOYEE_EMPLOYEEID).setParameter("empId",employee.getEmployeeId());
@@ -104,22 +106,15 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public List<Employee> getEmployeeByFirstName(String fname) {
+	public List<Employee> getEmployeeByName(String name) {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entering getEmployeeByFirstName method");
 		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEBYFNAME).setParameter("fname",fname).getResultList();
+		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEBYNAME).setParameter("name","%"+name+"%").getResultList();
 		return (resultList.isEmpty()?null:resultList);
 	}
 	
-	@Override
-	public List<Employee> getEmployeeByLastName(String lname) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getEmployeeByLastName method");
-		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEBYLNAME).setParameter("lname",lname).getResultList();
-		return (resultList.isEmpty()?null:resultList);
-	}
+	
 
 	@Override
 	public List<Employee> getEmployeeByDesignationId(Long destId) {
@@ -142,16 +137,17 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	@Transactional
 	@Override
-	public String addEmployee(Long credentialId,Employee employee) {
+	public String addEmployee(Long credentialId,EmployeeDto employeeDto) {
 		Session session=sessionFactory.getCurrentSession();
 		Long id=null;
 		try {
-			List<Boolean> stateArr=checkState(session,employee,0,-1);
+			List<Boolean> stateArr=checkState(session,employeeDto,0,-1);
 			
 			boolean addState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
 			
 				if(!addState) {
 					EmployeeCredential employeeCredential=session.load(EmployeeCredential.class,credentialId);//assuming that employee credentials always exists
+					Employee employee=EmployeeMapper.employeeEntityMapper(employeeDto);
 					employee.setEmployeeCredential(employeeCredential);
 					id=(Long)session.save(employee);
 					logger.info("Employee added with id: {}",id);
@@ -181,7 +177,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	@Transactional
 	@Override
-	public String updateEmployee(Long id, Employee employee) {
+	public String updateEmployee(Long id, EmployeeDto employeeDto) {
 		Session session=sessionFactory.getCurrentSession();
 		boolean check=false;
 		String result=null;
@@ -198,10 +194,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		}
 			
 		if(check) {
-				List<Boolean> stateArr=checkState(session,employee,1,id);
+				List<Boolean> stateArr=checkState(session,employeeDto,1,id);
 				boolean updateState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
 			
 				if(!updateState) {
+					Employee employee=EmployeeMapper.employeeEntityMapper(employeeDto);
 					employee.setId(id);
 					session.merge(employee);
 					session.flush();
@@ -246,7 +243,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			session.delete(deleteObject);
 			session.flush();
 			logger.info("Employee deleted with id: {}",id);
-			result="Deletion is successful for id: "+id;
+			result="Employee deletion is successful for id: "+id;
 		}
 		
 		return result;

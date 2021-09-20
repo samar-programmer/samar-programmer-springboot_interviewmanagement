@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.entity.Candidate;
+import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.service.CandidateService;
 
 @Service
@@ -46,9 +47,9 @@ public class CandidateServiceImpl implements CandidateService {
 	}
 
 	@Override
-	public List<Candidate> getCandidateByFirstName(String fname) {
+	public List<Candidate> getCandidateByName(String name) {
 		
-		return candidateDao.getCandidateByFirstName(fname) ;
+		return candidateDao.getCandidateByName(name) ;
 	}
 
 	@Override
@@ -64,20 +65,16 @@ public class CandidateServiceImpl implements CandidateService {
 	}
 
 	@Override
-	public String updateCandidate(Long id,Candidate candidate) {
+	public String updateCandidate(Long id,CandidateDto candidateDto) {
 		
-		return candidateDao.updateCandidate(id,candidate);
+		return candidateDao.updateCandidate(id,candidateDto);
 	}
 
 	@Override
-	public String addCandidate(Long id,Candidate candidate) {
+	public String addCandidate(Long id,CandidateDto candidateDto) {
 		
-		return candidateDao.addCandidate(id,candidate);
+		return candidateDao.addCandidate(id,candidateDto);
 	}
 
 
-	@Override
-	public List<Candidate> getCandidateByLastName(String lname) {
-		return candidateDao.getCandidateByLastName(lname) ;
-	}
 }

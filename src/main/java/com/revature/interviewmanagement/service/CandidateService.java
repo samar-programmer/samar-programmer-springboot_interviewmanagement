@@ -3,6 +3,7 @@ package com.revature.interviewmanagement.service;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Candidate;
+import com.revature.interviewmanagement.model.CandidateDto;
 
 public interface CandidateService {
 	public List<Candidate> getAllCandidate();
@@ -19,11 +20,10 @@ public interface CandidateService {
 
 	public String deleteCandidate(Long id);
 
-	public String updateCandidate(Long id,Candidate candidate);
+	public String updateCandidate(Long id,CandidateDto candidate);
 
-	public String addCandidate(Long id,Candidate candidate);
+	public String addCandidate(Long id,CandidateDto candidate);
 
-	public List<Candidate> getCandidateByFirstName(String fname);
+	public List<Candidate> getCandidateByName(String name);
 
-	public List<Candidate> getCandidateByLastName(String lname);
 }

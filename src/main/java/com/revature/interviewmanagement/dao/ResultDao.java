@@ -3,6 +3,7 @@ package com.revature.interviewmanagement.dao;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Result;
+import com.revature.interviewmanagement.model.ResultDto;
 
 public interface ResultDao {
 
@@ -16,9 +17,9 @@ public interface ResultDao {
 
 	public List<Result> getResultByCandidateId(Long canId);
 
-	public String addResult(Long interviewId, Result result);
+	public String addResult(Long interviewId, ResultDto result);
 
-	public String updateResult(Long id, Result result);
+	public String updateResult(Long id, ResultDto result);
 
 	public String deleteResult(Long id);
 

@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.CandidateDto;
+import com.revature.interviewmanagement.model.EmployeeDto;
+import com.revature.interviewmanagement.model.InterviewDto;
 import com.revature.interviewmanagement.service.InterviewService;
 
 @RestController
@@ -72,16 +75,15 @@ public class InterviewController {
 		 return new ResponseEntity<>(interviewService.getInterviewByCandidateName(name), new HttpHeaders(), HttpStatus.OK);  
 	} 
 	  
-	 @GetMapping("/interview/candidate/phone/{phone}") 
-	 public ResponseEntity<List<Interview>> getInterviewByCandidatePhone(@PathVariable("phone") String phone){  
-		//if we don't give @PathVariable("phone") here, phone number couldn't be recognized as string
+	 @PostMapping("/interview/candidate/phone") 
+	 public ResponseEntity<List<Interview>> getInterviewByCandidatePhone(@RequestBody CandidateDto candidateDto){  
 		 logger.debug("Entering getInterviewByCandidatePhone method");
-		 return new ResponseEntity<>(interviewService.getInterviewByCandidatePhone(phone), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(interviewService.getInterviewByCandidatePhone(candidateDto.getPhoneNumber()), new HttpHeaders(), HttpStatus.OK);  
 	}  
-	 @GetMapping("/interview/candidate/email/{email}") 
-	 public ResponseEntity<List<Interview>> getInterviewByCandidateEmail(@PathVariable String email){  
+	 @PostMapping("/interview/candidate/email") 
+	 public ResponseEntity<List<Interview>> getInterviewByCandidateEmail(@RequestBody CandidateDto candidateDto){  
 		 logger.debug("Entering getInterviewByCandidateEmail method");
-		 return new ResponseEntity<>(interviewService.getInterviewByCandidateEmail(email), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(interviewService.getInterviewByCandidateEmail(candidateDto.getEmailId()), new HttpHeaders(), HttpStatus.OK);  
 	}
 	 
 	 @GetMapping("/interview/candidate/role/{role}")  
@@ -102,16 +104,16 @@ public class InterviewController {
 		 return new ResponseEntity<>(interviewService.getInterviewByEmpId(empId), new HttpHeaders(), HttpStatus.OK); 
 	} 
 	 
-	 @GetMapping("/interview/employee/employee-id/{employeeId}")//this is the employeeId(String) of employee entity not auto generated id
-		public ResponseEntity<List<Interview>> getInterviewByEmployeeId(@PathVariable("employeeId") Long employeeId){ 
+	 @PostMapping("/interview/employee/employee-id")//this is the employeeId(String) of employee entity not auto generated id
+		public ResponseEntity<List<Interview>> getInterviewByEmployeeId(@RequestBody EmployeeDto employeeDto){ 
 		 logger.debug("Entering getInterviewByEmployeeId method");
-			 return new ResponseEntity<>(interviewService.getInterviewByEmployeeId(employeeId), new HttpHeaders(), HttpStatus.OK); 
+			 return new ResponseEntity<>(interviewService.getInterviewByEmployeeId(employeeDto.getEmployeeId()), new HttpHeaders(), HttpStatus.OK); 
 		}
 	 
-	 @GetMapping("/interview/employee/designation-id/{destId}")
-		public ResponseEntity<List<Interview>> getInterviewByDesignationId(@PathVariable Long destId){ 
+	 @PostMapping("/interview/employee/designation-id")
+		public ResponseEntity<List<Interview>> getInterviewByDesignationId(@RequestBody EmployeeDto employeeDto){ 
 		 logger.debug("Entering getInterviewByDesignationId method");
-			 return new ResponseEntity<>(interviewService.getInterviewByDesignationId(destId), new HttpHeaders(), HttpStatus.OK); 
+			 return new ResponseEntity<>(interviewService.getInterviewByDesignationId(employeeDto.getDesignationId()), new HttpHeaders(), HttpStatus.OK); 
 		} 
 	
 	 
@@ -121,28 +123,28 @@ public class InterviewController {
 		 return new ResponseEntity<>(interviewService.getInterviewByEmployeeName(name), new HttpHeaders(), HttpStatus.OK); 
 	}
 	 
-	 @GetMapping("/interview/employee/phone/{phone}") 
-	 public ResponseEntity<List<Interview>> getInterviewByEmployeePhone(@PathVariable("phone") String phone){  
+	 @PostMapping("/interview/employee/phone") 
+	 public ResponseEntity<List<Interview>> getInterviewByEmployeePhone(@RequestBody EmployeeDto employeeDto){  
 		//if we don't give @PathVariable("phone") here, phone number couldn't be recognized as string
 		 logger.debug("Entering getInterviewByEmployeePhone method");
-		 return new ResponseEntity<>(interviewService.getInterviewByEmployeePhone(phone), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(interviewService.getInterviewByEmployeePhone(employeeDto.getPhoneNumber()), new HttpHeaders(), HttpStatus.OK);  
 	}  
-	 @GetMapping("/interview/employee/email/{email}") 
-	 public ResponseEntity<List<Interview>> getInterviewByEmployeeEmail(@PathVariable String email){  
+	 @PostMapping("/interview/employee/email") 
+	 public ResponseEntity<List<Interview>> getInterviewByEmployeeEmail(@RequestBody EmployeeDto employeeDto){  
 		 logger.debug("Entering getInterviewByEmployeeEmail method");
-		 return new ResponseEntity<>(interviewService.getInterviewByEmployeeEmail(email), new HttpHeaders(), HttpStatus.OK);  
+		 return new ResponseEntity<>(interviewService.getInterviewByEmployeeEmail(employeeDto.getEmailId()), new HttpHeaders(), HttpStatus.OK);  
 	}
 	
 	@PostMapping("/interview/{canId}/{empId}")
-	public ResponseEntity<String> addInterview(@PathVariable("canId") Long canId,@PathVariable("empId") Long empId,@RequestBody Interview interview){
+	public ResponseEntity<String> addInterview(@PathVariable("canId") Long canId,@PathVariable("empId") Long empId,@RequestBody InterviewDto interviewDto){
 		logger.debug("Entering addInterview method");
-		return	new ResponseEntity<>(interviewService.addInterview(interview,canId,empId), new HttpHeaders(), HttpStatus.CREATED);
+		return	new ResponseEntity<>(interviewService.addInterview(interviewDto,canId,empId), new HttpHeaders(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/interview/{id}")
-	public ResponseEntity<String> updateInterview(@PathVariable Long id,@RequestBody Interview interview){
+	public ResponseEntity<String> updateInterview(@PathVariable Long id,@RequestBody InterviewDto interviewDto){
 		logger.debug("Entering updateInterview method");
-		return	new ResponseEntity<>(interviewService.updateInterview(id,interview), new HttpHeaders(), HttpStatus.OK);
+		return	new ResponseEntity<>(interviewService.updateInterview(id,interviewDto), new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/interview/{id}")

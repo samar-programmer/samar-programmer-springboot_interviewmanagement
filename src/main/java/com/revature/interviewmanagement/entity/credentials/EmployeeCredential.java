@@ -22,7 +22,7 @@ public class EmployeeCredential {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(nullable=false,unique=true)
+	@Column(nullable=false,unique=true,name="email_id")
 	private String emailId;
 	
 	@Column(nullable=false)

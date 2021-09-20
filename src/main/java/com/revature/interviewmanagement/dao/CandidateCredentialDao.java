@@ -1,15 +1,18 @@
 package com.revature.interviewmanagement.dao;
 
 import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
+import com.revature.interviewmanagement.model.credentials.CandidateCredentialDto;
 
 public interface CandidateCredentialDao {
 
-	public CandidateCredential getCredentialById(Long id);
+	public CandidateCredential validateCredential(CandidateCredentialDto candidateCredential);
 
-	public Boolean validateCredential(CandidateCredential candidateCredential);
+	public String addCredential(CandidateCredentialDto candidateCredential);
 
-	public String addCredential(CandidateCredential candidateCredential);
+	public String updatePassword(Long id, CandidateCredentialDto candidateCredential);
 
-	public String updateCredential(Long id, CandidateCredential candidateCredential);
+	public Boolean validateEmail(String email);
+
+	public Boolean resetPassword(CandidateCredentialDto candidateCredentialDto);
 
 }

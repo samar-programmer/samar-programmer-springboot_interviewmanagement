@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
@@ -40,7 +39,6 @@ import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
     	    resultClass = Candidate.class
     	    )
 @Entity  
-@Table(name="candidate_test")
 public class Candidate {
 	
 	@Id
@@ -84,7 +82,7 @@ public class Candidate {
 	private List<Interview> interview;
 	
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name="credential_id",nullable=false)
 	private CandidateCredential candidateCredential;
 	

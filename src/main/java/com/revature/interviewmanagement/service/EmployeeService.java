@@ -3,14 +3,15 @@ package com.revature.interviewmanagement.service;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Employee;
+import com.revature.interviewmanagement.model.EmployeeDto;
 
 public interface EmployeeService {
 
 	public String deleteEmployee(Long id);
 
-	public String updateEmployee(Long id, Employee employee);
+	public String updateEmployee(Long id, EmployeeDto employee);
 
-	public String addEmployee(Long id,Employee employee);
+	public String addEmployee(Long id,EmployeeDto employee);
 
 	public List<Employee> getEmployeeByEmployeeId(Long empId);
 
@@ -24,8 +25,7 @@ public interface EmployeeService {
 
 	public List<Employee> getAllEmployees();
 
-	public List<Employee> getEmployeeByLastName(String lname);
-
-	public List<Employee> getEmployeeByFirstName(String fname);
+	public List<Employee> getEmployeeByName(String name);
+	
 
 }

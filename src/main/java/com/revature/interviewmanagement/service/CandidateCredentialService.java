@@ -1,15 +1,18 @@
 package com.revature.interviewmanagement.service;
 
 import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
+import com.revature.interviewmanagement.model.credentials.CandidateCredentialDto;
 
 public interface CandidateCredentialService {
 
-	public String updateCredential(Long id, CandidateCredential candidateCredential);
+	public String updatePassword(Long id, CandidateCredentialDto candidateCredential);
 
-	public String addCredential(CandidateCredential candidateCredential);
+	public String addCredential(CandidateCredentialDto candidateCredential);
 
-	public Boolean validateCredential(CandidateCredential candidateCredential);
+	public CandidateCredential validateCredential(CandidateCredentialDto candidateCredential);
 
-	public CandidateCredential getCredentialById(Long id);
+	public Boolean validateEmail(String email);
+
+	public Boolean resetPassword(CandidateCredentialDto candidateCredentialDto);
 
 }

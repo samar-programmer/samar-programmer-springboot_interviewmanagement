@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.interviewmanagement.dao.CandidateCredentialDao;
 import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
+import com.revature.interviewmanagement.model.credentials.CandidateCredentialDto;
 import com.revature.interviewmanagement.service.CandidateCredentialService;
 
 @Service
@@ -14,27 +15,34 @@ public class CandidateCredentialServiceImpl implements CandidateCredentialServic
 	private CandidateCredentialDao candidateCredentialDao ;
 	
 	@Override
-	public String updateCredential(Long id, CandidateCredential candidateCredential) {
+	public String updatePassword(Long id, CandidateCredentialDto candidateCredential) {
 		
-		return candidateCredentialDao.updateCredential(id,candidateCredential);
+		return candidateCredentialDao.updatePassword(id,candidateCredential);
 	}
 
 	@Override
-	public String addCredential(CandidateCredential candidateCredential) {
+	public String addCredential(CandidateCredentialDto candidateCredential) {
 		
 		return candidateCredentialDao.addCredential(candidateCredential);
 	}
 
 	@Override
-	public Boolean validateCredential(CandidateCredential candidateCredential) {
+	public CandidateCredential validateCredential(CandidateCredentialDto candidateCredential) {
 		
 		return candidateCredentialDao.validateCredential(candidateCredential);
 	}
 
+
 	@Override
-	public CandidateCredential getCredentialById(Long id) {
+	public Boolean validateEmail(String email) {
 		
-		return candidateCredentialDao.getCredentialById(id);
+		return candidateCredentialDao.validateEmail(email);
+	}
+
+	@Override
+	public Boolean resetPassword(CandidateCredentialDto candidateCredentialDto) {
+		
+		return candidateCredentialDao.resetPassword(candidateCredentialDto);
 	}
 
 }

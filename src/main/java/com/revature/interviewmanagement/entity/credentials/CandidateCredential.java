@@ -2,6 +2,7 @@ package com.revature.interviewmanagement.entity.credentials;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,11 +22,14 @@ public class CandidateCredential {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(nullable=false,unique=true)
+	@Column(nullable=false,unique=true,name="email_id")
 	private String emailId;
 	
 	@Column(nullable=false)
-	private String password;
+	private String password;//it is hashed password
+	
+	@Column(nullable=false)
+	private String salt;
 	
 	@Column(name="added_on")
 	private LocalDateTime addedOn;
@@ -39,6 +43,10 @@ public class CandidateCredential {
 	@JsonIgnore
 	@OneToOne(mappedBy="candidateCredential")
 	private Candidate candidate;
+	
+	@JsonIgnore
+	@OneToOne(mappedBy="candidateCredential",cascade=CascadeType.ALL)
+	private RecoveryPassword recoveryPassword;
 
 	public Long getId() {
 		return id;
@@ -56,12 +64,21 @@ public class CandidateCredential {
 		this.emailId = emailId;
 	}
 
+
 	public String getPassword() {
 		return password;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 
 	public LocalDateTime getAddedOn() {
@@ -94,6 +111,14 @@ public class CandidateCredential {
 
 	public void setCandidate(Candidate candidate) {
 		this.candidate = candidate;
+	}
+
+	public RecoveryPassword getRecoveryPassword() {
+		return recoveryPassword;
+	}
+
+	public void setRecoveryPassword(RecoveryPassword recoveryPassword) {
+		this.recoveryPassword = recoveryPassword;
 	}
 
 	

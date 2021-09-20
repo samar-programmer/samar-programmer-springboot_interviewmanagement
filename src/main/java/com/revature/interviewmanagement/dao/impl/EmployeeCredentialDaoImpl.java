@@ -15,6 +15,8 @@ import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
 import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.model.credentials.EmployeeCredentialDto;
+import com.revature.interviewmanagement.util.mapper.EmployeeCredentialMapper;
 
 @Repository
 public class EmployeeCredentialDaoImpl implements EmployeeCredentialDao {
@@ -26,8 +28,7 @@ public class EmployeeCredentialDaoImpl implements EmployeeCredentialDao {
 	
 	private static final String EMAIL="email";
 	
-	private static final String CHECK_EMAIL_ADD="SELECT e FROM EmployeeCredential e WHERE e.emailId=:email";
-	private static final String CHECK_EMAIL_UPDATE="SELECT e FROM EmployeeCredential e WHERE e.emailId=:email AND e.id !=:id";
+	private static final String CHECK_EMAIL="SELECT e FROM EmployeeCredential e WHERE e.emailId=:email";
 	private static final String CHECK_CREDENTIALS="SELECT e FROM EmployeeCredential e WHERE e.emailId=:email AND e.password=:password";
 	
 	
@@ -35,7 +36,7 @@ public class EmployeeCredentialDaoImpl implements EmployeeCredentialDao {
 	
 	@Transactional
 	@Override
-	public String updateCredential(Long id, EmployeeCredential employeeCredential) {
+	public String updatePassword(Long id, EmployeeCredentialDto employeeCredentialDto) {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entering updateCredential method");
 		
@@ -44,21 +45,16 @@ public class EmployeeCredentialDaoImpl implements EmployeeCredentialDao {
 			updateObj=session.load(EmployeeCredential.class,id);
 			if(!updateObj.getEmailId().isEmpty()) {  //necessary line to continue the flow 
 				
-					@SuppressWarnings("unchecked")
-					List<CandidateCredential> resultList=session.createQuery(CHECK_EMAIL_UPDATE)
-							.setParameter(EMAIL,employeeCredential.getEmailId())
-							.setParameter("id",id)
-							.getResultList();
-					if(resultList !=null && resultList.isEmpty()) {
+						EmployeeCredential employeeCredential=EmployeeCredentialMapper.candidateCredentialMapper(employeeCredentialDto);
 						employeeCredential.setId(id);
+						employeeCredential.setAddedOn(updateObj.getAddedOn());
+						employeeCredential.setUpdatedOn(updateObj.getUpdatedOn());
+						employeeCredential.setUpdatedBy(updateObj.getUpdatedBy());
 						session.merge(employeeCredential);
 						session.flush();
 						
 					}
-					else {
-						throw new DuplicateIdException("Entered Email id already exists in another record");
-					}
-			}
+			
 		} 
 		catch (org.hibernate.ObjectNotFoundException e1) {
 			logger.warn("unable to update employee credentials, message: {}",e1.getMessage(),e1);
@@ -71,14 +67,15 @@ public class EmployeeCredentialDaoImpl implements EmployeeCredentialDao {
 
 	@Transactional
 	@Override
-	public String addCredential(EmployeeCredential employeeCredential) {
+	public String addCredential(EmployeeCredentialDto employeeCredentialDto) {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entering addCredential method");
 		@SuppressWarnings("unchecked")
-		List<CandidateCredential> resultList=session.createQuery(CHECK_EMAIL_ADD)
-				.setParameter(EMAIL,employeeCredential.getEmailId())
+		List<CandidateCredential> resultList=session.createQuery(CHECK_EMAIL)
+				.setParameter(EMAIL,employeeCredentialDto.getEmailId())
 				.getResultList();
 		if(resultList !=null && resultList.isEmpty()) {
+			EmployeeCredential employeeCredential=EmployeeCredentialMapper.candidateCredentialMapper(employeeCredentialDto);
 			Long id=(Long) session.save(employeeCredential);
 			return "Employee credentials created successfully with id "+id+" !";
 		}
@@ -88,22 +85,28 @@ public class EmployeeCredentialDaoImpl implements EmployeeCredentialDao {
 	}
 
 	@Override
-	public Boolean validateCredential(EmployeeCredential employeeCredential) {
+	public Boolean validateCredential(EmployeeCredentialDto employeeCredentialDto) {
 		Session session=sessionFactory.getCurrentSession();
 		logger.info("Entering validateCredential method");
 		@SuppressWarnings("unchecked")
 		List<CandidateCredential> resultList=session.createQuery(CHECK_CREDENTIALS)
-		.setParameter(EMAIL,employeeCredential.getEmailId())
-		.setParameter("password",employeeCredential.getPassword())
+		.setParameter(EMAIL,employeeCredentialDto.getEmailId())
+		.setParameter("password",employeeCredentialDto.getPassword())
 		.getResultList();
 		return !resultList.isEmpty();
 	}
 
+
 	@Override
-	public EmployeeCredential getCredentialById(Long id) {
+	public Boolean validateEmail(String email) {
 		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getCredentialById method");
-		return session.get(EmployeeCredential.class,id);
+		logger.info("Entering validateEmailCredential method");
+		@SuppressWarnings("unchecked")
+		List<CandidateCredential> resultList=session.createQuery(CHECK_EMAIL)
+				.setParameter(EMAIL,email)
+				.getResultList();
+		
+		return !resultList.isEmpty();
 	}
 
 }

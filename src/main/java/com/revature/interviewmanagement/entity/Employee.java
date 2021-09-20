@@ -13,12 +13,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
 
-@Table(name="employee_test")
+
 @Entity 
 public class Employee {
 	
@@ -58,7 +57,7 @@ public class Employee {
 	private List<Interview> interview;
 	
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(nullable=false,name="credential_id")
 	private EmployeeCredential employeeCredential;
 	

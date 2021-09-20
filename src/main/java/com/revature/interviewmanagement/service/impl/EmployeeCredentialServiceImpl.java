@@ -3,7 +3,7 @@ package com.revature.interviewmanagement.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
+import com.revature.interviewmanagement.model.credentials.EmployeeCredentialDto;
 import com.revature.interviewmanagement.service.EmployeeCredentialService;
 import com.revature.interviewmanagement.dao.EmployeeCredentialDao;
 
@@ -14,27 +14,27 @@ public class EmployeeCredentialServiceImpl implements EmployeeCredentialService 
 	private EmployeeCredentialDao employeeCredentialDao;
 	
 	@Override
-	public String updateCredential(Long id, EmployeeCredential employeeCredential) {
+	public String updatePassword(Long id, EmployeeCredentialDto employeeCredential) {
 		
-		return employeeCredentialDao.updateCredential(id,employeeCredential);
+		return employeeCredentialDao.updatePassword(id,employeeCredential);
 	}
 
 	@Override
-	public String addCredential(EmployeeCredential employeeCredential) {
+	public String addCredential(EmployeeCredentialDto employeeCredential) {
 		
 		return employeeCredentialDao.addCredential(employeeCredential);
 	}
 
 	@Override
-	public Boolean validateCredential(EmployeeCredential employeeCredential) {
+	public Boolean validateCredential(EmployeeCredentialDto employeeCredential) {
 		
 		return employeeCredentialDao.validateCredential(employeeCredential);
 	}
 
 	@Override
-	public EmployeeCredential getCredentialById(Long id) {
-		
-		return employeeCredentialDao.getCredentialById(id);
+	public Boolean validateEmail(String email) {
+	
+		return employeeCredentialDao.validateEmail(email);
 	}
 
 }
