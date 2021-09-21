@@ -1,5 +1,5 @@
 #  Interview Management Application
-* Backend Spring Boot and Hibernate
+* Backend using Spring Boot and Hibernate(MYSQL dialect)
   * Created CRUD operations for Candidate entity
   * Created CRUD operations for Employee entity
   * Created CRUD operations for Interview entity
