@@ -13,6 +13,7 @@ public class InterviewDto {
 
 	private	Long id;
 	private String interviewType;
+	private String status;
 	private LocalDate callScheduledDate;
 	private LocalTime callScheduledTime;
 	private LocalDateTime addedOn;
@@ -81,6 +82,12 @@ public class InterviewDto {
 	}
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	

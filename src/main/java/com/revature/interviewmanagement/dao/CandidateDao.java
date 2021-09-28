@@ -7,19 +7,19 @@ import com.revature.interviewmanagement.model.CandidateDto;
 
 public interface CandidateDao {
 
-	public String addCandidate(Long id,CandidateDto candidate);
+	public String addCandidate(CandidateDto candidate);
 
-	public String updateCandidate(Long id, CandidateDto candidate);
+	public String updateCandidate(CandidateDto candidate);
 
 	public String deleteCandidate(Long id);
 
-	public Candidate getCandidateByPhoneNumber(String phoneNumber);
+	public List<Candidate> getCandidateByPhoneNumber(String phoneNumber);
 
 	public List<Candidate> getCandidateByExperience(Integer exp);
 
 	public List<Candidate> getCandidateByRole(String role);
 
-	public Candidate getCandidateByEmailId(String email);
+	public List<Candidate> getCandidateByEmailId(String email);
 
 	public Candidate getCandidateById(Long id);
 

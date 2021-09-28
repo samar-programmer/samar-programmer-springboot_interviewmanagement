@@ -7,25 +7,25 @@ import com.revature.interviewmanagement.model.EmployeeDto;
 
 public interface EmployeeService {
 
-	public String deleteEmployee(Long id);
+	 String deleteEmployee(Long id);
 
-	public String updateEmployee(Long id, EmployeeDto employee);
+	 String updateEmployee(EmployeeDto employeeDto);
 
-	public String addEmployee(Long id,EmployeeDto employee);
+	 String addEmployee(EmployeeDto employeeDto);
 
-	public List<Employee> getEmployeeByEmployeeId(Long empId);
+	 Employee getEmployeeByEmployeeId(EmployeeDto employeeDto);
 
-	public List<Employee> getEmployeeByDesignationId(Long destId);
+	 Employee getEmployeeByDesignationId(EmployeeDto employeeDto);
 
-	public Employee getEmployeeByPhoneNumber(String phoneNumber);
+	 Employee getEmployeeByPhoneNumber(EmployeeDto employeeDto);
 
-	public Employee getEmployeeByEmailId(String email);
+	 Employee getEmployeeByEmailId(EmployeeDto employeeDto);
 
-	public Employee getEmployeeById(Long id);
+	 Employee getEmployeeById(Long id);
 
-	public List<Employee> getAllEmployees();
+	 List<Employee> getAllEmployee();
 
-	public List<Employee> getEmployeeByName(String name);
+	 List<Employee> getEmployeeByName(String name);
 	
 
 }

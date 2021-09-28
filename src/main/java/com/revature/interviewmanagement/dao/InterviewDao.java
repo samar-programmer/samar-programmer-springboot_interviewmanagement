@@ -8,42 +8,42 @@ import com.revature.interviewmanagement.model.InterviewDto;
 
 public interface InterviewDao {
 
-	public List<Interview> getAllInterview();
+	 List<Interview> getAllInterview();
 
-	public Interview getInterviewById(Long id);
+	 Interview getInterviewById(Long id);
 
-	public List<Interview> getInterviewByScheduledDate(LocalDate scheduledDate);
+	 List<Interview> getInterviewByScheduledDate(LocalDate scheduledDate);
 
-	public List<Interview> getInterviewByCandidateId(Long canId);
+	 List<Interview> getInterviewByCandidateId(Long canId);
 
-	public List<Interview> getInterviewByCandidateName(String name);
+	 List<Interview> getInterviewByCandidateName(String name);
 
-	public List<Interview> getInterviewByCandidatePhone(String phone);
+	 List<Interview> getInterviewByCandidatePhone(String phone);
 
-	public List<Interview> getInterviewByCandidateEmail(String email);
+	 List<Interview> getInterviewByCandidateEmailId(String email);
 
-	public List<Interview> getInterviewByCandidateRole(String role);
+	 List<Interview> getInterviewByCandidateRole(String role);
 
-	public List<Interview> getInterviewByCandidateExperience(Integer exp);
+	 List<Interview> getInterviewByCandidateExperience(Integer exp);
 	
-	public List<Interview> getInterviewByEmpId(Long empId);
+	 List<Interview> getInterviewByEmpId(Long empId);
 
-	public List<Interview> getInterviewByEmployeeId(Long employeeId);
+	 List<Interview> getInterviewByEmployeeId(Long employeeId);
 
-	public List<Interview> getInterviewByDesignationId(Long destId);
+	 List<Interview> getInterviewByDesignationId(Long destId);
 
-	public List<Interview> getInterviewByEmployeeName(String name);
+	 List<Interview> getInterviewByEmployeeName(String name);
 
-	public List<Interview> getInterviewByEmployeePhone(String phone);
+	 List<Interview> getInterviewByEmployeePhone(String phone);
 
-	public List<Interview> getInterviewByEmployeeEmail(String email);
+	 List<Interview> getInterviewByEmployeeEmailId(String email);
 
-	public String deleteInterview(Long id);
+	 String deleteInterview(Long id);
 
-	public String updateInterview(Long id, InterviewDto interview);
+	 String updateInterview(InterviewDto interview);
 
-	public String addInterview(InterviewDto interview,Long canId,Long empId);
+	 String addInterview(InterviewDto interview,Long canId,Long empId);
 
-	public List<Interview> getInterviewByType(String type);
+	 List<Interview> getInterviewByType(String type);
 
 }

@@ -9,8 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="result")
 public class Result {
 	
 	@Id
@@ -33,7 +35,7 @@ public class Result {
 	private String updatedBy;
 	
 	@OneToOne
-	@JoinColumn(nullable=false)
+	@JoinColumn(name="interview_id")
 	private Interview interview;
 
 	public Long getId() {
@@ -93,7 +95,4 @@ public class Result {
 		this.updatedBy = updatedBy;
 	}
 	
-	
-	
-
 }

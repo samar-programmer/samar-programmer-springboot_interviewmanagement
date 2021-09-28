@@ -24,7 +24,7 @@ public class EmployeeMapper {
 		employeeEntity.setUpdatedOn(employeeDto.getUpdatedOn());
 		employeeEntity.setUpdatedBy(employeeDto.getUpdatedBy());
 		employeeEntity.setInterview(employeeDto.getInterview());
-		employeeEntity.setEmployeeCredential(employeeDto.getEmployeeCredential());
+		
 		
 		return employeeEntity;
 	}

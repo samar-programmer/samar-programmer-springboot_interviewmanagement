@@ -1,16 +1,15 @@
 package com.revature.interviewmanagement.rest;
 
-import java.util.List;
+import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.GET_OPERATION;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,82 +18,178 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.revature.interviewmanagement.entity.Result;
-import com.revature.interviewmanagement.exception.DuplicateIdException;
-import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.model.ResultDto;
+import com.revature.interviewmanagement.response.HttpResponseStatus;
 import com.revature.interviewmanagement.service.ResultService;
 
+/**
+ * Result controller handles all the incoming requests for result operations
+ * @author RagulR
+ *
+ */
 @RestController
-@RequestMapping("/api")
-@CrossOrigin("http://localhost:4200")
+@RequestMapping("/result")
+@CrossOrigin("*")
 public class ResultController {
 
-	private static final Logger logger=LogManager.getLogger(ResultController.class.getName());
+	private static final Logger logger=LogManager.getLogger(ResultController.class);
 	
 	@Autowired
 	private ResultService resultService;
 	
-	@GetMapping("/result")
-	public ResponseEntity<List<Result>> getAllResult(){
-		logger.debug("Entering getAllResult method");
-		return	new ResponseEntity<>(resultService.getAllResult(), new HttpHeaders(), HttpStatus.OK);
+	/**
+	 *  gives all the results details. If no data found, returns empty list
+	 * @return details of all results currently in the database as a list of Result object
+	 */
+	@GetMapping
+	public ResponseEntity<HttpResponseStatus> getAllResult(){
+		logger.info("Entering getAllResult method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),GET_OPERATION,resultService.getAllResult()),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
-	@GetMapping("/result/{id}")
-	public ResponseEntity<Result> getResultById(@PathVariable Long id){
-		logger.debug("Entering getResultById method");
-		return	new ResponseEntity<>(resultService.getResultById(id), new HttpHeaders(), HttpStatus.OK);
+	/**
+	 * searches the id provided and if exists, gives a particular result details corresponds to the id provided
+	 * otherwise returns null
+	 * @param id id of the result
+	 * @return result details as a result object
+	 */
+	@GetMapping("/{id}")
+	public ResponseEntity<HttpResponseStatus> getResultById(@PathVariable Long id){
+		logger.info("Entering getResultById method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),GET_OPERATION,resultService.getResultById(id)),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
-	@GetMapping("/result/interview/{id}")
-	public ResponseEntity<List<Result>> getResultByInterviewId(@PathVariable("id") Long interviewId){
-		logger.debug("Entering getResultByInterviewId method");
-		return	new ResponseEntity<>(resultService.getResultByInterviewId(interviewId), new HttpHeaders(), HttpStatus.OK);
+	/**
+	 * searches the interview id associated with result and if exists, gives a particular result details 
+	 * corresponds to the interview id provided otherwise returns null
+	 * @param interviewId interview id associated with the result
+	 * @return result details as a result object
+	 */
+	@GetMapping("/interview/{interviewId}")
+	public ResponseEntity<HttpResponseStatus> getResultByInterviewId(@PathVariable Long interviewId){
+		logger.info("Entering getResultByInterviewId method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),GET_OPERATION,resultService.getResultByInterviewId(interviewId)),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
-	@GetMapping("/result/employee/{id}")
-	public ResponseEntity<List<Result>> getResultByEmployeeId(@PathVariable("id") Long empId){
-		logger.debug("Entering getResultByEmployeeId method");
-		return	new ResponseEntity<>(resultService.getResultByEmployeeId(empId), new HttpHeaders(), HttpStatus.OK);
+	/**
+	 * searches the auto-generated id of employee associated with result and if exists, gives a particular result details 
+	 * corresponds to the auto-generated id of employee provided otherwise returns null
+	 * @param empId auto-generated id of employee which is associated with result
+	 * @return result details as a list of result object
+	 */
+	@GetMapping("/employee/{id}")
+	public ResponseEntity<HttpResponseStatus> getResultByEmployeeId(@PathVariable("id") Long empId){
+		logger.info("Entering getResultByEmployeeId method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),GET_OPERATION,resultService.getResultByEmployeeId(empId)),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
-	@GetMapping("/result/candidate/{id}")
-	public ResponseEntity<List<Result>> getResultByCandidateId(@PathVariable("id") Long canId){
-		logger.debug("Entering getResultByCandidateId method");
-		return	new ResponseEntity<>(resultService.getResultByCandidateId(canId), new HttpHeaders(), HttpStatus.OK);
+	/**
+	 * searches the id of candidate associated with result and if exists, gives a particular result details 
+	 * corresponds to the id of candidate provided otherwise returns null
+	 * @param canId candidate id associated with result
+	 * @return result details as a list of result object
+	 */
+	@GetMapping("/candidate/{id}")
+	public ResponseEntity<HttpResponseStatus> getResultByCandidateId(@PathVariable("id") Long canId){
+		logger.info("Entering getResultByCandidateId method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),GET_OPERATION,resultService.getResultByCandidateId(canId)),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
-	@PostMapping("/result/{interview-id}")
-	public ResponseEntity<String> addResult(@PathVariable("interview-id") Long interviewId,@RequestBody ResultDto resultDto){
-		logger.debug("Entering addResult method");
-		return	new ResponseEntity<>(resultService.addResult(interviewId,resultDto), new HttpHeaders(), HttpStatus.CREATED);
+	/**
+	 * takes interview id and result details as arguments, adds result to the interview, saves in the database and returns the status of 
+	 * the operation 
+	 * @param interviewId id of the interview to which result needs to be added
+	 * @param resultDto result details to be added
+	 * @return status of insert operation
+	 */
+	@PostMapping("/{interviewId}")
+	public ResponseEntity<HttpResponseStatus> addResult(@PathVariable Long interviewId,@RequestBody ResultDto resultDto){
+		logger.info("Entering addResult method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.CREATED.value(),resultService.addResult(interviewId,resultDto)),HttpStatus.CREATED);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
-	@PutMapping("/result/{id}")
-	public ResponseEntity<String> updateResult(@PathVariable Long id,@RequestBody ResultDto resultDto){
-		logger.debug("Entering updateResult method");
-		return	new ResponseEntity<>(resultService.updateResult(id,resultDto), new HttpHeaders(), HttpStatus.OK);
+	/**
+	 * takes the result details to be updated, updates the details in the database if already exists and returns the status of 
+	 * the operation otherwise throws an exception
+	 * @param resultDto result details to be updated
+	 * @return status of the create operation
+	 */
+	@PutMapping
+	public ResponseEntity<HttpResponseStatus> updateResult(@RequestBody ResultDto resultDto){
+		logger.info("Entering updateResult method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),resultService.updateResult(resultDto)),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+		
 	}
 	
-	@DeleteMapping("/result/{id}")
-	public ResponseEntity<String> deleteResult(@PathVariable Long id){
-		logger.debug("Entering deleteResult method");
-		return	new ResponseEntity<>(resultService.deleteResult(id), new HttpHeaders(), HttpStatus.OK);
+	/**
+	 * takes the id of result details to be deleted, deletes the details in the database if already exists and returns the status of 
+	 * the operation otherwise throws an exception
+	 * @param id id of result details to be deleted
+	 * @return status of result operation
+	 */
+	@DeleteMapping("/{id}")
+	public ResponseEntity<HttpResponseStatus> deleteResult(@PathVariable Long id){
+		logger.info("Entering deleteResult method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),resultService.deleteResult(id)),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+		
 	}
 	
-
- 
- @ExceptionHandler(IdNotFoundException.class)
-	public ResponseEntity<String> userNotFound(IdNotFoundException e) {
-	 	logger.error("Id not found exception for {}",e.getMessage());
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	/**
+	 * takes candidate mail id and result details as a result object and sends the mail to the candidate
+	 * and returns the status of the operation
+	 * @param resultDto result details to be sent
+	 * @return status of the operation
+	 */
+	/*Result mail end points*/
+	@PostMapping("/email")
+	public ResponseEntity<HttpResponseStatus> sendResultMail(@RequestBody ResultDto resultDto){
+		logger.info("Entering sendResultMail method");
+		try {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),resultService.sendResultMail(resultDto)),HttpStatus.OK);
+		} catch(BussinessLogicException e) {
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+		
 	}
- 
- @ExceptionHandler(DuplicateIdException.class)
-	public ResponseEntity<String> duplicateResultFound(DuplicateIdException e) {
-	 	logger.error("Duplicate Id exception for {}",e.getMessage());
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-	}
+	
 	
 }

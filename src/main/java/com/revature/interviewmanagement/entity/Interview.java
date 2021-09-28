@@ -12,10 +12,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name="interview")
 public class Interview {
 	
 	@Id
@@ -24,6 +26,9 @@ public class Interview {
 	
 	@Column(name="interview_type",nullable=false)
 	private String interviewType;
+	
+	@Column(nullable=false)
+	private String status;
 	
 	@Column(nullable=false,name="call_scheduled_date")
 	private LocalDate callScheduledDate;
@@ -41,15 +46,15 @@ public class Interview {
 	private String updatedBy;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy="interview",cascade=CascadeType.ALL)
+	@OneToOne(mappedBy="interview",cascade={CascadeType.MERGE, CascadeType.PERSIST})
 	private Result result;
 	
 	@OneToOne
-	@JoinColumn(nullable=false)
+	@JoinColumn(name="candidate_id")
 	private Candidate candidate;
 	
 	@OneToOne
-	@JoinColumn(nullable=false)
+	@JoinColumn(name="employee_id")
 	private Employee employee;
 	
 	public Long getId() {
@@ -114,6 +119,12 @@ public class Interview {
 	}
 	public void setResult(Result result) {
 		this.result = result;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	

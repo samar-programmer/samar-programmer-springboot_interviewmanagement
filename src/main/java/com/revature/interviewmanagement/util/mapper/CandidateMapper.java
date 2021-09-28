@@ -24,7 +24,7 @@ public class CandidateMapper {
 		candidateEntity.setUpdatedOn(candidateDto.getUpdatedOn());
 		candidateEntity.setUpdatedBy(candidateDto.getUpdatedBy());
 		candidateEntity.setInterview(candidateDto.getInterview());
-		candidateEntity.setCandidateCredential(candidateDto.getCandidateCredential());
+		
 		
 		return candidateEntity;
 	}

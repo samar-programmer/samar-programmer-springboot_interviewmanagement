@@ -16,6 +16,7 @@ public class InterviewMapper {
 		interviewEntity.setCallScheduledDate(interviewDto.getCallScheduledDate());
 		interviewEntity.setCallScheduledTime(interviewDto.getCallScheduledTime());
 		interviewEntity.setInterviewType(interviewDto.getInterviewType());
+		interviewEntity.setStatus(interviewDto.getStatus());
 		interviewEntity.setCandidate(interviewDto.getCandidate());
 		interviewEntity.setEmployee(interviewDto.getEmployee());
 		interviewEntity.setResult(interviewDto.getResult());

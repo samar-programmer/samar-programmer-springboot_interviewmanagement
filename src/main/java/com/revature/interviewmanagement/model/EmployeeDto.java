@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Interview;
-import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
 
 
 public class EmployeeDto {
@@ -20,7 +19,7 @@ public class EmployeeDto {
 	private LocalDateTime updatedOn;
 	private String updatedBy;
 	private List<Interview> interview;
-	private EmployeeCredential employeeCredential;
+	
 	
 	public Long getId() {
 		return id;
@@ -88,12 +87,7 @@ public class EmployeeDto {
 	public void setInterview(List<Interview> interview) {
 		this.interview = interview;
 	}
-	public EmployeeCredential getEmployeeCredential() {
-		return employeeCredential;
-	}
-	public void setEmployeeCredential(EmployeeCredential employeeCredential) {
-		this.employeeCredential = employeeCredential;
-	}
+
 
 	
 	

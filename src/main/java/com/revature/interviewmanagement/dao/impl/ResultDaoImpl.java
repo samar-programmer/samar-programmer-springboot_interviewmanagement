@@ -1,5 +1,7 @@
 package com.revature.interviewmanagement.dao.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,15 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.entity.Result;
-import com.revature.interviewmanagement.exception.DuplicateIdException;
-import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.model.ResultDto;
 import com.revature.interviewmanagement.util.mapper.ResultMapper;
+import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.*;
 
 @Repository
 public class ResultDaoImpl implements com.revature.interviewmanagement.dao.ResultDao {
 	
 	private static final Logger logger=LogManager.getLogger(ResultDaoImpl.class.getName());
+	private static final LocalDateTime today=LocalDateTime.now(ZoneOffset.UTC);
 	
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -34,137 +37,123 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 	
 	@Override
 	public List<Result> getAllResult() {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entered getAllResult method");
-		@SuppressWarnings("unchecked")
-		List<Result> resultList=session.createQuery(GET_ALLRESULT).getResultList();
-		return resultList;
+		logger.trace("entering getAllResult method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(GET_ALLRESULT,Result.class).getResultList();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 	}
 
 	@Override
 	public Result getResultById(Long id) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entered getResultById method");
-		return session.get(Result.class,id);
+		logger.trace("entering getResultById method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.get(Result.class,id);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 	}
 
 	
 	@Override
-	public List<Result> getResultByInterviewId(Long interviewId) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entered getResultByInterviewId method");
-		@SuppressWarnings("unchecked")
-		List<Result> result=session.createQuery(GET_RESULTBYINTERVIEWID).setParameter(1,interviewId).getResultList();
-		return result;
+	public Result getResultByInterviewId(Long interviewId) {
+		logger.trace("entering getResultByInterviewId method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(GET_RESULTBYINTERVIEWID,Result.class).setParameter(1,interviewId).getSingleResult();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 		
 	}
 
 	@Override
 	public List<Result> getResultByEmployeeId(Long empId) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entered getResultByEmployeeId method");
-		@SuppressWarnings("unchecked")
-		List<Result> resultList=session.createQuery(GET_RESULTBYEMPID).setParameter(1,empId).getResultList();
-		return resultList;
+		logger.trace("entering getResultByEmployeeId method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(GET_RESULTBYEMPID,Result.class).setParameter(1,empId).getResultList();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 	}
 
 	@Override
 	public List<Result> getResultByCandidateId(Long canId) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entered getResultByCandidateId method");
-		@SuppressWarnings("unchecked")
-		List<Result> resultList=session.createQuery(GET_RESULTBYCANDIDATEID).setParameter(1,canId).getResultList();
-		return resultList;
+		logger.trace("entering getResultByCandidateId method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(GET_RESULTBYCANDIDATEID,Result.class).setParameter(1,canId).getResultList();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 	}
 
 	@Transactional
 	@Override
 	public String addResult(Long interviewId, ResultDto resultDto) {
-		Session session=sessionFactory.getCurrentSession();
-		@SuppressWarnings("unchecked")
-		List<Result> interviewCheck=session.createQuery(GET_RESULTBYINTERVIEWID).setParameter(1,interviewId).getResultList();
-		
-		if(interviewCheck!=null && !interviewCheck.isEmpty()) {
-			throw new DuplicateIdException("Can't add Result for this interview..This interview already has a result");
-		}
-		
-		Long id=null;
+		logger.trace("entering addResult method");
 		try {
-				Interview interview=session.load(Interview.class,interviewId);
-				Result result=ResultMapper.resultEntityMapper(resultDto);
-				result.setInterview(interview);
-				id=(Long)session.save(result);
-				logger.info("result added with id: {}",id);
+			Session session=sessionFactory.getCurrentSession();
+			Interview interview=session.load(Interview.class,interviewId);
+			Result result=ResultMapper.resultEntityMapper(resultDto);
+			interview.setStatus("Finished");
+			result.setInterview(interview);
+			result.setAddedOn(today);
+			session.save(result);
+			logger.info("result added for the given interview id {}",interviewId);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_ADDING);
+		}
 				
-			} 
-		catch (HibernateException e1) {
-			logger.error("unable to add result, message: {}",e1.getMessage(),e1);
-				throw new IdNotFoundException("Entered Interview id doesn't exist");
-			}
-		
-		return (id!=null)?"Result details inserted with id: "+id:"Couldn't create Result...Error occured while inserting";
+		return 	RESULT_CREATE;
 	
 	}
 
 	@Transactional
 	@Override
-	public String updateResult(Long id, ResultDto resultDto) {
-		Session session=sessionFactory.getCurrentSession();
-		boolean check=false;
-		String output=null;
-		Result updateObj=null;
+	public String updateResult(ResultDto resultDto) {
+		logger.trace("entering updateResult method");
 		try {
-			updateObj=session.load(Result.class,id);
-			if(updateObj.getStatus()!=null) {  //necessary line to continue the flow 
-				check=true;
-			}
-		} 
-		catch (org.hibernate.ObjectNotFoundException e1) {
-			logger.error("unable to update result, message: {}",e1.getMessage(),e1);
-			throw new IdNotFoundException("Updation is failed...entered id doesn't exist");
+			Session session=sessionFactory.getCurrentSession();
+			Long id=resultDto.getId();
+			Result result=ResultMapper.resultEntityMapper(resultDto);
+			result.setUpdatedOn(today);
+			session.merge(result);
+			session.flush();
+			logger.info("result updated with id: {}",id);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_UPDATING);
 		}
-		
-		
-			
-		if(check) {
-					Result result=ResultMapper.resultEntityMapper(resultDto);
-					result.setId(id);
-					session.merge(result);
-					session.flush();
-					logger.info("result updated with id: {}",id);
-					output="Updation is successful for id: "+id;
-			} 
-		return output;
+		return RESULT_UPDATE;
 		
 	}
 
 	@Transactional
 	@Override
 	public String deleteResult(Long id) {
-		Session session=sessionFactory.getCurrentSession();
-		String result=null;
-		boolean check=false;
-		Result deleteObject=null;
+		logger.trace("entering deleteResult method");
 		try {
-			deleteObject=session.load(Result.class, id);
-			if(deleteObject.getStatus()!=null) { //necessary line to continue the flow 
-				check=true;
-			}
-		}catch(org.hibernate.ObjectNotFoundException e) {
-			logger.error("unable to delete result, message: {}",e.getMessage(),e);
-			throw new IdNotFoundException("Deletion is failed...Entered Id doesn't exists");
-		}
-		 
-		if(check) {
-			session.clear();//without this line caused org.hibernate.ObjectDeletedException: deleted object would be re-saved by cascade (remove deleted object from associations)
-			session.delete(deleteObject);
+			Session session=sessionFactory.getCurrentSession();
+			session.delete(session.load(Result.class, id));
 			session.flush();
-			
 			logger.info("result deleted with id: {}",id);
-			result="Result deletion is successful for id: "+id;
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_DELETING);
 		}
-		
-		return result;
+			
+		return RESULT_DELETE;
 		
 	}
 

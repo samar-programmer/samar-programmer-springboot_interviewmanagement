@@ -1,6 +1,8 @@
 package com.revature.interviewmanagement.dao.impl;
 
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,23 +11,22 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.revature.interviewmanagement.dao.EmployeeDao;
 import com.revature.interviewmanagement.entity.Employee;
-import com.revature.interviewmanagement.entity.credentials.EmployeeCredential;
-import com.revature.interviewmanagement.exception.DuplicateIdException;
-import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.util.mapper.EmployeeMapper;
+import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.*;
 
 @Repository
 public class EmployeeDaoImpl implements EmployeeDao {
 
 	private static final Logger logger=LogManager.getLogger(EmployeeDaoImpl.class.getName());
+	private static final LocalDateTime today=LocalDateTime.now(ZoneOffset.UTC);
 	
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -38,29 +39,53 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	private static final String CHECK_EMPLOYEE_EMPLOYEEBYNAME="SELECT e FROM Employee e WHERE CONCAT(e.firstName,' ', e.lastName) LIKE :name";
 	
 	
-	
-	private List<Boolean> checkState(Session session, EmployeeDto employee,int statusCode, long id) {
-		Query<?> emailQuery = session.createQuery(CHECK_EMPLOYEE_EMAILID).setParameter("email",employee.getEmailId());
-		Query<?> phoneQuery = session.createQuery(CHECK_EMPLOYEE_PHONENUMBER).setParameter("phone",employee.getPhoneNumber());
-		Query<?> employeeIdQuery = session.createQuery(CHECK_EMPLOYEE_EMPLOYEEID).setParameter("empId",employee.getEmployeeId());
-		Query<?> designationIdQuery = session.createQuery(CHECK_EMPLOYEE_DESIGNATIONID).setParameter("destId",employee.getDesignationId());
+	/**
+	 * checkState method will check whether email id,phone number,employee id, designation id of an employee 
+	 * already present in another record before we add it.
+	 * The goal of the method is to check uniqueness of the data.
+	 * Before adding, we need to ensure that provided email id, phone number, employee id and designation id should not
+	 * already present in existing record.
+	 * For updating, we need to ensure that employee email id, phone number, employee id and designation id should already 
+	 * present in current employee record and values to be updated should not present in any of the record, otherwise
+	 * it will cause uniqueness constraint violation exception. 
+	 * If status is given as 0, it will go into create mode, 1 for update mode,
+	 * id is also one of the parameter is used for updating, id is not necessary while adding. Session object is passed
+	 * to utilize current hibernate session for querying into the database.
+	 * @param session current hibernate session used to query the database
+	 * @param employee employee object contains employee details such as email id, phone number, employee id and designation id
+	 * @param statusCode 0 for insert operation, 1 for update operation, which separates values to be checked
+	 * @param id id of employee for update operation, -1 for create operation
+	 * @return list of boolean represent state of email id, phone number, employee id and designation id respectively
+	 */
+	public List<Boolean> checkState(EmployeeDto employee,Integer statusCode, Long id) {
+		Session session=sessionFactory.getCurrentSession();
+		List<Employee> emailQueryList = session.createQuery(CHECK_EMPLOYEE_EMAILID,Employee.class).setParameter("email",employee.getEmailId()).getResultList();
+		List<Employee> phoneQueryList = session.createQuery(CHECK_EMPLOYEE_PHONENUMBER,Employee.class).setParameter("phone",employee.getPhoneNumber()).getResultList();
+		List<Employee> employeeIdQueryList = session.createQuery(CHECK_EMPLOYEE_EMPLOYEEID,Employee.class).setParameter("empId",employee.getEmployeeId()).getResultList();
+		List<Employee> designationIdQueryList = session.createQuery(CHECK_EMPLOYEE_DESIGNATIONID,Employee.class).setParameter("destId",employee.getDesignationId()).getResultList();
 		
 		List<Boolean> result=new ArrayList<>(4);
 		
-		//status code 0 for insert and 1 for update
+		//status code - 0 for insert and 1 for update
+		//
+		/*For case 0: If any index of result array is true that means
+		 *the corresponding email id/phone/other id doesn't exists in the database
+		 *For case 1:If any index of result array is true that means, 
+		 *either entered email id/phone/other id doesn't exists in the database or exists within the employee to be updated 
+		 */
 		switch(statusCode) {
 			case 0:{
-				result.add(emailQuery.list().isEmpty());
-				result.add(phoneQuery.list().isEmpty());
-				result.add(employeeIdQuery.list().isEmpty());
-				result.add(designationIdQuery.list().isEmpty());
+				result.add(emailQueryList.isEmpty());
+				result.add(phoneQueryList.isEmpty());
+				result.add(employeeIdQueryList.isEmpty());
+				result.add(designationIdQueryList.isEmpty());
 				break;
 			}
 			case 1:{
-				result.add(emailQuery.list().isEmpty() || emailQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
-				result.add(phoneQuery.list().isEmpty() || phoneQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
-				result.add(employeeIdQuery.list().isEmpty() || employeeIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
-				result.add(designationIdQuery.list().isEmpty() || designationIdQuery.list().stream().map(p->p).anyMatch(p->((Employee) p).getId()==id));
+				result.add(emailQueryList.isEmpty() || emailQueryList.stream().map(p->p).anyMatch(p-> p.getId().equals(id)));
+				result.add(phoneQueryList.isEmpty() || phoneQueryList.stream().map(p->p).anyMatch(p-> p.getId().equals(id)));
+				result.add(employeeIdQueryList.isEmpty() || employeeIdQueryList.stream().map(p->p).anyMatch(p-> p.getId().equals(id)));
+				result.add(designationIdQueryList.isEmpty() || designationIdQueryList.stream().map(p->p).anyMatch(p-> p.getId().equals(id)));
 				break;
 			}
 			default:{
@@ -72,181 +97,143 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	}
 	
 	@Override
-	public List<Employee> getAllEmployees() {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getAllEmployees method");
-		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_ALLEMPLOYEE).getResultList();
-		return (resultList.isEmpty()?null:resultList);
+	public List<Employee> getAllEmployee() {
+		logger.trace("Entering getAllEmployee method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(CHECK_EMPLOYEE_ALLEMPLOYEE,Employee.class).getResultList();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
 		}
+		
+	}
 
 	@Override
 	public Employee getEmployeeById(Long id) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getEmployeeById method");
-		return session.get(Employee.class, id);
+		logger.trace("Entering getEmployeeById method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.get(Employee.class, id);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 	}
 
 	@Override
 	public Employee getEmployeeByEmailId(String email) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getEmployeeByEmailId method");
-		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMAILID).setParameter("email",email).getResultList();
-		return (resultList.isEmpty()?null:resultList.get(0));
+		logger.trace("Entering getEmployeeByEmailId method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(CHECK_EMPLOYEE_EMAILID,Employee.class).setParameter("email",email).getSingleResult();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
+		
 	}
 
 	@Override
 	public Employee getEmployeeByPhoneNumber(String phoneNumber) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getEmployeeByPhoneNumber method");
-		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_PHONENUMBER).setParameter("phone",phoneNumber).getResultList();
-		return (resultList.isEmpty()?null:resultList.get(0));
+		logger.trace("Entering getEmployeeByPhoneNumber method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(CHECK_EMPLOYEE_PHONENUMBER,Employee.class).setParameter("phone",phoneNumber).getSingleResult();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 	}
 
 	@Override
 	public List<Employee> getEmployeeByName(String name) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getEmployeeByFirstName method");
-		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEBYNAME).setParameter("name","%"+name+"%").getResultList();
-		return (resultList.isEmpty()?null:resultList);
+		logger.trace("Entering getEmployeeByName method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(CHECK_EMPLOYEE_EMPLOYEEBYNAME,Employee.class).setParameter("name","%"+name+"%").getResultList();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
+		
 	}
 	
 	
 
 	@Override
-	public List<Employee> getEmployeeByDesignationId(Long destId) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getEmployeeByDesignationId method");
-		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_DESIGNATIONID).setParameter("destId",destId).getResultList();
-		return (resultList.isEmpty()?null:resultList);
+	public Employee getEmployeeByDesignationId(Long destId) {
+		logger.trace("Entering getEmployeeByDesignationId method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(CHECK_EMPLOYEE_DESIGNATIONID,Employee.class).setParameter("destId",destId).getSingleResult();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 	}
 
 	@Override
-	public List<Employee> getEmployeeByEmployeeId(Long empId) {
-		Session session=sessionFactory.getCurrentSession();
-		logger.info("Entering getEmployeeByEmployeeId method");
-		@SuppressWarnings("unchecked")
-		List<Employee> resultList=session.createQuery(CHECK_EMPLOYEE_EMPLOYEEID).setParameter("empId",empId).getResultList();
-		return (resultList.isEmpty()?null:resultList);
+	public Employee getEmployeeByEmployeeId(Long empId) {
+		logger.trace("Entering getEmployeeByEmployeeId method");
+		try {
+			Session session=sessionFactory.getCurrentSession();
+			return session.createQuery(CHECK_EMPLOYEE_EMPLOYEEID,Employee.class).setParameter("empId",empId).getSingleResult();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_READING);
+		}
 		
 	}
 
 	@Transactional
 	@Override
-	public String addEmployee(Long credentialId,EmployeeDto employeeDto) {
-		Session session=sessionFactory.getCurrentSession();
-		Long id=null;
+	public String addEmployee(EmployeeDto employeeDto) {
+		logger.trace("Entering addEmployee method");
+		
 		try {
-			List<Boolean> stateArr=checkState(session,employeeDto,0,-1);
-			
-			boolean addState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
-			
-				if(!addState) {
-					EmployeeCredential employeeCredential=session.load(EmployeeCredential.class,credentialId);//assuming that employee credentials always exists
-					Employee employee=EmployeeMapper.employeeEntityMapper(employeeDto);
-					employee.setEmployeeCredential(employeeCredential);
-					id=(Long)session.save(employee);
-					logger.info("Employee added with id: {}",id);
-				}
-				else if(Boolean.FALSE.equals(stateArr.get(0))){
-					throw new DuplicateIdException("Entered email id already exists");
-				}
-				else if(Boolean.FALSE.equals(stateArr.get(1))){
-					throw new DuplicateIdException("Entered phone number already exists");
-				}
-				else if(Boolean.FALSE.equals(stateArr.get(2))){
-					throw new DuplicateIdException("Entered Employee Id already exists");
-				}
-				else {
-					throw new DuplicateIdException("Entered Designation Id already exists");
-				}
-			
-			
-		} catch (HibernateException e1) {
-			
-			logger.warn("unable to add employee, message: {}",e1.getMessage(),e1);
+			Session session=sessionFactory.getCurrentSession();
+			Employee employee=EmployeeMapper.employeeEntityMapper(employeeDto);
+			employee.setAddedOn(today);
+			session.save(employee);
+			logger.info("Employee details inserted");
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_ADDING);
 		}
 		
-		return (id!=null)?"Employee details inserted with id: "+id:"Couldn't create employee...Error occured while inserting";
+		return EMPLOYEE_CREATE;
 	
 	}
 
 	@Transactional
 	@Override
-	public String updateEmployee(Long id, EmployeeDto employeeDto) {
-		Session session=sessionFactory.getCurrentSession();
-		boolean check=false;
-		String result=null;
-		Employee updateObj=null;
+	public String updateEmployee(EmployeeDto employeeDto) {
+		logger.trace("Entering updateEmployee method");
 		try {
-			updateObj=session.load(Employee.class,id);
-			if(!updateObj.getEmailId().isEmpty()) {  //necessary line to continue the flow 
-				check=true;
-			}
-		} 
-		catch (org.hibernate.ObjectNotFoundException e1) {
-			logger.warn("unable to update employee, message: {}",e1.getMessage(),e1);
-			throw new IdNotFoundException("Updation is failed...entered id doesn't exist");
+			Session session=sessionFactory.getCurrentSession();
+			final Long id=employeeDto.getId();
+			Employee employee=EmployeeMapper.employeeEntityMapper(employeeDto);
+			employee.setUpdatedOn(today);
+			session.merge(employee);
+			session.flush();
+			logger.info("Employee updated with id: {}",id);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_IN_UPDATING);
 		}
-			
-		if(check) {
-				List<Boolean> stateArr=checkState(session,employeeDto,1,id);
-				boolean updateState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
-			
-				if(!updateState) {
-					Employee employee=EmployeeMapper.employeeEntityMapper(employeeDto);
-					employee.setId(id);
-					session.merge(employee);
-					session.flush();
-					logger.info("Employee updated with id: {}",id);
-					result="updation is successful for id: "+id;
-				}
-				
-				else if(Boolean.FALSE.equals(stateArr.get(0))){
-					throw new DuplicateIdException("Updation is failed...Entered email id already exists in another record");
-				}
-				else if(Boolean.FALSE.equals(stateArr.get(1))){
-					throw new DuplicateIdException("Updation is failed...Entered phone number already exists in another record");
-				}
-				else if(Boolean.FALSE.equals(stateArr.get(2))){
-					throw new DuplicateIdException("Updation is failed...Entered Employee Id already exists in another record");
-				}
-				else {
-					throw new DuplicateIdException("Updation is failed...Entered Designation Id already exists in another record");
-				}
-			} 
-		return result;
+		return EMPLOYEE_UPDATE;
 		}
 
 	@Transactional
 	@Override
 	public String deleteEmployee(Long id) {
+		logger.trace("Entering deleteEmployee method");
 		Session session=sessionFactory.getCurrentSession();
-		String result=null;
-		boolean check=false;
-		Employee deleteObject=null;
-		try {
-			deleteObject=session.load(Employee.class, id);
-			if(!deleteObject.getEmailId().isEmpty()) { //necessary line to continue the flow 
-				check=true;
-			}
-		}catch(org.hibernate.ObjectNotFoundException e) {
-			logger.warn("unable to delete employee, message: {}",e.getMessage(),e);
-			throw new IdNotFoundException("Deletion is failed...Entered Id doesn't exists");
-		}
-		 
-		if(check) {
-			session.delete(deleteObject);
-			session.flush();
-			logger.info("Employee deleted with id: {}",id);
-			result="Employee deletion is successful for id: "+id;
-		}
-		
-		return result;
+		session.delete(session.load(Employee.class, id));
+		session.flush();
+		logger.info("Employee deleted with id: {}",id);
+		return EMPLOYEE_DELETE;
 		
 	}
 	

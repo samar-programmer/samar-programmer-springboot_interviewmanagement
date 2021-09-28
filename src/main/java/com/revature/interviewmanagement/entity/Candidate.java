@@ -9,36 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.revature.interviewmanagement.entity.credentials.CandidateCredential;
 
 
-    @NamedNativeQuery(
-    name = "callCandidateByEmailProcedure",
-    query = "CALL getCandidateByEmail(:email)",
-    resultClass = Candidate.class
-    )
-    @NamedNativeQuery(
-    name = "callCandidateByPhoneProcedure",
-    query = "CALL getCandidateByPhone(:phone)",
-    resultClass = Candidate.class
-    )
-    @NamedNativeQuery(
-    	    name = "callCandidateByEmailUpdateProcedure",
-    	    query = "CALL getCandidateUpdateByEmail(:email,:id)",
-    	    resultClass = Candidate.class
-    	    )
-    @NamedNativeQuery(
-    	    name = "callCandidateByPhoneUpdateProcedure",
-    	    query = "CALL getCandidateUpdateByPhone(:phone,:id)",
-    	    resultClass = Candidate.class
-    	    )
-@Entity  
+@Entity 
+@Table(name="candidate")
 public class Candidate {
 	
 	@Id
@@ -53,10 +31,10 @@ public class Candidate {
 	private String lastName;
 	
 	
-	@Column(nullable=false,unique=true,name="email_id")
+	@Column(nullable=false,name="email_id")
 	private String emailId;
 	
-	@Column(nullable=false,unique=true,name="phone_number")
+	@Column(nullable=false,name="phone_number")
 	private String phoneNumber;
 	
 	@Column(nullable=false,name="job_role")
@@ -78,13 +56,9 @@ public class Candidate {
 	private String updatedBy;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy="candidate",cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="candidate",cascade={CascadeType.MERGE, CascadeType.PERSIST})
 	private List<Interview> interview;
 	
-	
-	@OneToOne
-	@JoinColumn(name="credential_id",nullable=false)
-	private CandidateCredential candidateCredential;
 	
 	public Long getId() {
 		return id;
@@ -181,15 +155,6 @@ public class Candidate {
 	public void setInterview(List<Interview> interview) {
 		this.interview = interview;
 	}
-
-	public CandidateCredential getCandidateCredential() {
-		return candidateCredential;
-	}
-
-	public void setCandidateCredential(CandidateCredential candidateCredential) {
-		this.candidateCredential = candidateCredential;
-	}
-
 
 	
 }

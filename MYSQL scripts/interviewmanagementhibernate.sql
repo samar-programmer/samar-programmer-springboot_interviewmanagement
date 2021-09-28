@@ -1,15 +1,9 @@
-use sample;
-show tables;
-drop database sample;
-create database sample;
-show tables;
-
 #Candidate section
-select * from candidate;
 
+select * from candidate;
 drop table candidate;
-desc candidate_test;
-alter table candidate_test modify emailId varchar(30) unique,modify phoneNumber varchar(30) unique;
+desc candidate;
+alter table candidate modify emailId varchar(30) unique,modify phoneNumber varchar(30) unique;
 
 call getCandidateByEmail('balaji@gmail.com');
 call getCandidateByPhone('6756456789');
@@ -47,7 +41,7 @@ DELIMITER $
 #stored procedure for candidate entity starts
 #--------------------------------------------------------------------------------
 #Employee
-use sample;
+
 drop table employee;
 select * from employee;
 #--------------------------------------------------------------------------------
