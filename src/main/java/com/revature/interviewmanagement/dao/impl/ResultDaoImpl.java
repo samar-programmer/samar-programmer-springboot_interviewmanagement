@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -66,7 +68,13 @@ public class ResultDaoImpl implements com.revature.interviewmanagement.dao.Resul
 		try {
 			Session session=sessionFactory.getCurrentSession();
 			return session.createQuery(GET_RESULTBYINTERVIEWID,Result.class).setParameter(1,interviewId).getSingleResult();
-		} catch (HibernateException e) {
+		}
+		catch(NoResultException noResultException) {
+			logger.warn(noResultException.getMessage());
+			return null;
+		}
+		
+		catch (HibernateException e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_READING);
 		}

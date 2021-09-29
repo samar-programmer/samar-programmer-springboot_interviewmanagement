@@ -199,7 +199,7 @@ public class CandidateController {
 		try {
 			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),candidateSerive.deleteCandidate(id)),HttpStatus.OK);
 		} catch(BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.NOT_FOUND.value(),e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 		
 	}

@@ -1,26 +1,28 @@
 package com.revature.interviewmanagement.response;
 
 public class HttpResponseStatus {
-	private int statusCode;
+	private Integer statusCode;
 	private String message;
 	private Object data;
 	
-	public HttpResponseStatus(int statusCode, String message, Object data) {
+	public HttpResponseStatus() {}
+	
+	public HttpResponseStatus(Integer statusCode, String message, Object data) {
 		this.statusCode = statusCode;
 		this.message = message;
 		this.data = data;
 	}
 
-	public HttpResponseStatus(int statusCode, String message) {
+	public HttpResponseStatus(Integer statusCode, String message) {
 		this.statusCode = statusCode;
 		this.message = message;
 	}
 
-	public int getStatusCode() {
+	public Integer getStatusCode() {
 		return statusCode;
 	}
 
-	public void setStatusCode(int statusCode) {
+	public void setStatusCode(Integer statusCode) {
 		this.statusCode = statusCode;
 	}
 

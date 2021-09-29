@@ -62,7 +62,7 @@ public class ResultServiceImpl implements ResultService {
 	public String addResult(Long interviewId, ResultDto result) {
 		logger.info("entering addResult method");
 		try {
-			if(resultDao.getResultByInterviewId(interviewId)!=null) {
+			if(resultDao.getResultByInterviewId(interviewId)==null) {
 				return resultDao.addResult(interviewId,result);
 			}else {
 				throw new BussinessLogicException("Interview "+ID_NOT_FOUND);
