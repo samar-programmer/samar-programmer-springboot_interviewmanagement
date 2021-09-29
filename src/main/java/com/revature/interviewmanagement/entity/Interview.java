@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,7 +47,7 @@ public class Interview {
 	private String updatedBy;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy="interview",cascade={CascadeType.MERGE, CascadeType.PERSIST})
+	@OneToOne(mappedBy="interview",cascade={CascadeType.MERGE, CascadeType.PERSIST},fetch=FetchType.LAZY)
 	private Result result;
 	
 	@OneToOne
