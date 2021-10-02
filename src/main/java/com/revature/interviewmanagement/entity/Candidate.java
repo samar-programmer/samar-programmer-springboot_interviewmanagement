@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity 
 @Table(name="candidate")
 public class Candidate {
-	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
@@ -42,7 +42,7 @@ public class Candidate {
 	private String jobRole;
 	
 	@Column(nullable=false)
-	private Integer experience;
+	private String experience;
 	
 	@Column(nullable=false,name="resume_link")
 	private String resumeLink;
@@ -108,15 +108,15 @@ public class Candidate {
 	public void setJobRole(String jobRole) {
 		this.jobRole = jobRole;
 	}
-
-	public Integer getExperience() {
+	
+	public String getExperience() {
 		return experience;
 	}
 
-	public void setExperience(Integer experience) {
+	public void setExperience(String experience) {
 		this.experience = experience;
 	}
-	
+
 	public String getResumeLink() {
 		return resumeLink;
 	}
@@ -155,6 +155,14 @@ public class Candidate {
 
 	public void setInterview(List<Interview> interview) {
 		this.interview = interview;
+	}
+	
+	@Override
+	public String toString() {
+		return "Candidate [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailId=" + emailId
+				+ ", phoneNumber=" + phoneNumber + ", jobRole=" + jobRole + ", experience=" + experience
+				+ ", resumeLink=" + resumeLink + ", addedOn=" + addedOn + ", updatedOn=" + updatedOn + ", updatedBy="
+				+ updatedBy + ", interview=" + interview + "]";
 	}
 
 	

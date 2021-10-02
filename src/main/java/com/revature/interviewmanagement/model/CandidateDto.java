@@ -13,7 +13,7 @@ public class CandidateDto {
 	private String emailId;
 	private String phoneNumber;
 	private String jobRole;
-	private Integer experience;
+	private String experience;
 	private String resumeLink;
 	private LocalDateTime addedOn;
 	private LocalDateTime updatedOn;
@@ -56,10 +56,11 @@ public class CandidateDto {
 	public void setJobRole(String jobRole) {
 		this.jobRole = jobRole;
 	}
-	public Integer getExperience() {
+	
+	public String getExperience() {
 		return experience;
 	}
-	public void setExperience(Integer experience) {
+	public void setExperience(String experience) {
 		this.experience = experience;
 	}
 	public String getResumeLink() {

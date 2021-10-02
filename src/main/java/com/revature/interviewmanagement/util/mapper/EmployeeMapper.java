@@ -17,8 +17,8 @@ public class EmployeeMapper {
 		employeeEntity.setFirstName(employeeDto.getFirstName());
 		employeeEntity.setLastName(employeeDto.getLastName());
 		employeeEntity.setEmailId(employeeDto.getEmailId());
-		employeeEntity.setEmployeeId(employeeDto.getEmployeeId());
-		employeeEntity.setDesignationId(employeeDto.getDesignationId());
+		employeeEntity.setDesignation(employeeDto.getDesignation());
+		employeeEntity.setStatus(employeeDto.getStatus());
 		employeeEntity.setPhoneNumber(employeeDto.getPhoneNumber());
 		employeeEntity.setAddedOn(employeeDto.getAddedOn());
 		employeeEntity.setUpdatedOn(employeeDto.getUpdatedOn());

@@ -7,21 +7,21 @@ import com.revature.interviewmanagement.model.ResultDto;
 
 public interface ResultService {
 
-	 String deleteResult(Long id);
+	String deleteResult(Long id);
 
-	 String updateResult(ResultDto result);
+	String updateResult(ResultDto result);
 
-	 String addResult(Long interviewId, ResultDto result);
+	String addResult(Long interviewId, ResultDto result);
 
-	 List<Result> getResultByCandidateId(Long canId);
+	List<Result> getResultByCandidateId(Long canId);
 
-	 List<Result> getResultByEmployeeId(Long empId);
+	List<Result> getResultByEmployeeId(Long empId);
 
-	 Result getResultByInterviewId(Long interviewId);
+	Result getResultByInterviewId(Long interviewId);
 
-	 Result getResultById(Long id);
+	Result getResultById(Long id);
 
-	 List<Result> getAllResult();
+	List<Result> getAllResult();
 
 	String sendResultMail(ResultDto resultDto);
 

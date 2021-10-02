@@ -9,12 +9,12 @@ import com.revature.interviewmanagement.entity.Interview;
 public class EmployeeDto {
 	
 	private Long id;
-	private Long employeeId;
-	private Long designationId;
 	private String firstName;
 	private String lastName;
 	private String phoneNumber;
 	private String emailId;
+	private String designation;
+	private String status;
 	private LocalDateTime addedOn;
 	private LocalDateTime updatedOn;
 	private String updatedBy;
@@ -26,18 +26,6 @@ public class EmployeeDto {
 	}
 	public void setId(Long id) {
 		this.id = id;
-	}
-	public Long getEmployeeId() {
-		return employeeId;
-	}
-	public void setEmployeeId(Long employeeId) {
-		this.employeeId = employeeId;
-	}
-	public Long getDesignationId() {
-		return designationId;
-	}
-	public void setDesignationId(Long designationId) {
-		this.designationId = designationId;
 	}
 	public String getFirstName() {
 		return firstName;
@@ -87,9 +75,18 @@ public class EmployeeDto {
 	public void setInterview(List<Interview> interview) {
 		this.interview = interview;
 	}
-
-
-	
+	public String getDesignation() {
+		return designation;
+	}
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	
 	
 	

@@ -3,24 +3,23 @@ package com.revature.interviewmanagement.dao;
 import java.util.List;
 
 import com.revature.interviewmanagement.entity.Result;
-import com.revature.interviewmanagement.model.ResultDto;
 
 public interface ResultDao {
 
-	 List<Result> getAllResult();
+	List<Result> getAllResult();
 
-	 Result getResultById(Long id);
+	Result getResultById(Long id);
 
-	 Result getResultByInterviewId(Long interviewId);
+	Result getResultByInterviewId(Long interviewId);
 
-	 List<Result> getResultByEmployeeId(Long empId);
+	List<Result> getResultByEmployeeId(Long empId);
 
-	 List<Result> getResultByCandidateId(Long canId);
+	List<Result> getResultByCandidateId(Long canId);
 
-	 String addResult(Long interviewId, ResultDto result);
+	String addResult(Long interviewId, Result result);
 
-	 String updateResult(ResultDto result);
+	String updateResult(Result result);
 
-	 String deleteResult(Long id);
+	String deleteResult(Long id);
 
 }

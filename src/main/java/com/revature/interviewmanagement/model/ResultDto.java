@@ -11,6 +11,7 @@ public class ResultDto {
 	private Long id;
 	private	String remarks;
 	private	String status;
+	private String message;//for HR to send custom message to candidate
 	private LocalDateTime addedOn;
 	private LocalDateTime updatedOn;
 	private String updatedBy;
@@ -57,6 +58,12 @@ public class ResultDto {
 	}
 	public void setInterview(Interview interview) {
 		this.interview = interview;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
 	}
 	
 	

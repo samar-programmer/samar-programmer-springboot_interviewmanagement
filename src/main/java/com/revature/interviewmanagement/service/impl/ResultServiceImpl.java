@@ -14,6 +14,7 @@ import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.model.ResultDto;
 import com.revature.interviewmanagement.service.ResultService;
+import com.revature.interviewmanagement.util.mapper.ResultMapper;
 import com.revature.interviewmanagement.utils.ResultMailSenderUtil;
 import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.*;
 
@@ -44,10 +45,11 @@ public class ResultServiceImpl implements ResultService {
 	}
 
 	@Override
-	public String updateResult(ResultDto result) {
+	public String updateResult(ResultDto resultDto) {
 		logger.info("entering updateResult method");
 		try {
-			if(resultDao.getResultById(result.getId())!=null) {
+			if(resultDao.getResultById(resultDto.getId())!=null) {
+				Result result=ResultMapper.resultEntityMapper(resultDto);
 				return resultDao.updateResult(result);
 			}else {
 				throw new BussinessLogicException("Result "+ID_NOT_FOUND);
@@ -59,10 +61,11 @@ public class ResultServiceImpl implements ResultService {
 	}
 
 	@Override
-	public String addResult(Long interviewId, ResultDto result) {
+	public String addResult(Long interviewId, ResultDto resultDto) {
 		logger.info("entering addResult method");
 		try {
 			if(resultDao.getResultByInterviewId(interviewId)==null) {
+				Result result=ResultMapper.resultEntityMapper(resultDto);
 				return resultDao.addResult(interviewId,result);
 			}else {
 				throw new BussinessLogicException("Interview "+ID_NOT_FOUND);

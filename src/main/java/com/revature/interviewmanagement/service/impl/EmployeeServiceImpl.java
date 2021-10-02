@@ -13,118 +13,109 @@ import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.service.EmployeeService;
+import com.revature.interviewmanagement.util.mapper.EmployeeMapper;
+
 import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.*;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-	private static final Logger logger=LogManager.getLogger(EmployeeServiceImpl.class);
-	
+	private static final Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
+
 	@Autowired
 	private EmployeeDao employeeDao;
-	
+
 	@Override
 	public String deleteEmployee(Long id) {
 		logger.info("entering deleteEmployee method");
-		if(employeeDao.getEmployeeById(id)!=null) {
-			return employeeDao.deleteEmployee(id);
-		}else {
-			throw new BussinessLogicException("Employee "+ID_NOT_FOUND);
+		try {
+			if (employeeDao.getEmployeeById(id) != null) {
+				return employeeDao.deleteEmployee(id);
+			} else {
+				throw new BussinessLogicException("Employee " + ID_NOT_FOUND);
+			}
+		}  catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
 		}
-		
+
 	}
 
 	@Override
-	public String updateEmployee(EmployeeDto employee) {
+	public String updateEmployee(EmployeeDto employeeDto) {
 		logger.info("entering updateEmployee method");
-		if(employeeDao.getEmployeeById(employee.getId())!=null) {
-			
-			//1 denotes updating, 2nd parameter is the auto-generated id of employee 
-			List<Boolean> stateArr=employeeDao.checkState(employee,Integer.valueOf(1),employee.getId());
-			
-			//if any one of the constraint is false, this variable will have true as result, which denotes uniqueness violation
-			boolean updateState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
-			
-			if(!updateState) {
-				return employeeDao.updateEmployee(employee);
+		try {
+			if (employeeDao.getEmployeeById(employeeDto.getId()) != null) {
+
+				// 1 denotes updating, 2nd parameter is the auto-generated id of employee
+				List<Boolean> stateArr = employeeDao.checkState(employeeDto, Integer.valueOf(1), employeeDto.getId());
+
+				// if any one of the constraint is false, this variable will have true as
+				// result, which denotes uniqueness violation
+				boolean updateState = stateArr.stream().anyMatch(Boolean.FALSE::equals);
+
+				if (!updateState) {
+					Employee employee = EmployeeMapper.employeeEntityMapper(employeeDto);
+					return employeeDao.updateEmployee(employee);
+				} else if (Boolean.FALSE.equals(stateArr.get(0))) {
+					throw new BussinessLogicException("Entered Email Id " + DUPLICATE_ID);
+				} else {
+					throw new BussinessLogicException("Entered Phone Number " + DUPLICATE_ID);
+				}
+
+			} else {
+				throw new BussinessLogicException("Employee " + ID_NOT_FOUND);
 			}
-			else if(Boolean.FALSE.equals(stateArr.get(0))){
-				throw new BussinessLogicException("Entered Email Id "+DUPLICATE_ID);
-			}
-			else if(Boolean.FALSE.equals(stateArr.get(1))){
-				throw new BussinessLogicException("Entered Phone Number "+DUPLICATE_ID);
-			}
-			else if(Boolean.FALSE.equals(stateArr.get(2))){
-				throw new BussinessLogicException("Entered Employee Id "+DUPLICATE_ID);
-			}
-			else {
-				throw new BussinessLogicException("Entered Designation Id "+DUPLICATE_ID);
-			}
-			
-		}else {
-			throw new BussinessLogicException("Employee "+ID_NOT_FOUND);
+		}catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
 		}
-		
+
 	}
 
 	@Override
 	public String addEmployee(EmployeeDto employeeDto) {
 		logger.info("entering addEmployee method");
-		
-		//0 denotes adding, -1 for for id as we don't have id while inserting so it is kept as -1
-		List<Boolean> stateArr=employeeDao.checkState(employeeDto,Integer.valueOf(0),Long.valueOf(-1));
-		
-		//if any one of the constraint is false, this variable will have true as result, which denotes uniqueness violation
-		boolean addState=stateArr.stream().anyMatch(Boolean.FALSE::equals);
-		
-		if(!addState) {
-			return employeeDao.addEmployee(employeeDto);
+
+		try {
+			// 0 denotes adding, -1 for for id as we don't have id while inserting so it is
+			// kept as -1
+			List<Boolean> stateArr = employeeDao.checkState(employeeDto, Integer.valueOf(0), Long.valueOf(-1));
+
+			// if any one of the constraint is false, this variable will have true as
+			// result, which denotes uniqueness violation
+			boolean addState = stateArr.stream().anyMatch(Boolean.FALSE::equals);
+
+			if (!addState) {
+				Employee employee = EmployeeMapper.employeeEntityMapper(employeeDto);
+				return employeeDao.addEmployee(employee);
+			}
+
+			else if (Boolean.FALSE.equals(stateArr.get(0))) {
+				throw new BussinessLogicException("Entered Email Id already exists");
+			} else {
+				throw new BussinessLogicException("Entered Phone number already exists");
+			}
+		}  catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
 		}
-		
-		else if(Boolean.FALSE.equals(stateArr.get(0))){
-			throw new BussinessLogicException("Entered Email Id already exists");
-		}
-		else if(Boolean.FALSE.equals(stateArr.get(1))){
-			throw new BussinessLogicException("Entered Phone number already exists");
-		}
-		else if(Boolean.FALSE.equals(stateArr.get(2))){
-			throw new BussinessLogicException("Entered Employee Id already exists");
-		}
-		else {
-			throw new BussinessLogicException("Entered Designation Id already exists");
-		}
-		
-		
+
 	}
 
 	@Override
-	public Employee getEmployeeByEmployeeId(EmployeeDto employeeDto) {
-		logger.info("entering getEmployeeByEmployeeId method");
+	public List<Employee> getEmployeeByDesignation(String designation) {
+		logger.info("entering getEmployeeByDesignation method");
 		try {
-			return employeeDao.getEmployeeByEmployeeId(employeeDto.getEmployeeId());
+			return employeeDao.getEmployeeByDesignation(designation);
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
-
-	@Override
-	public Employee getEmployeeByDesignationId(EmployeeDto employeeDto) {
-		logger.info("entering getEmployeeByDesignationId method");
-		try {
-			return employeeDao.getEmployeeByDesignationId(employeeDto.getDesignationId());
-		} catch (DatabaseException e) {
-			throw new BussinessLogicException(e.getMessage());
-		}
-	}
-
-	
 
 	@Override
 	public Employee getEmployeeByPhoneNumber(EmployeeDto employeeDto) {
 		logger.info("entering getEmployeeByPhoneNumber method");
 		try {
 			return employeeDao.getEmployeeByPhoneNumber(employeeDto.getPhoneNumber());
-		}catch (DatabaseException e) {
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
@@ -134,7 +125,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		logger.info("entering getEmployeeByEmailId method");
 		try {
 			return employeeDao.getEmployeeByEmailId(employeeDto.getEmailId());
-		}catch (DatabaseException e) {
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
@@ -169,5 +160,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 	}
 
+	@Override
+	public List<Employee> getEmployeeByStatus(String status) {
+		logger.info("entering getEmployeeByStatus method");
+		try {
+			return employeeDao.getEmployeeByStatus(status);
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+
+	@Override
+	public List<?> getAllDesignation() {
+		logger.info("entering getAllDesignation method");
+		try {
+			return employeeDao.getAllDesignation();
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
 
 }

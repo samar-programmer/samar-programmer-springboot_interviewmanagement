@@ -21,6 +21,7 @@ import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.model.InterviewDto;
 import com.revature.interviewmanagement.service.InterviewService;
+import com.revature.interviewmanagement.util.mapper.InterviewMapper;
 import com.revature.interviewmanagement.utils.ScheduledInterviewMailUtil;
 
 @Service
@@ -50,6 +51,16 @@ public class InterviewServiceImpl implements InterviewService {
 		}
 	}
 
+	@Override
+	public List<?> getAllInterviewType() {
+		logger.info("entering getAllInterviewType method");
+		try {
+			return interviewDao.getAllInterviewType();
+		}  catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+	
 	@Override
 	public Interview getInterviewById(Long id) {
 		logger.info("entering getInterviewById method");
@@ -129,32 +140,23 @@ public class InterviewServiceImpl implements InterviewService {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
-	
-	@Override
-	public List<Interview> getInterviewByEmpId(Long empId) {
-		logger.info("entering getInterviewByEmpId method");
-		try {
-			return interviewDao.getInterviewByEmpId(empId);
-		} catch (DatabaseException e) {
-			throw new BussinessLogicException(e.getMessage());
-		}
-	}
+
 
 	@Override
-	public List<Interview> getInterviewByEmployeeId(EmployeeDto employeeDto) {
+	public List<Interview> getInterviewByEmployeeId(Long id) {
 		logger.info("entering getInterviewByEmployeeId method");
 		try {
-			return interviewDao.getInterviewByEmployeeId(employeeDto.getEmployeeId());
+			return interviewDao.getInterviewByEmployeeId(id);
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
 
 	@Override
-	public List<Interview> getInterviewByDesignationId(EmployeeDto employeeDto) {
-		logger.info("entering getInterviewByDesignationId method");
+	public List<Interview> getInterviewByEmployeeDesignation(String designation) {
+		logger.info("entering getInterviewByEmployeeDesignation method");
 		try {
-			return interviewDao.getInterviewByDesignationId(employeeDto.getDesignationId());
+			return interviewDao.getInterviewByEmployeeDesignation(designation);
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -206,10 +208,11 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	public String updateInterview(InterviewDto interview) {
+	public String updateInterview(InterviewDto interviewDto) {
 		logger.info("entering updateInterview method");
 		try {
-			if(interviewDao.getInterviewById(interview.getId())!=null) {
+			if(interviewDao.getInterviewById(interviewDto.getId())!=null) {
+				Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
 				return interviewDao.updateInterview(interview);
 			}
 			else {
@@ -222,10 +225,11 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	public String addInterview(InterviewDto interview,Long canId,Long empId) {
+	public String addInterview(InterviewDto interviewDto,Long canId,Long empId) {
 		logger.info("entering addInterview method");
 		try {
 			if(candidateDao.getCandidateById(canId)!=null && employeeDao.getEmployeeById(empId)!=null) {
+				Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
 				return interviewDao.addInterview(interview,canId,empId);
 			}
 			else {
@@ -268,6 +272,18 @@ public class InterviewServiceImpl implements InterviewService {
 			throw new BussinessLogicException(ERROR_IN_SENDING_MAIL);
 		}
 	}
+
+	@Override
+	public List<Interview> getInterviewByEmployeeStatus(String status) {
+		logger.info("entering getInterviewByEmployeeStatus method");
+		try {
+			return interviewDao.getInterviewByEmployeeStatus(status);
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+
+	
 
 	
 

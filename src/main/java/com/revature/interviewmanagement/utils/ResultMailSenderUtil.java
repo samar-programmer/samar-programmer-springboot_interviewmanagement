@@ -12,7 +12,7 @@ public class ResultMailSenderUtil {
 
 	public static String sendResultMail(JavaMailSender javaMailSender, ResultDto resultDto) {
 		String status = resultDto.getStatus();
-		String remarks = resultDto.getRemarks();
+		String hrMessage = resultDto.getMessage();
 		String callScheduledDate = DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(resultDto.getInterview().getCallScheduledDate());
 		String callScheduledTime = resultDto.getInterview().getCallScheduledTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
 		String interviewRound = resultDto.getInterview().getInterviewType();
@@ -20,7 +20,7 @@ public class ResultMailSenderUtil {
 				+ resultDto.getInterview().getCandidate().getLastName();
 		String subject = REVATURE_NAME+"| Interview Result";
 		String message = "Congrats " + name + "!\n\nYour interview result for " + interviewRound + " held on "
-				+ callScheduledTime + " " + callScheduledDate + "\n\nResult: " + status + "\n\nRemarks: " + remarks + "\r\n\n"
+				+ callScheduledTime + " " + callScheduledDate + "\n\nResult: " + status + "\n\n "+ hrMessage + "\r\n\n"
 				+ MAIL_FOOTER;
 
 		MailSenderUtil.sendMail(javaMailSender, resultDto.getInterview().getCandidate().getEmailId(), subject, message);

@@ -25,12 +25,6 @@ public class Employee {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(nullable=false,unique=true,name="employee_id")
-	private Long employeeId;
-	
-	@Column(nullable=false,unique=true,name="designation_id")
-	private Long designationId;
-	
 	@Column(nullable=false,name="first_name")
 	private String firstName;
 	
@@ -42,6 +36,12 @@ public class Employee {
 	
 	@Column(nullable=false,unique=true,name="email_id")
 	private String emailId;
+	
+	@Column(nullable=false)
+	private String designation;
+	
+	@Column(nullable=false)
+	private String status;
 	
 	@Column(name="added_on")
 	private LocalDateTime addedOn;
@@ -63,20 +63,6 @@ public class Employee {
 	}
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	
-	public Long getEmployeeId() {
-		return employeeId;
-	}
-	public void setEmployeeId(Long employeeId) {
-		this.employeeId = employeeId;
-	}
-	public Long getDesignationId() {
-		return designationId;
-	}
-	public void setDesignationId(Long designationId) {
-		this.designationId = designationId;
 	}
 	public String getFirstName() {
 		return firstName;
@@ -126,5 +112,19 @@ public class Employee {
 	public void setInterview(List<Interview> interview) {
 		this.interview = interview;
 	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getDesignation() {
+		return designation;
+	}
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+	
+	
 	
 }

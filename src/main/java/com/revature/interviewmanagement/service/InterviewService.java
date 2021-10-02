@@ -12,6 +12,8 @@ public interface InterviewService {
 
 	List<Interview> getAllInterview();
 
+	List<?> getAllInterviewType();
+
 	Interview getInterviewById(Long id);
 
 	List<Interview> getInterviewByScheduledDate(LocalDate scheduledDate);
@@ -28,11 +30,9 @@ public interface InterviewService {
 
 	List<Interview> getInterviewByCandidateExperience(Integer exp);
 
-	List<Interview> getInterviewByEmpId(Long empId);
+	List<Interview> getInterviewByEmployeeId(Long id);
 
-	List<Interview> getInterviewByEmployeeId(EmployeeDto employeeDto);
-
-	List<Interview> getInterviewByDesignationId(EmployeeDto employeeDto);
+	List<Interview> getInterviewByEmployeeDesignation(String designation);
 
 	List<Interview> getInterviewByEmployeeName(String name);
 
@@ -44,14 +44,14 @@ public interface InterviewService {
 
 	String updateInterview(InterviewDto interview);
 
-	String addInterview(InterviewDto interview,Long canId,Long empId);
+	String addInterview(InterviewDto interview, Long canId, Long empId);
 
 	List<Interview> getInterviewByType(String type);
 
-	String sendScheduledInterviewMail(Long canId,Long empId,InterviewDto interviewDto);
+	String sendScheduledInterviewMail(Long canId, Long empId, InterviewDto interviewDto);
 
-	String sendRescheduledInterviewMail(Long canId,Long empId,InterviewDto interviewDto);
+	String sendRescheduledInterviewMail(Long canId, Long empId, InterviewDto interviewDto);
 
-	
+	List<Interview> getInterviewByEmployeeStatus(String status);
 
 }

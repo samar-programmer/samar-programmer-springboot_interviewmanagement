@@ -13,6 +13,8 @@ import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.service.CandidateService;
+import com.revature.interviewmanagement.util.mapper.CandidateMapper;
+
 import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.*;
 
 @Service
@@ -64,7 +66,7 @@ public class CandidateServiceImpl implements CandidateService {
 	}
 
 	@Override
-	public List<Candidate> getCandidateByExperience(Integer exp) {
+	public List<Candidate> getCandidateByExperience(String exp) {
 		logger.info("entering getCandidateByExperience method");
 		try {
 			return candidateDao.getCandidateByExperience(exp);
@@ -113,7 +115,8 @@ public class CandidateServiceImpl implements CandidateService {
 		logger.info("entering updateCandidate method");
 		try {
 			if(candidateDao.getCandidateById(candidateDto.getId())!=null) {
-				return candidateDao.updateCandidate(candidateDto);
+				Candidate candidate=CandidateMapper.candidateEntityMapper(candidateDto);
+				return candidateDao.updateCandidate(candidate);
 			}else {
 				throw new BussinessLogicException("Candidate "+ID_NOT_FOUND);
 			}
@@ -127,7 +130,38 @@ public class CandidateServiceImpl implements CandidateService {
 	public String addCandidate(CandidateDto candidateDto) {
 		logger.info("entering addCandidate method");
 		try {
-			return candidateDao.addCandidate(candidateDto);
+			Candidate candidate=CandidateMapper.candidateEntityMapper(candidateDto);
+			return candidateDao.addCandidate(candidate);
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+
+	@Override
+	public List<?> getAllExperience() {
+		logger.info("entering getExperience method");
+		try {
+			return candidateDao.getAllExperience();
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+
+	@Override
+	public List<?> getAllJobRole() {
+		logger.info("entering getAllJobRole method");
+		try {
+			return candidateDao.getAllJobRole();
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Boolean validateJobRole(CandidateDto candidateDto) {
+		logger.info("entering validateJobRole method");
+		try {
+			return candidateDao.validateJobRole(candidateDto)==null;
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
