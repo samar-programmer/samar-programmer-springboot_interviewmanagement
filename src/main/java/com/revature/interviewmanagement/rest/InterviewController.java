@@ -266,7 +266,7 @@ public class InterviewController {
 	 * @return interview details as a list of interview object
 	 */
 	@GetMapping("/candidate/experience/{exp}")
-	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateExperience(@PathVariable Integer exp) {
+	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateExperience(@PathVariable String exp) {
 		logger.info("Entering getInterviewByCandidateExperience method");
 		try {
 			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,

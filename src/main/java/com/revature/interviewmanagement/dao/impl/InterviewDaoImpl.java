@@ -162,7 +162,7 @@ public class InterviewDaoImpl implements InterviewDao {
 	}
 
 	@Override
-	public List<Interview> getInterviewByCandidateExperience(Integer exp) {
+	public List<Interview> getInterviewByCandidateExperience(String exp) {
 		logger.info("entering getInterviewByCandidateExperience method");
 		try {
 			Session session = sessionFactory.getCurrentSession();

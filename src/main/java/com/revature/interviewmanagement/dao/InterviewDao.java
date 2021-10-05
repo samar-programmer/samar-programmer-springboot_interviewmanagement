@@ -23,7 +23,7 @@ public interface InterviewDao {
 
 	List<Interview> getInterviewByCandidateRole(String role);
 
-	List<Interview> getInterviewByCandidateExperience(Integer exp);
+	List<Interview> getInterviewByCandidateExperience(String exp);
 
 	List<Interview> getInterviewByEmployeeId(Long employeeId);
 

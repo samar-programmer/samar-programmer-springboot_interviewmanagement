@@ -57,7 +57,21 @@ public class Employee {
 	private List<Interview> interview;
 	
 
+	public Employee() {}
 	
+	
+	public Employee(Long id, String firstName, String lastName, String emailId, String phoneNumber, String designation
+			,String status) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.emailId = emailId;
+		this.designation = designation;
+		this.status=status;
+		
+	}
 	public Long getId() {
 		return id;
 	}

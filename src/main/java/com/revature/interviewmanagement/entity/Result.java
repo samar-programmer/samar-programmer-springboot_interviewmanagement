@@ -37,6 +37,21 @@ public class Result {
 	@OneToOne
 	@JoinColumn(name="interview_id")
 	private Interview interview;
+	
+	public Result(){}
+	
+	
+
+	public Result(Long id, String remarks, String status,
+			Interview interview) {
+		super();
+		this.id = id;
+		this.remarks = remarks;
+		this.status = status;
+		this.interview = interview;
+	}
+
+
 
 	public Long getId() {
 		return id;

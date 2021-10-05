@@ -10,7 +10,7 @@ update candidate set added_on='2021-08-01 14:20:15.778320' where id=2;
 drop table employee;
 select * from employee;
 desc employee;
-
+update employee set status="Available" where id=4;
 #interview --------------------------------------------------------------------------------
 
 desc interview;

@@ -32,11 +32,13 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	private static final String CHECK_EMPLOYEE_DESIGNATION = "SELECT e FROM Employee e WHERE e.designation=:designation AND e.status!='Left'";
 	private static final String CHECK_EMPLOYEE_STATUS = "SELECT e FROM Employee e WHERE e.status=:status";
-	private static final String CHECK_EMPLOYEE_EMAILID = "SELECT e FROM Employee e WHERE e.emailId=:email AND e.status!='Left'";
-	private static final String CHECK_EMPLOYEE_PHONENUMBER = "SELECT e FROM Employee e WHERE e.phoneNumber=:phone AND e.status!='Left'";
+	private static final String CHECK_EMPLOYEE_EMAILID = "SELECT e FROM Employee e WHERE e.emailId=:email AND e.status!='Left'";//this is used in getEmployeeByEmailId
+	private static final String CHECK_EMPLOYEE_EMAILID1 = "SELECT e FROM Employee e WHERE e.emailId=:email";//this is used by checkState method, because status is not checked here, this is helpful in checking deleted employee too.
+	private static final String CHECK_EMPLOYEE_PHONENUMBER = "SELECT e FROM Employee e WHERE e.phoneNumber=:phone";
 	private static final String CHECK_EMPLOYEE_ALLEMPLOYEE = "SELECT e FROM Employee e WHERE e.status!='Left'";
 	private static final String CHECK_EMPLOYEE_EMPLOYEEBYNAME = "SELECT e FROM Employee e WHERE CONCAT(e.firstName,' ', e.lastName) LIKE :name AND e.status!='Left'";
 	private static final String GET_ALL_DESIGNATION="SELECT * FROM designation";
+	
 	/**
 	 * checkState method will check whether email id,phone number of an employee
 	 * already present in another record before we add it. The goal of the method is
@@ -60,7 +62,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	 */
 	public List<Boolean> checkState(EmployeeDto employee, Integer statusCode, Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		List<Employee> emailQueryList = session.createQuery(CHECK_EMPLOYEE_EMAILID, Employee.class)
+		List<Employee> emailQueryList = session.createQuery(CHECK_EMPLOYEE_EMAILID1, Employee.class)
 				.setParameter("email", employee.getEmailId()).getResultList();
 		List<Employee> phoneQueryList = session.createQuery(CHECK_EMPLOYEE_PHONENUMBER, Employee.class)
 				.setParameter("phone", employee.getPhoneNumber()).getResultList();

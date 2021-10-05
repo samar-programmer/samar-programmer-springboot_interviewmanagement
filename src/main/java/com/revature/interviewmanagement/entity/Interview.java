@@ -58,6 +58,21 @@ public class Interview {
 	@JoinColumn(name="employee_id")
 	private Employee employee;
 	
+	
+	public Interview() {}
+	
+	
+	public Interview(Long id, String interviewType, String status, LocalDate callScheduledDate,
+			LocalTime callScheduledTime,Candidate candidate, Employee employee) {
+		super();
+		this.id = id;
+		this.interviewType = interviewType;
+		this.status = status;
+		this.callScheduledDate = callScheduledDate;
+		this.callScheduledTime = callScheduledTime;
+		this.candidate = candidate;
+		this.employee = employee;
+	}
 	public Long getId() {
 		return id;
 	}

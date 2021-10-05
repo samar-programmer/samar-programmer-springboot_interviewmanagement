@@ -132,7 +132,7 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	public List<Interview> getInterviewByCandidateExperience(Integer exp) {
+	public List<Interview> getInterviewByCandidateExperience(String exp) {
 		logger.info("entering getInterviewByCandidateExperience method");
 		try {
 			return interviewDao.getInterviewByCandidateExperience(exp);

@@ -60,7 +60,33 @@ public class Candidate {
 	@OneToMany(mappedBy="candidate",cascade={CascadeType.MERGE, CascadeType.PERSIST},fetch=FetchType.LAZY)
 	private List<Interview> interview;
 	
+	public Candidate() {}
 	
+	public Candidate(Long id,String firstName, String lastName, String emailId, String phoneNumber, String jobRole,
+			String experience) {
+		super();
+		this.id=id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailId = emailId;
+		this.phoneNumber = phoneNumber;
+		this.jobRole = jobRole;
+		this.experience = experience;	
+	}
+	
+	public Candidate(String firstName, String lastName, String emailId, String phoneNumber, String jobRole,
+			String experience,String resumeLink) {
+		super();
+		
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailId = emailId;
+		this.phoneNumber = phoneNumber;
+		this.jobRole = jobRole;
+		this.experience = experience;
+		this.resumeLink=resumeLink;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -157,13 +183,6 @@ public class Candidate {
 		this.interview = interview;
 	}
 	
-	@Override
-	public String toString() {
-		return "Candidate [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailId=" + emailId
-				+ ", phoneNumber=" + phoneNumber + ", jobRole=" + jobRole + ", experience=" + experience
-				+ ", resumeLink=" + resumeLink + ", addedOn=" + addedOn + ", updatedOn=" + updatedOn + ", updatedBy="
-				+ updatedBy + ", interview=" + interview + "]";
-	}
 
 	
 }
