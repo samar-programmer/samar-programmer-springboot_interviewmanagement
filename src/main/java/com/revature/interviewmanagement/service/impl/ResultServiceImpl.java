@@ -12,7 +12,10 @@ import com.revature.interviewmanagement.dao.ResultDao;
 import com.revature.interviewmanagement.entity.Result;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
+import com.revature.interviewmanagement.exception.DuplicateIdException;
+import com.revature.interviewmanagement.exception.IdNotFoundException;
 import com.revature.interviewmanagement.model.ResultDto;
+import com.revature.interviewmanagement.service.InterviewService;
 import com.revature.interviewmanagement.service.ResultService;
 import com.revature.interviewmanagement.util.mapper.ResultMapper;
 import com.revature.interviewmanagement.utils.ResultMailSenderUtil;
@@ -27,6 +30,9 @@ public class ResultServiceImpl implements ResultService {
 	private ResultDao resultDao;
 	
 	@Autowired
+	private InterviewService interviewService;
+	
+	@Autowired
 	private JavaMailSender javaMailSender;
 	
 	@Override
@@ -36,7 +42,7 @@ public class ResultServiceImpl implements ResultService {
 			if(resultDao.getResultById(id)!=null) {
 				return resultDao.deleteResult(id);
 			}else {
-				throw new BussinessLogicException("Result "+ID_NOT_FOUND);
+				throw new IdNotFoundException("Result "+ID_NOT_FOUND);
 			}
 			
 		} catch (DatabaseException e) {
@@ -52,7 +58,7 @@ public class ResultServiceImpl implements ResultService {
 				Result result=ResultMapper.resultEntityMapper(resultDto);
 				return resultDao.updateResult(result);
 			}else {
-				throw new BussinessLogicException("Result "+ID_NOT_FOUND);
+				throw new IdNotFoundException("Result "+ID_NOT_FOUND);
 			}
 			
 		} catch (DatabaseException e) {
@@ -64,11 +70,14 @@ public class ResultServiceImpl implements ResultService {
 	public String addResult(Long interviewId, ResultDto resultDto) {
 		logger.info("entering addResult method");
 		try {
-			if(resultDao.getResultByInterviewId(interviewId)==null) {
+			if(interviewService.getInterviewById(interviewId)==null) {
+				throw new IdNotFoundException("Interview "+ID_NOT_FOUND);
+			}
+			else if(resultDao.getResultByInterviewId(interviewId)==null) {
 				Result result=ResultMapper.resultEntityMapper(resultDto);
 				return resultDao.addResult(interviewId,result);
 			}else {
-				throw new BussinessLogicException("Interview "+ID_NOT_FOUND);
+				throw new DuplicateIdException("The Interview already has a result");
 			}
 			
 		} catch (DatabaseException e) {

@@ -11,6 +11,7 @@ import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.entity.Candidate;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
+import com.revature.interviewmanagement.exception.IdNotFoundException;
 import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.service.CandidateService;
 import com.revature.interviewmanagement.util.mapper.CandidateMapper;
@@ -19,14 +20,14 @@ import static com.revature.interviewmanagement.utils.InterviewManagementConstant
 
 @Service
 public class CandidateServiceImpl implements CandidateService {
-	
-	private static final Logger logger=LogManager.getLogger(CandidateServiceImpl.class);
-	
+
+	private static final Logger logger = LogManager.getLogger(CandidateServiceImpl.class);
+
 	@Autowired
 	private CandidateDao candidateDao;
-	
+
 	@Override
-	public List<Candidate> getAllCandidate(){
+	public List<Candidate> getAllCandidate() {
 		logger.info("entering getAllCandidate method");
 		try {
 			return candidateDao.getAllCandidate();
@@ -59,7 +60,7 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getCandidateByRole(String role) {
 		logger.info("entering getCandidateByRole method");
 		try {
-			return candidateDao.getCandidateByRole(role) ;
+			return candidateDao.getCandidateByRole(role);
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -79,8 +80,8 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getCandidateByName(String name) {
 		logger.info("entering getCandidateByName method");
 		try {
-			return candidateDao.getCandidateByName(name) ;
-		}catch (DatabaseException e) {
+			return candidateDao.getCandidateByName(name);
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
@@ -90,7 +91,7 @@ public class CandidateServiceImpl implements CandidateService {
 		logger.info("entering getCandidateByPhoneNumber method");
 		try {
 			return candidateDao.getCandidateByPhoneNumber(candidateDto.getPhoneNumber());
-		}catch (DatabaseException e) {
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
@@ -99,13 +100,13 @@ public class CandidateServiceImpl implements CandidateService {
 	public String deleteCandidate(Long id) {
 		logger.info("entering deleteCandidate method");
 		try {
-			if(candidateDao.getCandidateById(id)!=null) {
+			if (candidateDao.getCandidateById(id) != null) {
 				return candidateDao.deleteCandidate(id);
-			}else {
-				throw new BussinessLogicException("Candidate "+ID_NOT_FOUND);
+			} else {
+				throw new IdNotFoundException("Candidate " + ID_NOT_FOUND);
 			}
-			
-		}catch (DatabaseException e) {
+
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
@@ -114,13 +115,13 @@ public class CandidateServiceImpl implements CandidateService {
 	public String updateCandidate(CandidateDto candidateDto) {
 		logger.info("entering updateCandidate method");
 		try {
-			if(candidateDao.getCandidateById(candidateDto.getId())!=null) {
-				Candidate candidate=CandidateMapper.candidateEntityMapper(candidateDto);
+			if (candidateDao.getCandidateById(candidateDto.getId()) != null) {
+				Candidate candidate = CandidateMapper.candidateEntityMapper(candidateDto);
 				return candidateDao.updateCandidate(candidate);
-			}else {
-				throw new BussinessLogicException("Candidate "+ID_NOT_FOUND);
+			} else {
+				throw new IdNotFoundException("Candidate " + ID_NOT_FOUND);
 			}
-			
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -130,7 +131,7 @@ public class CandidateServiceImpl implements CandidateService {
 	public String addCandidate(CandidateDto candidateDto) {
 		logger.info("entering addCandidate method");
 		try {
-			Candidate candidate=CandidateMapper.candidateEntityMapper(candidateDto);
+			Candidate candidate = CandidateMapper.candidateEntityMapper(candidateDto);
 			return candidateDao.addCandidate(candidate);
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
@@ -161,11 +162,10 @@ public class CandidateServiceImpl implements CandidateService {
 	public Boolean validateJobRole(CandidateDto candidateDto) {
 		logger.info("entering validateJobRole method");
 		try {
-			return candidateDao.validateJobRole(candidateDto)==null;
+			return candidateDao.validateJobRole(candidateDto) == null;
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
-
 
 }

@@ -17,6 +17,7 @@ import com.revature.interviewmanagement.dao.InterviewDao;
 import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
+import com.revature.interviewmanagement.exception.IdNotFoundException;
 import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.model.InterviewDto;
@@ -199,7 +200,7 @@ public class InterviewServiceImpl implements InterviewService {
 			if(interviewDao.getInterviewById(id)!=null) {
 				return interviewDao.deleteInterview(id);
 			}else {
-				throw new BussinessLogicException("Interview "+ID_NOT_FOUND);
+				throw new IdNotFoundException("Interview "+ID_NOT_FOUND);
 			}
 			
 		} catch (DatabaseException e) {
@@ -216,7 +217,7 @@ public class InterviewServiceImpl implements InterviewService {
 				return interviewDao.updateInterview(interview);
 			}
 			else {
-				throw new BussinessLogicException("Interview "+ID_NOT_FOUND);
+				throw new IdNotFoundException("Interview "+ID_NOT_FOUND);
 			}
 			
 		} catch (DatabaseException e) {
@@ -233,7 +234,7 @@ public class InterviewServiceImpl implements InterviewService {
 				return interviewDao.addInterview(interview,canId,empId);
 			}
 			else {
-				throw new BussinessLogicException("Candidate "+ID_NOT_FOUND+" or Employee "+ID_NOT_FOUND);
+				throw new IdNotFoundException("Candidate "+ID_NOT_FOUND+" or Employee "+ID_NOT_FOUND);
 			}
 			
 		} catch (DatabaseException e) {

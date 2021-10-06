@@ -4,6 +4,8 @@ desc candidate;
 drop table candidate;
 desc candidate;
 
+delete from candidate where id=1;
+
 update candidate set added_on='2021-08-01 14:20:15.778320' where id=2;
 
 #Employee---------------------------------------------------------

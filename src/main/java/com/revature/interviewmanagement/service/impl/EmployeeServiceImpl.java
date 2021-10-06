@@ -11,6 +11,8 @@ import com.revature.interviewmanagement.dao.EmployeeDao;
 import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
+import com.revature.interviewmanagement.exception.DuplicateIdException;
+import com.revature.interviewmanagement.exception.IdNotFoundException;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.service.EmployeeService;
 import com.revature.interviewmanagement.util.mapper.EmployeeMapper;
@@ -32,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			if (employeeDao.getEmployeeById(id) != null) {
 				return employeeDao.deleteEmployee(id);
 			} else {
-				throw new BussinessLogicException("Employee " + ID_NOT_FOUND);
+				throw new IdNotFoundException("Employee " + ID_NOT_FOUND);
 			}
 		}  catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
@@ -57,13 +59,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 					Employee employee = EmployeeMapper.employeeEntityMapper(employeeDto);
 					return employeeDao.updateEmployee(employee);
 				} else if (Boolean.FALSE.equals(stateArr.get(0))) {
-					throw new BussinessLogicException("Entered Email Id " + DUPLICATE_ID);
+					throw new DuplicateIdException("Entered Email Id " + DUPLICATE_ID);
 				} else {
-					throw new BussinessLogicException("Entered Phone Number " + DUPLICATE_ID);
+					throw new DuplicateIdException("Entered Phone Number " + DUPLICATE_ID);
 				}
 
 			} else {
-				throw new BussinessLogicException("Employee " + ID_NOT_FOUND);
+				throw new IdNotFoundException("Employee " + ID_NOT_FOUND);
 			}
 		}catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
@@ -90,9 +92,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 			}
 
 			else if (Boolean.FALSE.equals(stateArr.get(0))) {
-				throw new BussinessLogicException("Entered Email Id already exists");
+				throw new DuplicateIdException("Entered Email Id already exists");
 			} else {
-				throw new BussinessLogicException("Entered Phone number already exists");
+				throw new DuplicateIdException("Entered Phone number already exists");
 			}
 		}  catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());

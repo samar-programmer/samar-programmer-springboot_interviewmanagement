@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.model.InterviewDto;
@@ -53,14 +52,10 @@ public class InterviewController {
 	@GetMapping
 	public ResponseEntity<HttpResponseStatus> getAllInterview() {
 		logger.info("Entering getAllInterview method");
-		try {
-			return new ResponseEntity<>(
-					new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, interviewService.getAllInterview()),
-					HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(
+				new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, interviewService.getAllInterview()),
+				HttpStatus.OK);
 
 	}
 
@@ -73,14 +68,10 @@ public class InterviewController {
 	@GetMapping("/interview-type")
 	public ResponseEntity<HttpResponseStatus> getAllInterviewType() {
 		logger.info("Entering getAllInterviewType method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getAllInterviewType()), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
 
+		return new ResponseEntity<>(
+				new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, interviewService.getAllInterviewType()),
+				HttpStatus.OK);
 	}
 
 	/**
@@ -93,15 +84,10 @@ public class InterviewController {
 	@GetMapping("/{id}")
 	public ResponseEntity<HttpResponseStatus> getInterviewById(@PathVariable Long id) {
 		logger.info("Entering getInterviewById method");
-		try {
-			return new ResponseEntity<>(
-					new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, interviewService.getInterviewById(id)),
-					HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
 
+		return new ResponseEntity<>(
+				new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, interviewService.getInterviewById(id)),
+				HttpStatus.OK);
 	}
 
 	/**
@@ -114,14 +100,10 @@ public class InterviewController {
 	@GetMapping("/type/{type}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByType(@PathVariable String type) {
 		logger.info("Entering getInterviewByType method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByType(type)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
 
+		return new ResponseEntity<>(
+				new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, interviewService.getInterviewByType(type)),
+				HttpStatus.OK);
 	}
 
 	/**
@@ -136,13 +118,9 @@ public class InterviewController {
 	public ResponseEntity<HttpResponseStatus> getInterviewByScheduledDate(
 			@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate scheduledDate) {
 		logger.info("Entering getInterviewByScheduledDate method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByScheduledDate(scheduledDate)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByScheduledDate(scheduledDate)), HttpStatus.OK);
 
 	}
 
@@ -158,13 +136,9 @@ public class InterviewController {
 	@GetMapping("/candidate/{canId}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateId(@PathVariable Long canId) {
 		logger.info("Entering getInterviewByCandidateId method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByCandidateId(canId)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByCandidateId(canId)), HttpStatus.OK);
 
 	}
 
@@ -180,13 +154,9 @@ public class InterviewController {
 	@GetMapping("/candidate/name/{name}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateName(@PathVariable String name) {
 		logger.info("Entering getInterviewByCandidateName method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByCandidateName(name)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByCandidateName(name)), HttpStatus.OK);
 
 	}
 
@@ -202,14 +172,9 @@ public class InterviewController {
 	@PostMapping("/candidate/phone")
 	public ResponseEntity<HttpResponseStatus> getInterviewByCandidatePhone(@RequestBody CandidateDto candidateDto) {
 		logger.info("Entering getInterviewByCandidatePhone method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByCandidatePhone(candidateDto)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
 
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByCandidatePhone(candidateDto)), HttpStatus.OK);
 	}
 
 	/**
@@ -224,13 +189,9 @@ public class InterviewController {
 	@PostMapping("/candidate/email")
 	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateEmailId(@RequestBody CandidateDto candidateDto) {
 		logger.info("Entering getInterviewByCandidateEmail method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByCandidateEmailId(candidateDto)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByCandidateEmailId(candidateDto)), HttpStatus.OK);
 
 	}
 
@@ -246,14 +207,9 @@ public class InterviewController {
 	@GetMapping("/candidate/role/{role}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateRole(@PathVariable String role) {
 		logger.info("Entering getInterviewByCandidateRole method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByCandidateRole(role)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
 
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByCandidateRole(role)), HttpStatus.OK);
 	}
 
 	/**
@@ -268,13 +224,9 @@ public class InterviewController {
 	@GetMapping("/candidate/experience/{exp}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateExperience(@PathVariable String exp) {
 		logger.info("Entering getInterviewByCandidateExperience method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByCandidateExperience(exp)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByCandidateExperience(exp)), HttpStatus.OK);
 
 	}
 
@@ -290,13 +242,9 @@ public class InterviewController {
 	@GetMapping("/employee/{id}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeeId(@PathVariable Long id) {
 		logger.info("Entering getInterviewByEmployeeId method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByEmployeeId(id)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByEmployeeId(id)), HttpStatus.OK);
 
 	}
 
@@ -311,13 +259,9 @@ public class InterviewController {
 	@GetMapping("/employee/designation/{designation}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeeDesignation(@PathVariable String designation) {
 		logger.info("Entering getInterviewByEmployeeDesignation method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByEmployeeDesignation(designation)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByEmployeeDesignation(designation)), HttpStatus.OK);
 
 	}
 
@@ -331,14 +275,9 @@ public class InterviewController {
 	@GetMapping("/employee/status/{status}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeeStatus(@PathVariable String status) {
 		logger.info("Entering getInterviewByEmployeeStatus method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByEmployeeStatus(status)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
 
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByEmployeeStatus(status)), HttpStatus.OK);
 	}
 
 	/**
@@ -353,14 +292,9 @@ public class InterviewController {
 	@GetMapping("/employee/name/{name}")
 	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeeName(@PathVariable String name) {
 		logger.info("Entering getInterviewByEmployeeName method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByEmployeeName(name)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
 
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByEmployeeName(name)), HttpStatus.OK);
 	}
 
 	/**
@@ -375,13 +309,9 @@ public class InterviewController {
 	@PostMapping("/employee/phone")
 	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeePhone(@RequestBody EmployeeDto employeeDto) {
 		logger.info("Entering getInterviewByEmployeePhone method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByEmployeePhone(employeeDto)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByEmployeePhone(employeeDto)), HttpStatus.OK);
 
 	}
 
@@ -397,13 +327,9 @@ public class InterviewController {
 	@PostMapping("/employee/email")
 	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeeEmailId(@RequestBody EmployeeDto employeeDto) {
 		logger.info("Entering getInterviewByEmployeeEmail method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
-					interviewService.getInterviewByEmployeeEmailId(employeeDto)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
+				interviewService.getInterviewByEmployeeEmailId(employeeDto)), HttpStatus.OK);
 
 	}
 
@@ -422,13 +348,9 @@ public class InterviewController {
 	public ResponseEntity<HttpResponseStatus> addInterview(@PathVariable("canId") Long canId,
 			@PathVariable("empId") Long empId, @RequestBody InterviewDto interviewDto) {
 		logger.info("Entering addInterview method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.CREATED.value(),
-					interviewService.addInterview(interviewDto, canId, empId)), HttpStatus.CREATED);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.CREATED.value(),
+				interviewService.addInterview(interviewDto, canId, empId)), HttpStatus.CREATED);
 
 	}
 
@@ -443,15 +365,10 @@ public class InterviewController {
 	@PutMapping
 	public ResponseEntity<HttpResponseStatus> updateInterview(@RequestBody InterviewDto interviewDto) {
 		logger.info("Entering updateInterview method");
-		try {
-			return new ResponseEntity<>(
-					new HttpResponseStatus(HttpStatus.OK.value(), interviewService.updateInterview(interviewDto)),
-					HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.NOT_FOUND.value(), e.getMessage()),
-					HttpStatus.NOT_FOUND);
-		}
 
+		return new ResponseEntity<>(
+				new HttpResponseStatus(HttpStatus.OK.value(), interviewService.updateInterview(interviewDto)),
+				HttpStatus.OK);
 	}
 
 	/**
@@ -464,13 +381,9 @@ public class InterviewController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<HttpResponseStatus> deleteInterview(@PathVariable Long id) {
 		logger.info("Entering deleteInterview method");
-		try {
-			return new ResponseEntity<>(
-					new HttpResponseStatus(HttpStatus.OK.value(), interviewService.deleteInterview(id)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.NOT_FOUND.value(), e.getMessage()),
-					HttpStatus.NOT_FOUND);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), interviewService.deleteInterview(id)),
+				HttpStatus.OK);
 
 	}
 
@@ -490,13 +403,9 @@ public class InterviewController {
 	public ResponseEntity<HttpResponseStatus> sendScheduledInterviewMail(@PathVariable("canId") Long canId,
 			@PathVariable("empId") Long empId, @RequestBody InterviewDto interviewDto) {
 		logger.info("Entering sendScheduledInterviewMail method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),
-					interviewService.sendScheduledInterviewMail(canId, empId, interviewDto)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),
+				interviewService.sendScheduledInterviewMail(canId, empId, interviewDto)), HttpStatus.OK);
 
 	}
 
@@ -517,13 +426,9 @@ public class InterviewController {
 	public ResponseEntity<HttpResponseStatus> sendRescheduledInterviewMail(@PathVariable("canId") Long canId,
 			@PathVariable("empId") Long empId, @RequestBody InterviewDto interviewDto) {
 		logger.info("Entering sendRescheduledInterviewMail method");
-		try {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),
-					interviewService.sendRescheduledInterviewMail(canId, empId, interviewDto)), HttpStatus.OK);
-		} catch (BussinessLogicException e) {
-			return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-					HttpStatus.BAD_REQUEST);
-		}
+
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),
+				interviewService.sendRescheduledInterviewMail(canId, empId, interviewDto)), HttpStatus.OK);
 
 	}
 
