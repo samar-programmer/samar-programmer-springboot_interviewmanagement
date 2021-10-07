@@ -232,7 +232,7 @@ public class CandidateDaoImpl implements CandidateDao{
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage());
-			throw new DatabaseException(ERROR_IN_READING);
+			throw new DatabaseException(ERROR_OCCURED);
 		}
 		
 		

@@ -6,12 +6,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.entity.Candidate;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.exception.NoRecordFoundException;
 import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.service.CandidateService;
 import com.revature.interviewmanagement.util.mapper.CandidateMapper;
@@ -30,7 +32,12 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getAllCandidate() {
 		logger.info("entering getAllCandidate method");
 		try {
-			return candidateDao.getAllCandidate();
+			List<Candidate> candidates = candidateDao.getAllCandidate();
+			if (CollectionUtils.isEmpty(candidates)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return candidates;
+			}
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -40,7 +47,12 @@ public class CandidateServiceImpl implements CandidateService {
 	public Candidate getCandidateById(Long id) {
 		logger.info("entering getCandidateById method");
 		try {
-			return candidateDao.getCandidateById(id);
+			Candidate candidate = candidateDao.getCandidateById(id);
+			if (candidate != null) {
+				return candidate;
+			} else {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			}
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -50,7 +62,13 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getCandidateByEmailId(CandidateDto candidateDto) {
 		logger.info("entering getCandidateByEmailId method");
 		try {
-			return candidateDao.getCandidateByEmailId(candidateDto.getEmailId());
+			List<Candidate> candidates = candidateDao.getCandidateByEmailId(candidateDto.getEmailId());
+			if (CollectionUtils.isEmpty(candidates)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return candidates;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -60,7 +78,13 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getCandidateByRole(String role) {
 		logger.info("entering getCandidateByRole method");
 		try {
-			return candidateDao.getCandidateByRole(role);
+			List<Candidate> candidates = candidateDao.getCandidateByRole(role);
+			if (CollectionUtils.isEmpty(candidates)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return candidates;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -70,7 +94,13 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getCandidateByExperience(String exp) {
 		logger.info("entering getCandidateByExperience method");
 		try {
-			return candidateDao.getCandidateByExperience(exp);
+			List<Candidate> candidates = candidateDao.getCandidateByExperience(exp);
+			if (CollectionUtils.isEmpty(candidates)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return candidates;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -80,7 +110,13 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getCandidateByName(String name) {
 		logger.info("entering getCandidateByName method");
 		try {
-			return candidateDao.getCandidateByName(name);
+			List<Candidate> candidates = candidateDao.getCandidateByName(name);
+			if (CollectionUtils.isEmpty(candidates)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return candidates;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -90,7 +126,12 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<Candidate> getCandidateByPhoneNumber(CandidateDto candidateDto) {
 		logger.info("entering getCandidateByPhoneNumber method");
 		try {
-			return candidateDao.getCandidateByPhoneNumber(candidateDto.getPhoneNumber());
+			List<Candidate> candidates = candidateDao.getCandidateByPhoneNumber(candidateDto.getPhoneNumber());
+			if (CollectionUtils.isEmpty(candidates)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return candidates;
+			}
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -116,8 +157,14 @@ public class CandidateServiceImpl implements CandidateService {
 		logger.info("entering updateCandidate method");
 		try {
 			if (candidateDao.getCandidateById(candidateDto.getId()) != null) {
-				Candidate candidate = CandidateMapper.candidateEntityMapper(candidateDto);
-				return candidateDao.updateCandidate(candidate);
+				if (Boolean.TRUE.equals(validateJobRole(candidateDto))) {
+					Candidate candidate = CandidateMapper.candidateEntityMapper(candidateDto);
+					return candidateDao.updateCandidate(candidate);
+				} else {
+					throw new BussinessLogicException(
+							"You cannot apply for this role at the moment. You can apply for this role only after 3 months");
+				}
+
 			} else {
 				throw new IdNotFoundException("Candidate " + ID_NOT_FOUND);
 			}
@@ -131,8 +178,15 @@ public class CandidateServiceImpl implements CandidateService {
 	public String addCandidate(CandidateDto candidateDto) {
 		logger.info("entering addCandidate method");
 		try {
-			Candidate candidate = CandidateMapper.candidateEntityMapper(candidateDto);
-			return candidateDao.addCandidate(candidate);
+			//invokes validateJobRole method which is going to return true if the candidate is able to apply for a specific role
+			if (candidateDao.validateJobRole(candidateDto)==null) {
+				Candidate candidate = CandidateMapper.candidateEntityMapper(candidateDto);
+				return candidateDao.addCandidate(candidate);
+			} else {
+				throw new BussinessLogicException(
+						"You cannot apply for this role at the moment. You can apply for this role only after 3 months");
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -142,7 +196,13 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<?> getAllExperience() {
 		logger.info("entering getExperience method");
 		try {
-			return candidateDao.getAllExperience();
+			List<?> experience = candidateDao.getAllExperience();
+			if (CollectionUtils.isEmpty(experience)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return experience;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -152,7 +212,12 @@ public class CandidateServiceImpl implements CandidateService {
 	public List<?> getAllJobRole() {
 		logger.info("entering getAllJobRole method");
 		try {
-			return candidateDao.getAllJobRole();
+			List<?> jobRoles = candidateDao.getAllJobRole();
+			if (CollectionUtils.isEmpty(jobRoles)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return jobRoles;
+			}
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}

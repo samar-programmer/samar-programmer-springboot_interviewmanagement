@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.dao.EmployeeDao;
@@ -18,6 +19,7 @@ import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.exception.NoRecordFoundException;
 import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.model.InterviewDto;
@@ -28,26 +30,32 @@ import com.revature.interviewmanagement.utils.ScheduledInterviewMailUtil;
 @Service
 public class InterviewServiceImpl implements InterviewService {
 
-	private static final Logger logger=LogManager.getLogger(InterviewServiceImpl.class);
-	
+	private static final Logger logger = LogManager.getLogger(InterviewServiceImpl.class);
+
 	@Autowired
 	private InterviewDao interviewDao;
-	
+
 	@Autowired
 	private CandidateDao candidateDao;
-	
+
 	@Autowired
 	private EmployeeDao employeeDao;
-	
+
 	@Autowired
 	private JavaMailSender javaMailSender;
-	
+
 	@Override
 	public List<Interview> getAllInterview() {
 		logger.info("entering getAllInterview method");
 		try {
-			return interviewDao.getAllInterview();
-		}  catch (DatabaseException e) {
+			List<Interview> interviews = interviewDao.getAllInterview();
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
@@ -56,17 +64,29 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<?> getAllInterviewType() {
 		logger.info("entering getAllInterviewType method");
 		try {
-			return interviewDao.getAllInterviewType();
-		}  catch (DatabaseException e) {
+			List<?> interviewType = interviewDao.getAllInterviewType();
+			if (CollectionUtils.isEmpty(interviewType)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviewType;
+			}
+
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public Interview getInterviewById(Long id) {
 		logger.info("entering getInterviewById method");
 		try {
-			return interviewDao.getInterviewById(id);
+			Interview interview = interviewDao.getInterviewById(id);
+			if (interview == null) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interview;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -76,7 +96,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByScheduledDate(LocalDate scheduledDate) {
 		logger.info("entering getInterviewByScheduledDate method");
 		try {
-			return interviewDao.getInterviewByScheduledDate(scheduledDate);
+			List<Interview> interviews = interviewDao.getInterviewByScheduledDate(scheduledDate);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -86,7 +112,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByCandidateId(Long canId) {
 		logger.info("entering getInterviewByCandidateId method");
 		try {
-			return interviewDao.getInterviewByCandidateId(canId);
+			List<Interview> interviews = interviewDao.getInterviewByCandidateId(canId);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -96,7 +128,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByCandidateName(String name) {
 		logger.info("entering getInterviewByCandidateName method");
 		try {
-			return interviewDao.getInterviewByCandidateName(name);
+			List<Interview> interviews = interviewDao.getInterviewByCandidateName(name);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -106,7 +144,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByCandidatePhone(CandidateDto candidateDto) {
 		logger.info("entering getInterviewByCandidatePhone method");
 		try {
-			return interviewDao.getInterviewByCandidatePhone(candidateDto.getPhoneNumber());
+			List<Interview> interviews = interviewDao.getInterviewByCandidatePhone(candidateDto.getPhoneNumber());
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -116,7 +160,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByCandidateEmailId(CandidateDto candidateDto) {
 		logger.info("entering getInterviewByCandidateEmailId method");
 		try {
-			return interviewDao.getInterviewByCandidateEmailId(candidateDto.getEmailId());
+			List<Interview> interviews = interviewDao.getInterviewByCandidateEmailId(candidateDto.getEmailId());
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -126,7 +176,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByCandidateRole(String role) {
 		logger.info("entering getInterviewByCandidateRole method");
 		try {
-			return interviewDao.getInterviewByCandidateRole(role);
+			List<Interview> interviews = interviewDao.getInterviewByCandidateRole(role);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -136,18 +192,29 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByCandidateExperience(String exp) {
 		logger.info("entering getInterviewByCandidateExperience method");
 		try {
-			return interviewDao.getInterviewByCandidateExperience(exp);
+			List<Interview> interviews = interviewDao.getInterviewByCandidateExperience(exp);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
 
-
 	@Override
 	public List<Interview> getInterviewByEmployeeId(Long id) {
 		logger.info("entering getInterviewByEmployeeId method");
 		try {
-			return interviewDao.getInterviewByEmployeeId(id);
+			List<Interview> interviews = interviewDao.getInterviewByEmployeeId(id);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -157,7 +224,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByEmployeeDesignation(String designation) {
 		logger.info("entering getInterviewByEmployeeDesignation method");
 		try {
-			return interviewDao.getInterviewByEmployeeDesignation(designation);
+			List<Interview> interviews = interviewDao.getInterviewByEmployeeDesignation(designation);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -167,7 +240,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByEmployeeName(String name) {
 		logger.info("entering getInterviewByEmployeeName method");
 		try {
-			return interviewDao.getInterviewByEmployeeName(name);
+			List<Interview> interviews = interviewDao.getInterviewByEmployeeName(name);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -177,7 +256,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByEmployeePhone(EmployeeDto employeeDto) {
 		logger.info("entering getInterviewByEmployeePhone method");
 		try {
-			return interviewDao.getInterviewByEmployeePhone(employeeDto.getPhoneNumber());
+			List<Interview> interviews = interviewDao.getInterviewByEmployeePhone(employeeDto.getPhoneNumber());
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -187,56 +272,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByEmployeeEmailId(EmployeeDto employeeDto) {
 		logger.info("entering getInterviewByEmployeeEmailId method");
 		try {
-			return interviewDao.getInterviewByEmployeeEmailId(employeeDto.getEmailId());
-		} catch (DatabaseException e) {
-			throw new BussinessLogicException(e.getMessage());
-		}
-	}
+			List<Interview> interviews = interviewDao.getInterviewByEmployeeEmailId(employeeDto.getEmailId());
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
 
-	@Override
-	public String deleteInterview(Long id) {
-		logger.info("entering deleteInterview method");
-		try {
-			if(interviewDao.getInterviewById(id)!=null) {
-				return interviewDao.deleteInterview(id);
-			}else {
-				throw new IdNotFoundException("Interview "+ID_NOT_FOUND);
-			}
-			
-		} catch (DatabaseException e) {
-			throw new BussinessLogicException(e.getMessage());
-		}
-	}
-
-	@Override
-	public String updateInterview(InterviewDto interviewDto) {
-		logger.info("entering updateInterview method");
-		try {
-			if(interviewDao.getInterviewById(interviewDto.getId())!=null) {
-				Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
-				return interviewDao.updateInterview(interview);
-			}
-			else {
-				throw new IdNotFoundException("Interview "+ID_NOT_FOUND);
-			}
-			
-		} catch (DatabaseException e) {
-			throw new BussinessLogicException(e.getMessage());
-		}
-	}
-
-	@Override
-	public String addInterview(InterviewDto interviewDto,Long canId,Long empId) {
-		logger.info("entering addInterview method");
-		try {
-			if(candidateDao.getCandidateById(canId)!=null && employeeDao.getEmployeeById(empId)!=null) {
-				Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
-				return interviewDao.addInterview(interview,canId,empId);
-			}
-			else {
-				throw new IdNotFoundException("Candidate "+ID_NOT_FOUND+" or Employee "+ID_NOT_FOUND);
-			}
-			
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -246,31 +288,15 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByType(String type) {
 		logger.info("entering getInterviewByType method");
 		try {
-			return interviewDao.getInterviewByType(type);
+			List<Interview> interviews = interviewDao.getInterviewByType(type);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
-		}
-	}
-
-	@Override
-	public String sendScheduledInterviewMail(Long canId,Long empId,InterviewDto interviewDto) {
-		logger.info("entering sendScheduledInterviewMail method");
-		try {
-			return ScheduledInterviewMailUtil.sendScheduledInterviewMail(javaMailSender,candidateDao.getCandidateById(canId),employeeDao.getEmployeeById(empId),interviewDto);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new BussinessLogicException(ERROR_IN_SENDING_MAIL);
-		}
-	}
-
-	@Override
-	public String sendRescheduledInterviewMail(Long canId,Long empId,InterviewDto interviewDto) {
-		logger.info("entering sendRescheduledInterviewMail method");
-		try {
-			return ScheduledInterviewMailUtil.sendReScheduledInterviewMail(javaMailSender,candidateDao.getCandidateById(canId),employeeDao.getEmployeeById(empId),interviewDto);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new BussinessLogicException(ERROR_IN_SENDING_MAIL);
 		}
 	}
 
@@ -278,16 +304,95 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewByEmployeeStatus(String status) {
 		logger.info("entering getInterviewByEmployeeStatus method");
 		try {
-			return interviewDao.getInterviewByEmployeeStatus(status);
+			List<Interview> interviews = interviewDao.getInterviewByEmployeeStatus(status);
+			if (CollectionUtils.isEmpty(interviews)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return interviews;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 	}
 
-	
+	@Override
+	public String deleteInterview(Long id) {
+		logger.info("entering deleteInterview method");
+		try {
+			if (interviewDao.getInterviewById(id) != null) {
+				return interviewDao.deleteInterview(id);
+			} else {
+				throw new IdNotFoundException("Interview " + ID_NOT_FOUND);
+			}
 
-	
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
 
-	
+	@Override
+	public String updateInterview(InterviewDto interviewDto) {
+		logger.info("entering updateInterview method");
+		try {
+			if (interviewDao.getInterviewById(interviewDto.getId()) != null) {
+				// checks whether updated candidate and employee exists in the database
+				if (candidateDao.getCandidateById(interviewDto.getCandidate().getId()) != null
+						&& employeeDao.getEmployeeById(interviewDto.getEmployee().getId()) != null) {
+					Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
+					return interviewDao.updateInterview(interview);
+				} else {
+					throw new IdNotFoundException("Candidate " + ID_NOT_FOUND + " or Employee " + ID_NOT_FOUND);
+				}
+
+			} else {
+				throw new IdNotFoundException("Interview " + ID_NOT_FOUND);
+			}
+
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+
+	@Override
+	public String addInterview(InterviewDto interviewDto, Long canId, Long empId) {
+		logger.info("entering addInterview method");
+		try {
+			// checks whether updated candidate and employee exists in the database
+			if (candidateDao.getCandidateById(canId) != null && employeeDao.getEmployeeById(empId) != null) {
+				Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
+				return interviewDao.addInterview(interview, canId, empId);
+			} else {
+				throw new IdNotFoundException("Candidate " + ID_NOT_FOUND + " or Employee " + ID_NOT_FOUND);
+			}
+
+		} catch (DatabaseException e) {
+			throw new BussinessLogicException(e.getMessage());
+		}
+	}
+
+	@Override
+	public String sendScheduledInterviewMail(Long canId, Long empId, InterviewDto interviewDto) {
+		logger.info("entering sendScheduledInterviewMail method");
+		try {
+			return ScheduledInterviewMailUtil.sendScheduledInterviewMail(javaMailSender,
+					candidateDao.getCandidateById(canId), employeeDao.getEmployeeById(empId), interviewDto);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new BussinessLogicException(ERROR_IN_SENDING_MAIL);
+		}
+	}
+
+	@Override
+	public String sendRescheduledInterviewMail(Long canId, Long empId, InterviewDto interviewDto) {
+		logger.info("entering sendRescheduledInterviewMail method");
+		try {
+			return ScheduledInterviewMailUtil.sendReScheduledInterviewMail(javaMailSender,
+					candidateDao.getCandidateById(canId), employeeDao.getEmployeeById(empId), interviewDto);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new BussinessLogicException(ERROR_IN_SENDING_MAIL);
+		}
+	}
 
 }

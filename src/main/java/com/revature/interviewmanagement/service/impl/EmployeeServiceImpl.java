@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.revature.interviewmanagement.dao.EmployeeDao;
 import com.revature.interviewmanagement.entity.Employee;
@@ -13,6 +14,7 @@ import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.exception.NoRecordFoundException;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.service.EmployeeService;
 import com.revature.interviewmanagement.util.mapper.EmployeeMapper;
@@ -36,7 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			} else {
 				throw new IdNotFoundException("Employee " + ID_NOT_FOUND);
 			}
-		}  catch (DatabaseException e) {
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 
@@ -67,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			} else {
 				throw new IdNotFoundException("Employee " + ID_NOT_FOUND);
 			}
-		}catch (DatabaseException e) {
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 
@@ -96,7 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			} else {
 				throw new DuplicateIdException("Entered Phone number already exists");
 			}
-		}  catch (DatabaseException e) {
+		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
 
@@ -106,7 +108,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<Employee> getEmployeeByDesignation(String designation) {
 		logger.info("entering getEmployeeByDesignation method");
 		try {
-			return employeeDao.getEmployeeByDesignation(designation);
+			List<Employee> employees = employeeDao.getEmployeeByDesignation(designation);
+			if (CollectionUtils.isEmpty(employees)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return employees;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -116,7 +124,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public Employee getEmployeeByPhoneNumber(EmployeeDto employeeDto) {
 		logger.info("entering getEmployeeByPhoneNumber method");
 		try {
-			return employeeDao.getEmployeeByPhoneNumber(employeeDto.getPhoneNumber());
+			Employee employee = employeeDao.getEmployeeByPhoneNumber(employeeDto.getPhoneNumber());
+			if (employee == null) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return employee;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -126,7 +140,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public Employee getEmployeeByEmailId(EmployeeDto employeeDto) {
 		logger.info("entering getEmployeeByEmailId method");
 		try {
-			return employeeDao.getEmployeeByEmailId(employeeDto.getEmailId());
+			Employee employee = employeeDao.getEmployeeByEmailId(employeeDto.getEmailId());
+			if (employee == null) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return employee;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -136,7 +156,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public Employee getEmployeeById(Long id) {
 		logger.info("entering getEmployeeById method");
 		try {
-			return employeeDao.getEmployeeById(id);
+			Employee employee = employeeDao.getEmployeeById(id);
+			if (employee == null) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return employee;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -146,7 +172,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<Employee> getAllEmployee() {
 		logger.info("entering getAllEmployee method");
 		try {
-			return employeeDao.getAllEmployee();
+			List<Employee> employees = employeeDao.getAllEmployee();
+			if (CollectionUtils.isEmpty(employees)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return employees;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -156,7 +188,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<Employee> getEmployeeByName(String name) {
 		logger.info("entering getEmployeeByName method");
 		try {
-			return employeeDao.getEmployeeByName(name);
+			List<Employee> employees = employeeDao.getEmployeeByName(name);
+			if (CollectionUtils.isEmpty(employees)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return employees;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -166,7 +204,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<Employee> getEmployeeByStatus(String status) {
 		logger.info("entering getEmployeeByStatus method");
 		try {
-			return employeeDao.getEmployeeByStatus(status);
+			List<Employee> employees = employeeDao.getEmployeeByStatus(status);
+			if (CollectionUtils.isEmpty(employees)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return employees;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -176,7 +220,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<?> getAllDesignation() {
 		logger.info("entering getAllDesignation method");
 		try {
-			return employeeDao.getAllDesignation();
+			List<?> designations = employeeDao.getAllDesignation();
+			if (CollectionUtils.isEmpty(designations)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return designations;
+			}
+
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}

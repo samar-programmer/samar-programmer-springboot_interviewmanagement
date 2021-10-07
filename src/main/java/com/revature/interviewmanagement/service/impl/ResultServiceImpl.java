@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.revature.interviewmanagement.dao.ResultDao;
 import com.revature.interviewmanagement.entity.Result;
@@ -14,6 +15,7 @@ import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
 import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
+import com.revature.interviewmanagement.exception.NoRecordFoundException;
 import com.revature.interviewmanagement.model.ResultDto;
 import com.revature.interviewmanagement.service.InterviewService;
 import com.revature.interviewmanagement.service.ResultService;
@@ -54,9 +56,17 @@ public class ResultServiceImpl implements ResultService {
 	public String updateResult(ResultDto resultDto) {
 		logger.info("entering updateResult method");
 		try {
-			if(resultDao.getResultById(resultDto.getId())!=null) {
-				Result result=ResultMapper.resultEntityMapper(resultDto);
-				return resultDao.updateResult(result);
+			//checks whether given result already exists so that we can update it.
+			Result result=resultDao.getResultById(resultDto.getId());
+			if(result!=null) {
+				//checks whether previous interview and updated interview remains same
+				if(result.getInterview().getId().equals(resultDto.getInterview().getId())) {
+					 result=ResultMapper.resultEntityMapper(resultDto);
+					return resultDao.updateResult(result);
+				}else {
+					throw new BussinessLogicException("Conflict while updating the result. Result should not be updated with different interview");
+				}
+				
 			}else {
 				throw new IdNotFoundException("Result "+ID_NOT_FOUND);
 			}
@@ -89,7 +99,13 @@ public class ResultServiceImpl implements ResultService {
 	public List<Result> getResultByCandidateId(Long canId) {
 		logger.info("entering getResultByCandidateId method");
 		try {
-			return resultDao.getResultByCandidateId(canId);
+			List<Result> results =  resultDao.getResultByCandidateId(canId);
+			if (CollectionUtils.isEmpty(results)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return results;
+			}
+			
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -99,7 +115,13 @@ public class ResultServiceImpl implements ResultService {
 	public List<Result> getResultByEmployeeId(Long empId) {
 		logger.info("entering getAllCandidate method");
 		try {
-			return resultDao.getResultByEmployeeId(empId);
+			List<Result> results =  resultDao.getResultByEmployeeId(empId);
+			if (CollectionUtils.isEmpty(results)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return results;
+			}
+			
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -109,7 +131,13 @@ public class ResultServiceImpl implements ResultService {
 	public Result getResultByInterviewId(Long interviewId) {
 		logger.info("entering getResultByInterviewId method");
 		try {
-			return resultDao.getResultByInterviewId(interviewId);
+			Result result = resultDao.getResultByInterviewId(interviewId);
+			if (result==null) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return result;
+			}
+			 
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -119,7 +147,13 @@ public class ResultServiceImpl implements ResultService {
 	public Result getResultById(Long id) {
 		logger.info("entering getResultById method");
 		try {
-			return resultDao.getResultById(id);
+			Result result = resultDao.getResultById(id);
+			if (result==null) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return result;
+			}
+			
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
@@ -129,7 +163,13 @@ public class ResultServiceImpl implements ResultService {
 	public List<Result> getAllResult() {
 		logger.info("entering getAllResult method");
 		try {
-			return resultDao.getAllResult();
+			List<Result> results =  resultDao.getAllResult();
+			if (CollectionUtils.isEmpty(results)) {
+				throw new NoRecordFoundException(NO_DATA_FOUND);
+			} else {
+				return results;
+			}
+			
 		} catch (DatabaseException e) {
 			throw new BussinessLogicException(e.getMessage());
 		}
