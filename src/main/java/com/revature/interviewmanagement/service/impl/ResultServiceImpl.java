@@ -9,7 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.revature.interviewmanagement.dao.InterviewDao;
 import com.revature.interviewmanagement.dao.ResultDao;
+import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.entity.Result;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
@@ -17,7 +19,6 @@ import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 import com.revature.interviewmanagement.exception.NoRecordFoundException;
 import com.revature.interviewmanagement.model.ResultDto;
-import com.revature.interviewmanagement.service.InterviewService;
 import com.revature.interviewmanagement.service.ResultService;
 import com.revature.interviewmanagement.util.mapper.ResultMapper;
 import com.revature.interviewmanagement.utils.ResultMailSenderUtil;
@@ -32,7 +33,7 @@ public class ResultServiceImpl implements ResultService {
 	private ResultDao resultDao;
 	
 	@Autowired
-	private InterviewService interviewService;
+	private InterviewDao interviewDao;
 	
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -59,6 +60,14 @@ public class ResultServiceImpl implements ResultService {
 			//checks whether given result already exists so that we can update it.
 			Result result=resultDao.getResultById(resultDto.getId());
 			if(result!=null) {
+				Interview interview=resultDto.getInterview();
+				//checking whether candidate and employee not null
+				if(interview.getCandidate()==null) {
+					throw new BussinessLogicException(CANDIDATE+NOT_FOUND);
+				}else if(interview.getEmployee()==null) {
+					throw new BussinessLogicException(EMPLOYEE+NOT_FOUND);
+				}
+				
 				//checks whether previous interview and updated interview remains same
 				if(result.getInterview().getId().equals(resultDto.getInterview().getId())) {
 					 result=ResultMapper.resultEntityMapper(resultDto);
@@ -80,7 +89,7 @@ public class ResultServiceImpl implements ResultService {
 	public String addResult(Long interviewId, ResultDto resultDto) {
 		logger.info("entering addResult method");
 		try {
-			if(interviewService.getInterviewById(interviewId)==null) {
+			if(interviewDao.getInterviewById(interviewId)==null) {
 				throw new IdNotFoundException("Interview "+ID_NOT_FOUND);
 			}
 			else if(resultDao.getResultByInterviewId(interviewId)==null) {

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.response.HttpResponseStatus;
 import com.revature.interviewmanagement.service.EmployeeService;
+import com.revature.interviewmanagement.util.markerinterface.AddValidation;
+import com.revature.interviewmanagement.util.markerinterface.EmailValidation;
+import com.revature.interviewmanagement.util.markerinterface.PhoneValidation;
+import com.revature.interviewmanagement.util.markerinterface.UpdateValidation;
 
 /**
  * employee controller class which handles incoming request for employee
@@ -39,7 +44,7 @@ public class EmployeeController {
 	private EmployeeService employeeSerive;
 
 	/**
-	 * returns all the employees details. If no data found, returns empty list
+	 * returns all the available employees details. If no data found, returns empty list
 	 * 
 	 * @return details of all employees currently in the database as a list of
 	 *         employee object
@@ -79,7 +84,7 @@ public class EmployeeController {
 	 * @return employee details whose email id matches with the given email id
 	 */
 	@PostMapping("/email")
-	public ResponseEntity<HttpResponseStatus> getEmployeeByEmailId(@RequestBody EmployeeDto employeeDto) {
+	public ResponseEntity<HttpResponseStatus> getEmployeeByEmailId(@RequestBody @Validated(EmailValidation.class) EmployeeDto employeeDto) {
 		logger.info("Entering getAllCandidate method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -98,7 +103,7 @@ public class EmployeeController {
 	 *         number
 	 */
 	@PostMapping("/phone")
-	public ResponseEntity<HttpResponseStatus> getEmployeeByPhoneNumber(@RequestBody EmployeeDto employeeDto) {
+	public ResponseEntity<HttpResponseStatus> getEmployeeByPhoneNumber(@RequestBody @Validated(PhoneValidation.class) EmployeeDto employeeDto) {
 		logger.info("Entering getEmployeeByPhoneNumber method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -178,7 +183,7 @@ public class EmployeeController {
 	 * @return status of adding a employee details
 	 */
 	@PostMapping
-	public ResponseEntity<HttpResponseStatus> addEmployee(@RequestBody EmployeeDto employeeDto) {
+	public ResponseEntity<HttpResponseStatus> addEmployee(@RequestBody @Validated(AddValidation.class) EmployeeDto employeeDto) {
 		logger.info("Entering addEmployee method");
 
 		return new ResponseEntity<>(
@@ -195,7 +200,7 @@ public class EmployeeController {
 	 * @return status of the update operation
 	 */
 	@PutMapping
-	public ResponseEntity<HttpResponseStatus> updateEmployee(@RequestBody EmployeeDto employeeDto) {
+	public ResponseEntity<HttpResponseStatus> updateEmployee(@RequestBody  @Validated({AddValidation.class,UpdateValidation.class}) EmployeeDto employeeDto) {
 		logger.info("Entering updateEmployee method");
 
 		return new ResponseEntity<>(

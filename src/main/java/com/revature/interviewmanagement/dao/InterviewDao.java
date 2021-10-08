@@ -47,4 +47,6 @@ public interface InterviewDao {
 
 	List<?> getAllInterviewType();
 
+	boolean isCandidateHasLiveInterview(Long canId);
+
 }

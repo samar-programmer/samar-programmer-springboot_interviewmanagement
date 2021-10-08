@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
@@ -13,13 +16,18 @@ import com.revature.interviewmanagement.exception.DuplicateIdException;
 import com.revature.interviewmanagement.exception.IdNotFoundException;
 import com.revature.interviewmanagement.exception.NoRecordFoundException;
 import com.revature.interviewmanagement.response.HttpResponseStatus;
+import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.INVALID_INPUT;
+import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.INVALID_REQUESTBODY;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
 
 	@ExceptionHandler(IdNotFoundException.class)
-	public ResponseEntity<HttpResponseStatus> userNotFound(IdNotFoundException e) {
+	public ResponseEntity<HttpResponseStatus> idNotFound(IdNotFoundException e) {
 		logger.error(e.getMessage());
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage()),
 				HttpStatus.UNPROCESSABLE_ENTITY);
@@ -33,10 +41,31 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(DuplicateIdException.class)
-	public ResponseEntity<HttpResponseStatus> userNotFound(DuplicateIdException e) {
+	public ResponseEntity<HttpResponseStatus> duplicateIdFound(DuplicateIdException e) {
 		logger.error(e.getMessage());
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.CONFLICT.value(), e.getMessage()),
 				HttpStatus.CONFLICT);
+	}
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<HttpResponseStatus> invalidInputArgumentsFound(MethodArgumentTypeMismatchException e) {
+		logger.error(e.getMessage());
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(),INVALID_INPUT),
+				HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<HttpResponseStatus> invalidRequestBodyFound(MethodArgumentNotValidException e) {
+		logger.error(e.getMessage());
+		
+		//this exception occurs when mandatory input fields are not provided with input request body,
+		//as we have notNull or NotBlank in Dto, we can get corresponding input fields which is not satisfying, 
+		//those errors are captured here.
+		List<String> details= e.getBindingResult().getFieldErrors().stream()
+		        .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+		
+		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.BAD_REQUEST.value(),INVALID_REQUESTBODY,details),
+				HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(DatabaseException.class)

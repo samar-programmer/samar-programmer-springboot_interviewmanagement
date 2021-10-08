@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -45,7 +47,8 @@ public class InterviewDaoImpl implements InterviewDao {
 	private static final String GET_INTERVIEW_EMPLOYEEEMAIL = "SELECT i FROM Interview i WHERE i.employee.emailId=?1 and i.status NOT IN ('Cancelled','Finished') ";
 	private static final String GET_INTERVIEW_EMPLOYEEPHONE = "SELECT i FROM Interview i WHERE i.employee.phoneNumber=?1";
 	private static final String GET_INTERVIEW_TYPE = "SELECT i FROM Interview i WHERE i.interviewType=?1";
-	private static final String GET_ALLINTERVIEWTYPE="SELECT * FROM interview_type";
+	private static final String GET_ALLINTERVIEWTYPE = "SELECT * FROM interview_type";
+	private static final String VALIDATE_CANDIDATE_FOR_INTERVIEW = "SELECT i FROM Interview i WHERE i.candidate.id=:canId AND i.status IN ('Live','Rescheduled') ";
 
 	@Override
 	public List<Interview> getAllInterview() {
@@ -68,6 +71,29 @@ public class InterviewDaoImpl implements InterviewDao {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_READING);
+		}
+	}
+
+	/**
+	 * method is used to check whether candidate having a live/Rescheduled interview, returns
+	 * true if candidate having a live/Rescheduled interview otherwise false
+	 * 
+	 * @param id id of the candidate
+	 * @return boolean based on the state of interview, true if candidate having a live/Rescheduled interview
+	 */
+	@Override
+	public boolean isCandidateHasLiveInterview(Long canId) {
+		logger.info("entering validateCandidateForInterview method");
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			return session.createQuery(VALIDATE_CANDIDATE_FOR_INTERVIEW, Interview.class).setParameter("canId", canId)
+					.getSingleResult() != null;
+		} catch (NoResultException e) {
+			logger.warn(e.getMessage());
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_OCCURED);
 		}
 	}
 
@@ -261,12 +287,11 @@ public class InterviewDaoImpl implements InterviewDao {
 			session.delete(session.load(Interview.class, id));
 			session.flush();
 			logger.info("Interview deleted with id: {}", id);
+			return INTERVIEW_DELETE;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_DELETING);
 		}
-
-		return INTERVIEW_DELETE;
 
 	}
 
@@ -281,11 +306,11 @@ public class InterviewDaoImpl implements InterviewDao {
 			session.merge(interview);
 			session.flush();
 			logger.info("Interview details updated with id: {}", id);
+			return INTERVIEW_UPDATE;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_UPDATING);
 		}
-		return INTERVIEW_UPDATE;
 
 	}
 
@@ -297,27 +322,27 @@ public class InterviewDaoImpl implements InterviewDao {
 			Session session = sessionFactory.getCurrentSession();
 			interview.setCandidate(session.load(Candidate.class, canId));
 			interview.setEmployee(session.load(Employee.class, empId));
+			interview.setStatus("Live");
 			interview.setAddedOn(today);
 			session.save(interview);
 			logger.info("Interview details inserted");
+			return INTERVIEW_CREATE;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_ADDING);
 		}
 
-		return INTERVIEW_CREATE;
-
 	}
 
-	//This method will return interview types stored in database. There is no relation with entity, so return type is generic
+	// This method will return interview types stored in database. There is no
+	// relation with entity, so return type is generic
 	@Override
 	public List<?> getAllInterviewType() {
-		
+
 		logger.info("entering getAllInterviewType method");
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			return session.createNativeQuery(GET_ALLINTERVIEWTYPE)
-					.getResultList();
+			return session.createNativeQuery(GET_ALLINTERVIEWTYPE).getResultList();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_READING);

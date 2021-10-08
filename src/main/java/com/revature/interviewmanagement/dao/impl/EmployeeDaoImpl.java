@@ -32,13 +32,19 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	private static final String CHECK_EMPLOYEE_DESIGNATION = "SELECT e FROM Employee e WHERE e.designation=:designation AND e.status!='Left'";
 	private static final String CHECK_EMPLOYEE_STATUS = "SELECT e FROM Employee e WHERE e.status=:status";
-	private static final String CHECK_EMPLOYEE_EMAILID = "SELECT e FROM Employee e WHERE e.emailId=:email AND e.status!='Left'";//this is used in getEmployeeByEmailId
-	private static final String CHECK_EMPLOYEE_EMAILID1 = "SELECT e FROM Employee e WHERE e.emailId=:email";//this is used by checkState method, because status is not checked here, this is helpful in checking deleted employee too.
+	/*
+	 * CHECK_EMPLOYEE_EMAILID is used in getEmployeeByEmailId
+	 */
+	private static final String CHECK_EMPLOYEE_EMAILID = "SELECT e FROM Employee e WHERE e.emailId=:email AND e.status!='Left'";
+	/*
+	 * CHECK_EMPLOYEE_EMAILID1 is used by checkState method, because status is not checked here, this is helpful in checking deleted employee too.
+	 */
+	private static final String CHECK_EMPLOYEE_EMAILID1 = "SELECT e FROM Employee e WHERE e.emailId=:email";
 	private static final String CHECK_EMPLOYEE_PHONENUMBER = "SELECT e FROM Employee e WHERE e.phoneNumber=:phone";
 	private static final String CHECK_EMPLOYEE_ALLEMPLOYEE = "SELECT e FROM Employee e WHERE e.status!='Left'";
 	private static final String CHECK_EMPLOYEE_EMPLOYEEBYNAME = "SELECT e FROM Employee e WHERE CONCAT(e.firstName,' ', e.lastName) LIKE :name AND e.status!='Left'";
-	private static final String GET_ALL_DESIGNATION="SELECT * FROM designation";
-	
+	private static final String GET_ALL_DESIGNATION = "SELECT * FROM designation";
+
 	/**
 	 * checkState method will check whether email id,phone number of an employee
 	 * already present in another record before we add it. The goal of the method is
@@ -110,10 +116,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		}
 
 	}
-	
+
 	@Override
 	public List<?> getAllDesignation() {
-		
+
 		logger.info("Entering getAllDesignation method");
 		try {
 			Session session = sessionFactory.getCurrentSession();
@@ -220,12 +226,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			employee.setStatus("Available");
 			session.save(employee);
 			logger.info("Employee details inserted");
+			return EMPLOYEE_CREATE;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_ADDING);
 		}
-
-		return EMPLOYEE_CREATE;
 
 	}
 
@@ -240,33 +245,32 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			session.merge(employee);
 			session.flush();
 			logger.info("Employee updated with id: {}", id);
+			return EMPLOYEE_UPDATE;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_UPDATING);
 		}
-		return EMPLOYEE_UPDATE;
+
 	}
 
 	@Transactional
 	@Override
-	//here delete operation means that we marking status as Left
+	// here delete operation means that we marking status as Left
 	public String deleteEmployee(Long id) {
 		logger.info("Entering deleteEmployee method");
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			Employee employee=session.load(Employee.class, id);
+			Employee employee = session.load(Employee.class, id);
 			employee.setUpdatedOn(today);
 			employee.setStatus("Left");
 			session.merge(employee);
 			logger.info("Employee deleted with id: {}", id);
+			return EMPLOYEE_DELETE;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_IN_DELETING);
 		}
-		return EMPLOYEE_DELETE;
 
 	}
-
-	
 
 }

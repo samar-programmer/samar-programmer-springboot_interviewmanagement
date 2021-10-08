@@ -31,6 +31,15 @@ public final class InterviewManagementConstantsUtil {
 	public static final String ERROR_IN_SENDING_MAIL = "Error occured while sending the mail";
 	public static final String NO_DATA_FOUND = "No data available";
 	public static final String ERROR_OCCURED="Error occured while processing";
+	public static final String INVALID_INPUT="Invalid input is given";
+	public static final String INVALID_REQUESTBODY="Error in mandatory input fields";
+	public static final String INVALID_INTERVIEW_UPDATE="The interview status cannot be made live or finished at the moment";
+	public static final String EMPLOYEE_LEFT="The Employee is not available for the interview";
+	public static final String FINISHED_INTERVIEW="The interview is already over. Finished interview cannot be updated";
+	public static final String CANDIDATE_ALREADY_HAS_LIVE_INTERVIEW="The Candidate already has a Live/Rescheduled interview";
+	public static final String CANDIDATE="Candidate ";
+	public static final String EMPLOYEE="Employee ";
+	public static final String NOT_FOUND="Not Found";
 	private InterviewManagementConstantsUtil() {
 	}
 

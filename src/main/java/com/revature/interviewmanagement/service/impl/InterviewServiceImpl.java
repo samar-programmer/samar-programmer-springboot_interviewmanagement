@@ -15,6 +15,8 @@ import org.springframework.util.CollectionUtils;
 import com.revature.interviewmanagement.dao.CandidateDao;
 import com.revature.interviewmanagement.dao.EmployeeDao;
 import com.revature.interviewmanagement.dao.InterviewDao;
+import com.revature.interviewmanagement.entity.Candidate;
+import com.revature.interviewmanagement.entity.Employee;
 import com.revature.interviewmanagement.entity.Interview;
 import com.revature.interviewmanagement.exception.BussinessLogicException;
 import com.revature.interviewmanagement.exception.DatabaseException;
@@ -43,6 +45,9 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	private Candidate candidate=null;
+	private Employee employee=null;
 
 	@Override
 	public List<Interview> getAllInterview() {
@@ -335,14 +340,36 @@ public class InterviewServiceImpl implements InterviewService {
 	public String updateInterview(InterviewDto interviewDto) {
 		logger.info("entering updateInterview method");
 		try {
-			if (interviewDao.getInterviewById(interviewDto.getId()) != null) {
+			//interview status will be changed to Finished only after we add result for the interview
+			//So while updating the interview itself we cannot make status as finished
+			if(("Finished").equals(interviewDto.getStatus()) || ("Live").equals(interviewDto.getStatus())) {
+				throw new BussinessLogicException(INVALID_INTERVIEW_UPDATE);
+			}
+			
+			
+			//checks whether interview exists for given id
+			Interview interview=interviewDao.getInterviewById(interviewDto.getId());
+			if (interview != null) {
 				// checks whether updated candidate and employee exists in the database
-				if (candidateDao.getCandidateById(interviewDto.getCandidate().getId()) != null
-						&& employeeDao.getEmployeeById(interviewDto.getEmployee().getId()) != null) {
-					Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
-					return interviewDao.updateInterview(interview);
+				candidate=candidateDao.getCandidateById(interviewDto.getCandidate().getId());
+				employee=employeeDao.getEmployeeById(interviewDto.getEmployee().getId());
+				if (candidate != null && employee != null) {
+					
+					//checks the employee status is available or left
+					if(("Left").equals(employee.getStatus())) {
+						throw new BussinessLogicException(EMPLOYEE_LEFT);
+					}
+					//isCandidateHasLiveInterview method checks the candidate has a live/Rescheduled interview and returns true if candidate has
+					//a live/Rescheduled interview
+					else if(("Finished").equals(interview.getStatus())) {
+						throw new BussinessLogicException(FINISHED_INTERVIEW);
+					} else {
+						interview = InterviewMapper.interviewEntityMapper(interviewDto);
+						return interviewDao.updateInterview(interview);
+					}
+					
 				} else {
-					throw new IdNotFoundException("Candidate " + ID_NOT_FOUND + " or Employee " + ID_NOT_FOUND);
+					throw new IdNotFoundException(CANDIDATE + ID_NOT_FOUND + " or "+EMPLOYEE + ID_NOT_FOUND);
 				}
 
 			} else {
@@ -358,12 +385,26 @@ public class InterviewServiceImpl implements InterviewService {
 	public String addInterview(InterviewDto interviewDto, Long canId, Long empId) {
 		logger.info("entering addInterview method");
 		try {
-			// checks whether updated candidate and employee exists in the database
-			if (candidateDao.getCandidateById(canId) != null && employeeDao.getEmployeeById(empId) != null) {
-				Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
-				return interviewDao.addInterview(interview, canId, empId);
+			candidate=candidateDao.getCandidateById(canId);
+			employee=employeeDao.getEmployeeById(empId);
+			// checks whether candidate and employee exists in the database
+			if (candidate != null && employee != null) {
+			
+				//checks the employee status is available or left
+				if(("Left").equals(employee.getStatus())) {
+					throw new BussinessLogicException(EMPLOYEE_LEFT);
+				}
+				//isCandidateHasLiveInterview method checks the candidate has a live/Rescheduled interview and returns true if candidate has
+				//a live/Rescheduled interview
+				else if(interviewDao.isCandidateHasLiveInterview(canId)) {
+					throw new BussinessLogicException(CANDIDATE_ALREADY_HAS_LIVE_INTERVIEW);
+				} else {
+					Interview interview = InterviewMapper.interviewEntityMapper(interviewDto);
+					return interviewDao.addInterview(interview, canId, empId);
+				}
+				
 			} else {
-				throw new IdNotFoundException("Candidate " + ID_NOT_FOUND + " or Employee " + ID_NOT_FOUND);
+				throw new IdNotFoundException(CANDIDATE + ID_NOT_FOUND + " or "+EMPLOYEE + ID_NOT_FOUND);
 			}
 
 		} catch (DatabaseException e) {
@@ -374,9 +415,18 @@ public class InterviewServiceImpl implements InterviewService {
 	@Override
 	public String sendScheduledInterviewMail(Long canId, Long empId, InterviewDto interviewDto) {
 		logger.info("entering sendScheduledInterviewMail method");
+		
+		//checking whether candidate and employee exists in the database
+		candidate=candidateDao.getCandidateById(canId);
+		if(candidate==null) {
+			throw new IdNotFoundException(CANDIDATE+ID_NOT_FOUND);
+		}
+		employee=employeeDao.getEmployeeById(empId);
+		if(employee==null) {
+			throw new IdNotFoundException(EMPLOYEE+ID_NOT_FOUND);
+		}
 		try {
-			return ScheduledInterviewMailUtil.sendScheduledInterviewMail(javaMailSender,
-					candidateDao.getCandidateById(canId), employeeDao.getEmployeeById(empId), interviewDto);
+			return ScheduledInterviewMailUtil.sendScheduledInterviewMail(javaMailSender,candidate,employee, interviewDto);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new BussinessLogicException(ERROR_IN_SENDING_MAIL);
@@ -386,9 +436,19 @@ public class InterviewServiceImpl implements InterviewService {
 	@Override
 	public String sendRescheduledInterviewMail(Long canId, Long empId, InterviewDto interviewDto) {
 		logger.info("entering sendRescheduledInterviewMail method");
+		
+		//checking whether candidate and employee exists in the database
+		candidate=candidateDao.getCandidateById(canId);
+		if(candidate==null) {
+			throw new IdNotFoundException(CANDIDATE+ID_NOT_FOUND);
+		}
+		employee=employeeDao.getEmployeeById(empId);
+		if(employee==null) {
+			throw new IdNotFoundException(EMPLOYEE+ID_NOT_FOUND);
+		}
+		
 		try {
-			return ScheduledInterviewMailUtil.sendReScheduledInterviewMail(javaMailSender,
-					candidateDao.getCandidateById(canId), employeeDao.getEmployeeById(empId), interviewDto);
+			return ScheduledInterviewMailUtil.sendReScheduledInterviewMail(javaMailSender,candidate, employee, interviewDto);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new BussinessLogicException(ERROR_IN_SENDING_MAIL);

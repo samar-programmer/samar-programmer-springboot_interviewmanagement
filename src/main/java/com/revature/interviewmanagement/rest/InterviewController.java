@@ -4,12 +4,14 @@ import static com.revature.interviewmanagement.utils.InterviewManagementConstant
 
 import java.time.LocalDate;
 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,11 @@ import com.revature.interviewmanagement.model.EmployeeDto;
 import com.revature.interviewmanagement.model.InterviewDto;
 import com.revature.interviewmanagement.response.HttpResponseStatus;
 import com.revature.interviewmanagement.service.InterviewService;
+import com.revature.interviewmanagement.util.markerinterface.AddValidation;
+import com.revature.interviewmanagement.util.markerinterface.EmailValidation;
+import com.revature.interviewmanagement.util.markerinterface.MailValidation;
+import com.revature.interviewmanagement.util.markerinterface.PhoneValidation;
+import com.revature.interviewmanagement.util.markerinterface.UpdateValidation;
 
 /**
  * Interview controller class which handles incoming requests for interview
@@ -170,7 +177,7 @@ public class InterviewController {
 	 * @return interview details as a list of interview object
 	 */
 	@PostMapping("/candidate/phone")
-	public ResponseEntity<HttpResponseStatus> getInterviewByCandidatePhone(@RequestBody CandidateDto candidateDto) {
+	public ResponseEntity<HttpResponseStatus> getInterviewByCandidatePhone(@RequestBody @Validated({PhoneValidation.class}) CandidateDto candidateDto) {
 		logger.info("Entering getInterviewByCandidatePhone method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -187,7 +194,7 @@ public class InterviewController {
 	 * @return interview details as a list of interview object
 	 */
 	@PostMapping("/candidate/email")
-	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateEmailId(@RequestBody CandidateDto candidateDto) {
+	public ResponseEntity<HttpResponseStatus> getInterviewByCandidateEmailId(@RequestBody @Validated({EmailValidation.class}) CandidateDto candidateDto) {
 		logger.info("Entering getInterviewByCandidateEmail method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -307,7 +314,7 @@ public class InterviewController {
 	 * @return interview details as a list of interview object
 	 */
 	@PostMapping("/employee/phone")
-	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeePhone(@RequestBody EmployeeDto employeeDto) {
+	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeePhone(@RequestBody @Validated({PhoneValidation.class}) EmployeeDto employeeDto) {
 		logger.info("Entering getInterviewByEmployeePhone method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -325,7 +332,7 @@ public class InterviewController {
 	 * @return interview details as a list of interview object
 	 */
 	@PostMapping("/employee/email")
-	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeeEmailId(@RequestBody EmployeeDto employeeDto) {
+	public ResponseEntity<HttpResponseStatus> getInterviewByEmployeeEmailId(@RequestBody @Validated({EmailValidation.class}) EmployeeDto employeeDto) {
 		logger.info("Entering getInterviewByEmployeeEmail method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -346,7 +353,7 @@ public class InterviewController {
 	 */
 	@PostMapping("/{canId}/{empId}")
 	public ResponseEntity<HttpResponseStatus> addInterview(@PathVariable("canId") Long canId,
-			@PathVariable("empId") Long empId, @RequestBody InterviewDto interviewDto) {
+			@PathVariable("empId") Long empId, @RequestBody @Validated({AddValidation.class}) InterviewDto interviewDto) {
 		logger.info("Entering addInterview method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.CREATED.value(),
@@ -363,7 +370,7 @@ public class InterviewController {
 	 * @return status of the update operation
 	 */
 	@PutMapping
-	public ResponseEntity<HttpResponseStatus> updateInterview(@RequestBody InterviewDto interviewDto) {
+	public ResponseEntity<HttpResponseStatus> updateInterview(@RequestBody @Validated({AddValidation.class,UpdateValidation.class}) InterviewDto interviewDto) {
 		logger.info("Entering updateInterview method");
 
 		return new ResponseEntity<>(
@@ -401,7 +408,7 @@ public class InterviewController {
 	 */
 	@PostMapping("/scheduled-interview/{canId}/{empId}")
 	public ResponseEntity<HttpResponseStatus> sendScheduledInterviewMail(@PathVariable("canId") Long canId,
-			@PathVariable("empId") Long empId, @RequestBody InterviewDto interviewDto) {
+			@PathVariable("empId") Long empId, @RequestBody @Validated({MailValidation.class}) InterviewDto interviewDto) {
 		logger.info("Entering sendScheduledInterviewMail method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),
@@ -424,7 +431,7 @@ public class InterviewController {
 	 */
 	@PutMapping("/rescheduled-interview/{canId}/{empId}")
 	public ResponseEntity<HttpResponseStatus> sendRescheduledInterviewMail(@PathVariable("canId") Long canId,
-			@PathVariable("empId") Long empId, @RequestBody InterviewDto interviewDto) {
+			@PathVariable("empId") Long empId, @RequestBody @Validated({MailValidation.class}) InterviewDto interviewDto) {
 		logger.info("Entering sendRescheduledInterviewMail method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(),

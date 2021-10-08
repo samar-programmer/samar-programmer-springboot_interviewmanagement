@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.interviewmanagement.model.ResultDto;
 import com.revature.interviewmanagement.response.HttpResponseStatus;
 import com.revature.interviewmanagement.service.ResultService;
+import com.revature.interviewmanagement.util.markerinterface.AddValidation;
+import com.revature.interviewmanagement.util.markerinterface.MailValidation;
+import com.revature.interviewmanagement.util.markerinterface.UpdateValidation;
 
 /**
  * Result controller handles all the incoming requests for result operations
@@ -131,7 +135,7 @@ public class ResultController {
 	 */
 	@PostMapping("/{interviewId}")
 	public ResponseEntity<HttpResponseStatus> addResult(@PathVariable Long interviewId,
-			@RequestBody ResultDto resultDto) {
+			@RequestBody @Validated({AddValidation.class}) ResultDto resultDto) {
 		logger.info("Entering addResult method");
 
 		return new ResponseEntity<>(
@@ -149,7 +153,7 @@ public class ResultController {
 	 * @return status of the create operation
 	 */
 	@PutMapping
-	public ResponseEntity<HttpResponseStatus> updateResult(@RequestBody ResultDto resultDto) {
+	public ResponseEntity<HttpResponseStatus> updateResult(@RequestBody @Validated({AddValidation.class,UpdateValidation.class}) ResultDto resultDto) {
 		logger.info("Entering updateResult method");
 
 		return new ResponseEntity<>(
@@ -183,7 +187,7 @@ public class ResultController {
 	 */
 	/* Result mail end points */
 	@PostMapping("/email")
-	public ResponseEntity<HttpResponseStatus> sendResultMail(@RequestBody ResultDto resultDto) {
+	public ResponseEntity<HttpResponseStatus> sendResultMail(@RequestBody @Validated({MailValidation.class}) ResultDto resultDto) {
 		logger.info("Entering sendResultMail method");
 
 		return new ResponseEntity<>(

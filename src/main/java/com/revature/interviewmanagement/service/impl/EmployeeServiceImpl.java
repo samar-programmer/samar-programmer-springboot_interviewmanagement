@@ -32,8 +32,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public String deleteEmployee(Long id) {
 		logger.info("entering deleteEmployee method");
+		Employee employee=employeeDao.getEmployeeById(id);
 		try {
-			if (employeeDao.getEmployeeById(id) != null) {
+			/*
+			 * if the employee is present then check the status, we cannot delete employee who left,
+			 *  only available employee can be deleted
+			 */
+			if (employee != null && !("Left").equals(employee.getStatus())) {
 				return employeeDao.deleteEmployee(id);
 			} else {
 				throw new IdNotFoundException("Employee " + ID_NOT_FOUND);

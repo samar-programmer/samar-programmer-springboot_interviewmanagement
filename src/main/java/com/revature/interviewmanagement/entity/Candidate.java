@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -24,26 +25,24 @@ public class Candidate {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	
 	@Column(nullable=false,name="first_name")
 	private String firstName;
 	
 	@Column(nullable=false,name="last_name")
 	private String lastName;
 	
-	
 	@Column(nullable=false,name="email_id")
 	private String emailId;
-	
+
 	@Column(nullable=false,name="phone_number")
 	private String phoneNumber;
 	
 	@Column(nullable=false,name="job_role")
 	private String jobRole;
-	
+
 	@Column(nullable=false)
 	private String experience;
-	
+
 	@Column(nullable=false,name="resume_link")
 	private String resumeLink;
 

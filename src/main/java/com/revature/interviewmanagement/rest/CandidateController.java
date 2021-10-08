@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.interviewmanagement.model.CandidateDto;
 import com.revature.interviewmanagement.response.HttpResponseStatus;
 import com.revature.interviewmanagement.service.CandidateService;
+import com.revature.interviewmanagement.util.markerinterface.AddValidation;
+import com.revature.interviewmanagement.util.markerinterface.EmailValidation;
+import com.revature.interviewmanagement.util.markerinterface.JobRoleValidation;
+import com.revature.interviewmanagement.util.markerinterface.PhoneValidation;
+import com.revature.interviewmanagement.util.markerinterface.UpdateValidation;
 
 import static com.revature.interviewmanagement.utils.InterviewManagementConstantsUtil.*;
 
@@ -64,10 +70,12 @@ public class CandidateController {
 	@GetMapping("/{id}")
 	public ResponseEntity<HttpResponseStatus> getCandidateById(@PathVariable Long id) {
 		logger.info("Entering getCandidateById method");
-
-		return new ResponseEntity<>(
-				new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, candidateSerive.getCandidateById(id)),
-				HttpStatus.OK);
+		
+			return new ResponseEntity<>(
+					new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION, candidateSerive.getCandidateById(id)),
+					HttpStatus.OK);
+		
+		
 
 	}
 
@@ -81,7 +89,7 @@ public class CandidateController {
 	 * @return candidate details whose email id matches with the given email id
 	 */
 	@PostMapping("/email")
-	public ResponseEntity<HttpResponseStatus> getCandidateByEmailId(@RequestBody CandidateDto candidateDto) {
+	public ResponseEntity<HttpResponseStatus> getCandidateByEmailId(@RequestBody @Validated(EmailValidation.class) CandidateDto candidateDto) {
 		logger.info("Entering getCandidateByEmailId method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -100,7 +108,7 @@ public class CandidateController {
 	 *         number
 	 */
 	@PostMapping("/phone")
-	public ResponseEntity<HttpResponseStatus> getCandidateByPhoneNumber(@RequestBody CandidateDto candidateDto) {
+	public ResponseEntity<HttpResponseStatus> getCandidateByPhoneNumber(@RequestBody @Validated(PhoneValidation.class)  CandidateDto candidateDto) {
 		logger.info("Entering getCandidateByPhoneNumber method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -200,7 +208,7 @@ public class CandidateController {
 	 * @return boolean value based on the validation
 	 */
 	@PostMapping("/validate-role")
-	public ResponseEntity<HttpResponseStatus> validateJobRole(@RequestBody CandidateDto candidateDto) {
+	public ResponseEntity<HttpResponseStatus> validateJobRole(@RequestBody @Validated({EmailValidation.class,JobRoleValidation.class}) CandidateDto candidateDto) {
 		logger.info("Entering getCandidateByRole method");
 
 		return new ResponseEntity<>(new HttpResponseStatus(HttpStatus.OK.value(), GET_OPERATION,
@@ -216,7 +224,7 @@ public class CandidateController {
 	 * @return status of adding a candidate details
 	 */
 	@PostMapping
-	public ResponseEntity<HttpResponseStatus> addCandidate(@RequestBody CandidateDto candidateDto) {
+	public ResponseEntity<HttpResponseStatus> addCandidate(@RequestBody @Validated(AddValidation.class) CandidateDto candidateDto) {
 		logger.info("Entering addCandidate method");
 
 		return new ResponseEntity<>(
@@ -234,7 +242,7 @@ public class CandidateController {
 	 * @return status of the update operation
 	 */
 	@PutMapping
-	public ResponseEntity<HttpResponseStatus> updateCandidate(@RequestBody CandidateDto candidateDto) {
+	public ResponseEntity<HttpResponseStatus> updateCandidate(@RequestBody @Validated({AddValidation.class,UpdateValidation.class}) CandidateDto candidateDto) {
 		logger.info("Entering updateCandidate method");
 
 		return new ResponseEntity<>(
