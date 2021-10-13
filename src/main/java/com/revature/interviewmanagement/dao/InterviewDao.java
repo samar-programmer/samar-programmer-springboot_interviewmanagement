@@ -49,4 +49,6 @@ public interface InterviewDao {
 
 	boolean isCandidateHasLiveInterview(Long canId);
 
+	Long isCandidateHasLiveInterviewForUpdate(Long canId);
+
 }

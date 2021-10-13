@@ -360,7 +360,13 @@ public class InterviewServiceImpl implements InterviewService {
 						throw new BussinessLogicException(EMPLOYEE_LEFT);
 					}
 					//isCandidateHasLiveInterview method checks the candidate has a live/Rescheduled interview and returns true if candidate has
-					//a live/Rescheduled interview
+					//a live/Rescheduled interview. If yes, checks id of the interview is same as id of the interview to be updated.
+					//if they are not same, throws an exception
+					Long interviewId=interviewDao.isCandidateHasLiveInterviewForUpdate(interviewDto.getCandidate().getId());
+					//if interviewId equals null then candidate did not match with any interview
+					if(interviewId !=null && !interviewDto.getId().equals(interviewId)) {
+						throw new BussinessLogicException(CANDIDATE_ALREADY_HAS_LIVE_INTERVIEW);
+					}
 					else if(("Finished").equals(interview.getStatus())) {
 						throw new BussinessLogicException(FINISHED_INTERVIEW);
 					} else {

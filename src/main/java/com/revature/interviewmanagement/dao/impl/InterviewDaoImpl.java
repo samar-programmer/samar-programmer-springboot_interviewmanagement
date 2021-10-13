@@ -83,7 +83,7 @@ public class InterviewDaoImpl implements InterviewDao {
 	 */
 	@Override
 	public boolean isCandidateHasLiveInterview(Long canId) {
-		logger.info("entering validateCandidateForInterview method");
+		logger.info("entering isCandidateHasLiveInterview method");
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			return session.createQuery(VALIDATE_CANDIDATE_FOR_INTERVIEW, Interview.class).setParameter("canId", canId)
@@ -91,6 +91,23 @@ public class InterviewDaoImpl implements InterviewDao {
 		} catch (NoResultException e) {
 			logger.warn(e.getMessage());
 			return false;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException(ERROR_OCCURED);
+		}
+	}
+	
+	@Override
+	public Long isCandidateHasLiveInterviewForUpdate(Long canId) {
+		logger.info("entering isCandidateHasLiveInterviewForUpdate method");
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			//check if candidate already has a live or rescheduled interview, if yes, it returns id of the interview
+			return session.createQuery(VALIDATE_CANDIDATE_FOR_INTERVIEW, Interview.class).setParameter("canId", canId)
+					.getSingleResult().getId();
+		} catch (NoResultException e) {
+			logger.warn(e.getMessage());
+			return null;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(ERROR_OCCURED);
@@ -348,5 +365,7 @@ public class InterviewDaoImpl implements InterviewDao {
 			throw new DatabaseException(ERROR_IN_READING);
 		}
 	}
+
+
 
 }
