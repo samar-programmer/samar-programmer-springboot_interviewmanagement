@@ -1,1 +1,5 @@
 
+
+vscode:
+ extensions:
+   - kyntrack.gitpod-plugin
